@@ -1,6 +1,6 @@
 name: 💡 Feature Request
 description: Request a feature/enhancement
-labels: "Feature"
+type: "Feature"
 
 body:
   - type: checkboxes
