@@ -35,10 +35,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -119,8 +116,12 @@ public class RecommendationsState {
                 .toArray(RecommenationResponse.SkinInfo[]::new);
     }
 
-    public RecommenationResponse.SkinInfo getRandomRecommendation() {
-        return SRHelpers.getRandomEntry(recommendationsList);
+    public Optional<RecommenationResponse.SkinInfo> getRandomRecommendation() {
+        if (recommendationsList.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SRHelpers.getRandomEntry(recommendationsList));
     }
 
     public RecommenationResponse.SkinInfo getRecommendation(String skinId) {
