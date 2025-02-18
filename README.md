@@ -39,6 +39,7 @@ Implementation:
 
 ## :link: Links
 
+- [Modrinth](https://modrinth.com/plugin/skinsrestorer)
 - [SpigotMC](https://www.spigotmc.org/resources/2124)
 - [Hangar](https://hangar.papermc.io/SRTeam/SkinsRestorer)
 - [BuiltByBit](https://builtbybit.com/resources/skinsrestorer.21982/)
