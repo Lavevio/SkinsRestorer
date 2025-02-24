@@ -46,6 +46,8 @@ public final class SRServerMessageAdapter {
                 serverAdapter.openGUI(event.getPlayer(), srInventory);
             } else if (channelPayload instanceof SRServerPluginMessage.SkinUpdateChannelPayload(SkinProperty skinProperty)) {
                 skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
+            } else if (channelPayload instanceof SRServerPluginMessage.GiveSkullChannelPayload payload) {
+                serverAdapter.giveSkullItem(event.getPlayer(), payload);
             }
         });
     }

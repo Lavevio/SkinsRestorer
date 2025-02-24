@@ -45,8 +45,15 @@ public class CommandConfig implements SettingsHolder {
             "Can be bypassed with 'skinsrestorer.bypasscooldown'."
     })
     public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newCappedProperty("commands.skinChangeCooldown", 30, 0, Integer.MAX_VALUE);
+    @Comment({
+            "Players cooldown in seconds when getting skulls (set to 0 to disable).",
+            "SkullErrorCooldown is used when an error or invalid url occurs.",
+            "Can be bypassed with 'skinsrestorer.bypasscooldown'."
+    })
+    public static final Property<Integer> SKULL_GET_COOLDOWN = newCappedProperty("commands.skullGetCooldown", 30, 0, Integer.MAX_VALUE);
 
     public static final Property<Integer> SKIN_ERROR_COOLDOWN = newCappedProperty("commands.skinErrorCooldown", 5, 0, Integer.MAX_VALUE);
+    public static final Property<Integer> SKULL_ERROR_COOLDOWN = newCappedProperty("commands.skullErrorCooldown", 5, 0, Integer.MAX_VALUE);
     public static final Property<Boolean> RESTRICT_SKIN_URLS_ENABLED = newProperty("commands.restrictSkinUrls.enabled", false);
     @SuppressWarnings("HttpUrlsUsage")
     public static final Property<List<String>> RESTRICT_SKIN_URLS_LIST = newListProperty("commands.restrictSkinUrls.list",
@@ -111,6 +118,13 @@ public class CommandConfig implements SettingsHolder {
             "Requires a server restart to take effect."
     })
     public static final Property<Boolean> DISABLE_SKIN_COMMAND = newProperty("commands.disableSkinCommand", false);
+    @Comment({
+            "<!! Warning !!>",
+            "This option will disable the /skull command from being registered on the server.",
+            "Do not disable this unless you are overriding the /skull command with a different plugin or you don't want the skull command.",
+            "Requires a server restart to take effect."
+    })
+    public static final Property<Boolean> DISABLE_SKULL_COMMAND = newProperty("commands.disableSkullCommand", false);
     @Comment({
             "<!! Warning !!>",
             "This option will disable the /skins command from being registered on the server.",

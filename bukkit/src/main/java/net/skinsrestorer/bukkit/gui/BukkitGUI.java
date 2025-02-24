@@ -20,14 +20,11 @@ package net.skinsrestorer.bukkit.gui;
 import ch.jalu.injector.Injector;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.profiles.builder.XSkull;
-import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
-import com.cryptomorin.xseries.profiles.objects.Profileable;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.utils.SkullUtil;
 import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SRInventory;
-import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -42,7 +39,6 @@ import java.util.Objects;
 public class BukkitGUI implements GUIManager<Inventory> {
     private final Injector injector;
     private final Server server;
-    private final SRLogger logger;
 
     @SuppressWarnings("UnstableApiUsage")
     private ItemStack createItem(SRInventory.Item entry) {
@@ -55,22 +51,14 @@ public class BukkitGUI implements GUIManager<Inventory> {
             case ENCHANTING_TABLE -> XMaterial.ENCHANTING_TABLE;
         };
         ItemStack itemStack = Objects.requireNonNull(material.parseItem());
-        entry.textureHash().ifPresent(hash -> {
-            try {
-                XSkull.of(itemStack)
-                        .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash))
-                        .apply();
-            } catch (Throwable t) {
-                logger.severe("Failed to set skull texture", t);
-            }
-        });
+        entry.textureHash().ifPresent(hash -> SkullUtil.setSkull(itemStack, hash));
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
         skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(entry.displayName()));
         skullMeta.setLore(entry.lore().stream().map(BukkitComponentHelper::toStupidHex).toList());
         if (entry.enchantmentGlow()) {
             skullMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            skullMeta.addEnchant(Objects.requireNonNull(XEnchantment.LURE.getEnchant()), 1, true);
+            skullMeta.addEnchant(Objects.requireNonNull(XEnchantment.LURE.get()), 1, true);
         }
 
         itemStack.setItemMeta(skullMeta);
