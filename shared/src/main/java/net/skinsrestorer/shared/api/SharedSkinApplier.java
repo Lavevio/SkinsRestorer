@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.api;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinApplier;
 import net.skinsrestorer.api.property.SkinIdentifier;
@@ -28,7 +29,6 @@ import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
-import net.skinsrestorer.shared.utils.SRHelpers;
 
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
     public void applySkin(P player) throws DataRequestException {
         SRPlayer srPlayer = wrapper.player(player);
         Optional<SkinProperty> playerSkin = playerStorage.getSkinForPlayer(srPlayer.getUniqueId(), srPlayer.getName());
-        applySkin(player, playerSkin.orElse(SRHelpers.EMPTY_SKIN));
+        applySkin(player, playerSkin.orElse(PropertyUtils.EMPTY_SKIN));
     }
 
     @Override

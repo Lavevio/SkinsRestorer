@@ -19,7 +19,6 @@ package net.skinsrestorer.shared.utils;
 
 import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.api.Base64Utils;
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
@@ -45,7 +44,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class SRHelpers {
-    public static final SkinProperty EMPTY_SKIN = SkinProperty.of("", "");
     public static final String MESSAGE_CHANNEL = "sr:messagechannel";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
 

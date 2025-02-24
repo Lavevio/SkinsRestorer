@@ -187,7 +187,7 @@ public final class SkinCommand {
             try {
                 if (targetPlayer.isPresent()) {
                     Optional<SkinProperty> property = playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
-                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), property.orElse(SRHelpers.EMPTY_SKIN));
+                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), property.orElse(PropertyUtils.EMPTY_SKIN));
                 }
 
                 if (senderEqual(sender, target)) {
@@ -273,7 +273,7 @@ public final class SkinCommand {
                     Optional<SkinProperty> newSkin = currentSkin.isEmpty() ?
                             Optional.empty() : playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
 
-                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), newSkin.orElse(SRHelpers.EMPTY_SKIN));
+                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), newSkin.orElse(PropertyUtils.EMPTY_SKIN));
                 }
 
                 if (senderEqual(sender, target)) {
