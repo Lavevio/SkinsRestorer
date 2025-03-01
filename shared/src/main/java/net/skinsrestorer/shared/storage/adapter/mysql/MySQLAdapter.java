@@ -669,11 +669,19 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public void purgeStoredOldSkins(long targetPurgeTimestamp) {
-        mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE timestamp NOT LIKE 0 AND timestamp<=?", targetPurgeTimestamp);
-    }
+    public int purgeStoredOldSkins(long targetPurgeTimestamp) {
+        int count = 0;
+        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM " + resolvePlayerSkinTable() + " WHERE timestamp NOT LIKE 0 AND timestamp<=?", targetPurgeTimestamp)) {
+            if (crs.next()) {
+                count = crs.getInt(1);
+            }
 
-    @Override
+            mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE timestamp NOT LIKE 0 AND timestamp<=?", targetPurgeTimestamp);
+        } catch (SQLException ignored) {
+        }
+        return count;
+    }
+        @Override
     public Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException {
         try (ResultSet crs = mysql.query("SELECT * FROM " + resolveCacheTable() + " WHERE name=?", playerName)) {
             if (!crs.next()) {
