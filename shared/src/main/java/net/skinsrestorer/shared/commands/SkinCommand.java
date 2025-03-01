@@ -134,6 +134,12 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN)
     @CommandDescription(Message.HELP_SKIN)
     public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_skin") @Greedy String query) {
+        if (settings.getProperty(CommandConfig.CUSTOM_HELP_ENABLED)) {
+            settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)
+                    .forEach(l -> sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(l)));
+            return;
+        }
+
         MinecraftHelp.<SRCommandSender>builder()
                 .commandManager(commandManager.getCommandManager())
                 .audienceProvider(ComponentHelper::commandSenderToAudience)
