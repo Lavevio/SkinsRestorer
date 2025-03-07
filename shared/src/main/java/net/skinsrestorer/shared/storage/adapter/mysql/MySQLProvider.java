@@ -53,16 +53,16 @@ public class MySQLProvider {
         pool = Pools.retrievePool(configuration.clone(username, password));
     }
 
-    public void execute(@Language("sql") final String query, final Object... vars) {
+    public int update(@Language("sql") final String query, final Object... vars) {
         try (Connection connection = pool.getPoolConnection().getConnection()) {
             try (PreparedStatement ps = connection.prepareStatement(query)) {
                 fillPreparedStatement(ps, vars);
 
-                ps.execute();
+                return ps.executeUpdate();
             }
         } catch (SQLException e) {
             if (e.getErrorCode() == 1060) {
-                return;
+                return -1;
             }
 
             logger.warning("MySQL error: %s".formatted(e.getMessage()), e);
@@ -70,6 +70,8 @@ public class MySQLProvider {
             if (SRPlugin.isUnitTest()) {
                 throw new AssertionError(e);
             }
+
+            return -1;
         }
     }
 
