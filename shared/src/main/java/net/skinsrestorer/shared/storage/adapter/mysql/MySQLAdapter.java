@@ -60,27 +60,27 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void init() {
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCacheTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveCacheTable() + "` ("
                 + "`name` VARCHAR(16) NOT NULL,"
                 + "`uuid` VARCHAR(36),"
                 + "`timestamp` BIGINT(20) NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCooldownTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveCooldownTable() + "` ("
                 + "`uuid` VARCHAR(36),"
                 + "`group_name` VARCHAR(36) NOT NULL,"
                 + "`creation_time` BIGINT(20) NOT NULL,"
                 + "`duration` BIGINT(20) NOT NULL,"
                 + "PRIMARY KEY (`uuid`, `group_name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolvePlayerTable() + "` ("
                 + "`uuid` VARCHAR(36) NOT NULL,"
                 + "`skin_identifier` VARCHAR(2083),"
                 + "`skin_variant` VARCHAR(20),"
                 + "`skin_type` VARCHAR(20),"
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerHistoryTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolvePlayerHistoryTable() + "` ("
                 + "`uuid` VARCHAR(36) NOT NULL,"
                 + "`timestamp` BIGINT(20) NOT NULL,"
                 + "`skin_identifier` VARCHAR(2083) NOT NULL,"
@@ -88,7 +88,7 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`skin_type` VARCHAR(20) NOT NULL,"
                 + "PRIMARY KEY (`uuid`, `timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerFavouritesTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolvePlayerFavouritesTable() + "` ("
                 + "`uuid` VARCHAR(36) NOT NULL,"
                 + "`timestamp` BIGINT(20) NOT NULL,"
                 + "`skin_identifier` VARCHAR(2083) NOT NULL,"
@@ -96,7 +96,7 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`skin_type` VARCHAR(20) NOT NULL,"
                 + "PRIMARY KEY (`uuid`, `timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerSkinTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolvePlayerSkinTable() + "` ("
                 + "`uuid` VARCHAR(36) NOT NULL,"
                 + "`last_known_name` VARCHAR(16),"
                 + "`value` TEXT NOT NULL,"
@@ -104,7 +104,7 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`timestamp` BIGINT(20) NOT NULL,"
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinTable() + "` ("
                 + "`url` VARCHAR(266) NOT NULL," // Max chatbox command length
                 + "`mine_skin_id` VARCHAR(36),"
                 + "`value` TEXT NOT NULL,"
@@ -112,12 +112,12 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`skin_variant` VARCHAR(20),"
                 + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinIndexTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinIndexTable() + "` ("
                 + "`url` VARCHAR(266) NOT NULL," // Max chatbox command length
                 + "`skin_variant` VARCHAR(20),"
                 + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCustomSkinTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveCustomSkinTable() + "` ("
                 + "`name` VARCHAR(36) NOT NULL,"
                 + "`display_name` TEXT,"
                 + "`value` TEXT NOT NULL,"
@@ -139,11 +139,11 @@ public class MySQLAdapter implements StorageAdapter {
     private void migrateV15() {
         // Now fully replaced by missing uuid column
         if (columnExists(resolveCacheTable(), "is_premium")) {
-            mysql.execute("ALTER TABLE `" + resolveCacheTable() + "` DROP COLUMN `is_premium`");
+            mysql.update("ALTER TABLE `" + resolveCacheTable() + "` DROP COLUMN `is_premium`");
         }
 
         if (!columnExists(resolveCustomSkinTable(), "display_name")) {
-            mysql.execute("ALTER TABLE `" + resolveCustomSkinTable() + "` ADD COLUMN `display_name` TEXT");
+            mysql.update("ALTER TABLE `" + resolveCustomSkinTable() + "` ADD COLUMN `display_name` TEXT");
         }
     }
 
@@ -160,7 +160,7 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         logger.info("Migrating legacy player table to new format...");
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacyPlayerTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveLegacyPlayerTable() + "` ("
                 + "`name` varchar(17) NOT NULL,"
                 + "`skin_name` varchar(19) NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -170,14 +170,14 @@ public class MySQLAdapter implements StorageAdapter {
                 String name = crs.getString("Nick");
                 String skin = crs.getString("Skin");
 
-                mysql.execute("INSERT INTO " + resolveLegacyPlayerTable() + " (name, skin_name) VALUES (?, ?)",
+                mysql.update("INSERT INTO " + resolveLegacyPlayerTable() + " (name, skin_name) VALUES (?, ?)",
                         name, skin);
             }
         } catch (SQLException e) {
             logger.severe("Failed to migrate legacy player table", e);
         }
 
-        mysql.execute("DROP TABLE " + legacyPlayerTable.get());
+        mysql.update("DROP TABLE " + legacyPlayerTable.get());
 
         Files.deleteIfExists(getLegacyPlayerTableFilePath());
         logger.info("Player migration complete!");
@@ -196,7 +196,7 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         logger.info("Migrating legacy skin table to new format...");
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacySkinTable() + "` ("
+        mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveLegacySkinTable() + "` ("
                 + "`name` varchar(36) NOT NULL,"
                 + "`value` text NOT NULL,"
                 + "`signature` text NOT NULL,"
@@ -213,7 +213,7 @@ public class MySQLAdapter implements StorageAdapter {
                 if (timestampString == null || isLegacyCustomSkinTimestamp(Long.parseLong(timestampString))) {
                     setCustomSkinData(name, CustomSkinData.of(name, null, SkinProperty.of(value, signature)));
                 } else {
-                    mysql.execute("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
+                    mysql.update("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
                             name, value, signature);
                 }
             }
@@ -221,7 +221,7 @@ public class MySQLAdapter implements StorageAdapter {
             throw new IOException(e);
         }
 
-        mysql.execute("DROP TABLE `" + legacySkinTable.get() + "`");
+        mysql.update("DROP TABLE `" + legacySkinTable.get() + "`");
 
         Files.deleteIfExists(getLegacySkinTableFilePath());
         logger.info("Skin migration complete!");
@@ -307,7 +307,7 @@ public class MySQLAdapter implements StorageAdapter {
 
         // Variant is only present on url skins
         String skinVariant = hasSkin && identifier.getSkinVariant() != null ? identifier.getSkinVariant().name() : null;
-        mysql.execute("INSERT INTO " + resolvePlayerTable() + " (uuid, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
+        mysql.update("INSERT INTO " + resolvePlayerTable() + " (uuid, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
                 uuid.toString(),
                 skinIdentifierString,
                 skinType,
@@ -316,7 +316,7 @@ public class MySQLAdapter implements StorageAdapter {
                 skinType,
                 skinVariant);
 
-        mysql.execute("DELETE FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? AND timestamp NOT IN (" +
+        mysql.update("DELETE FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? AND timestamp NOT IN (" +
                 (data.getHistory().isEmpty() ? "NULL" : data.getHistory().stream().map(HistoryData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
                 + ")", uuid);
         for (HistoryData historyData : data.getHistory()) {
@@ -325,7 +325,7 @@ public class MySQLAdapter implements StorageAdapter {
             String historySkinType = historyIdentifier.getSkinType().name();
             String historySkinVariant = historyIdentifier.getSkinVariant() != null ? historyIdentifier.getSkinVariant().name() : null;
 
-            mysql.execute("INSERT INTO " + resolvePlayerHistoryTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
+            mysql.update("INSERT INTO " + resolvePlayerHistoryTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
                     uuid.toString(),
                     historyData.getTimestamp(),
                     historySkinIdentifier,
@@ -336,7 +336,7 @@ public class MySQLAdapter implements StorageAdapter {
                     historySkinVariant);
         }
 
-        mysql.execute("DELETE FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? AND timestamp NOT IN (" +
+        mysql.update("DELETE FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? AND timestamp NOT IN (" +
                 (data.getFavourites().isEmpty() ? "NULL" : data.getFavourites().stream().map(FavouriteData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
                 + ")", uuid);
         for (FavouriteData favouriteData : data.getFavourites()) {
@@ -345,7 +345,7 @@ public class MySQLAdapter implements StorageAdapter {
             String favouriteSkinType = favouriteIdentifier.getSkinType().name();
             String favouriteSkinVariant = favouriteIdentifier.getSkinVariant() != null ? favouriteIdentifier.getSkinVariant().name() : null;
 
-            mysql.execute("INSERT INTO " + resolvePlayerFavouritesTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
+            mysql.update("INSERT INTO " + resolvePlayerFavouritesTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
                     uuid.toString(),
                     favouriteData.getTimestamp(),
                     favouriteSkinIdentifier,
@@ -377,12 +377,12 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removePlayerSkinData(UUID uuid) {
-        mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE uuid=?", uuid.toString());
+        mysql.update("DELETE FROM " + resolvePlayerSkinTable() + " WHERE uuid=?", uuid.toString());
     }
 
     @Override
     public void setPlayerSkinData(UUID uuid, PlayerSkinData skinData) {
-        mysql.execute("INSERT INTO " + resolvePlayerSkinTable() + " (uuid, last_known_name, value, signature, timestamp) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE last_known_name=?, value=?, signature=?, timestamp=?",
+        mysql.update("INSERT INTO " + resolvePlayerSkinTable() + " (uuid, last_known_name, value, signature, timestamp) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE last_known_name=?, value=?, signature=?, timestamp=?",
                 uuid.toString(),
                 skinData.getLastKnownName(),
                 skinData.getProperty().getValue(),
@@ -414,12 +414,12 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removeURLSkinData(String url, SkinVariant skinVariant) {
-        mysql.execute("DELETE FROM " + resolveURLSkinTable() + " WHERE url=? AND skin_variant=?", url, skinVariant.name());
+        mysql.update("DELETE FROM " + resolveURLSkinTable() + " WHERE url=? AND skin_variant=?", url, skinVariant.name());
     }
 
     @Override
     public void setURLSkinData(String url, URLSkinData skinData) {
-        mysql.execute("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE mine_skin_id=?, value=?, signature=?, skin_variant=?",
+        mysql.update("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE mine_skin_id=?, value=?, signature=?, skin_variant=?",
                 url,
                 skinData.getMineSkinId(),
                 skinData.getProperty().getValue(),
@@ -448,12 +448,12 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removeURLSkinIndex(String url) {
-        mysql.execute("DELETE FROM " + resolveURLSkinIndexTable() + " WHERE url=?", url);
+        mysql.update("DELETE FROM " + resolveURLSkinIndexTable() + " WHERE url=?", url);
     }
 
     @Override
     public void setURLSkinIndex(String url, URLIndexData skinData) {
-        mysql.execute("INSERT INTO " + resolveURLSkinIndexTable() + " (url, skin_variant) VALUES (?, ?) ON DUPLICATE KEY UPDATE skin_variant=?",
+        mysql.update("INSERT INTO " + resolveURLSkinIndexTable() + " (url, skin_variant) VALUES (?, ?) ON DUPLICATE KEY UPDATE skin_variant=?",
                 url,
                 skinData.getSkinVariant().name(),
                 skinData.getSkinVariant().name());
@@ -480,13 +480,13 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void removeCustomSkinData(String skinName) {
         skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
-        mysql.execute("DELETE FROM " + resolveCustomSkinTable() + " WHERE name=?", skinName);
+        mysql.update("DELETE FROM " + resolveCustomSkinTable() + " WHERE name=?", skinName);
     }
 
     @Override
     public void setCustomSkinData(String skinName, CustomSkinData skinData) {
         skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
-        mysql.execute("INSERT INTO " + resolveCustomSkinTable() + " (name, display_name, value, signature) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE display_name=?, value=?, signature=?",
+        mysql.update("INSERT INTO " + resolveCustomSkinTable() + " (name, display_name, value, signature) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE display_name=?, value=?, signature=?",
                 skinName,
                 skinData.getDisplayName() == null ? null : skinData.getDisplayName().jsonString(),
                 skinData.getProperty().getValue(),
@@ -519,7 +519,7 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void removeLegacySkinData(String skinName) {
         if (tableExists(resolveLegacySkinTable())) {
-            mysql.execute("DELETE FROM " + resolveLegacySkinTable() + " WHERE name=?", skinName);
+            mysql.update("DELETE FROM " + resolveLegacySkinTable() + " WHERE name=?", skinName);
         }
     }
 
@@ -545,7 +545,7 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void removeLegacyPlayerData(String playerName) {
         if (tableExists(resolveLegacyPlayerTable())) {
-            mysql.execute("DELETE FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName);
+            mysql.update("DELETE FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName);
         }
     }
 
@@ -676,7 +676,7 @@ public class MySQLAdapter implements StorageAdapter {
                 count = crs.getInt(1);
             }
 
-            mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE timestamp NOT LIKE 0 AND timestamp<=?", targetPurgeTimestamp);
+            mysql.update("DELETE FROM " + resolvePlayerSkinTable() + " WHERE timestamp NOT LIKE 0 AND timestamp<=?", targetPurgeTimestamp);
         } catch (SQLException ignored) {
         }
         return count;
@@ -701,7 +701,7 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void setCachedUUID(String playerName, MojangCacheData mojangCacheData) {
         String uuid = mojangCacheData.getUniqueId().map(UUID::toString).orElse(null);
-        mysql.execute("INSERT INTO " + resolveCacheTable() + " (name, uuid, timestamp) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE uuid=?, timestamp=?",
+        mysql.update("INSERT INTO " + resolveCacheTable() + " (name, uuid, timestamp) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE uuid=?, timestamp=?",
                 playerName,
                 uuid,
                 mojangCacheData.getTimestamp(),
@@ -743,7 +743,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void setCooldown(UUID owner, String groupName, Instant creationTime, Duration duration) {
-        mysql.execute("INSERT INTO " + resolveCooldownTable() + " (uuid, group_name, creation_time, duration) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE creation_time=?, duration=?",
+        mysql.update("INSERT INTO " + resolveCooldownTable() + " (uuid, group_name, creation_time, duration) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE creation_time=?, duration=?",
                 owner.toString(),
                 groupName,
                 creationTime.getEpochSecond(),
@@ -754,7 +754,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removeCooldown(UUID owner, String groupName) {
-        mysql.execute("DELETE FROM " + resolveCooldownTable() + " WHERE uuid=? AND group_name=?", owner.toString(), groupName);
+        mysql.update("DELETE FROM " + resolveCooldownTable() + " WHERE uuid=? AND group_name=?", owner.toString(), groupName);
     }
 
     private String resolveCustomSkinTable() {
