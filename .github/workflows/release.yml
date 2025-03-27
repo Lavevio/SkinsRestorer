@@ -1,0 +1,78 @@
+name: Public Release
+
+on: [ workflow_dispatch ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Validate Gradle wrapper
+      uses: gradle/actions/wrapper-validation@v4
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+    - name: Build with Gradle
+      run: ./gradlew build test --stacktrace --scan
+    - name: Set version
+      id: set-version
+      run: |
+        projectVersion=$(grep '^maven_version=' gradle.properties | cut -d'=' -f2)
+        echo "::set-output name=version::$projectVersion"
+
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        embed-title: SkinsRestorer ${{ steps.set-version.outputs.version }}
+        embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Download it at https://modrinth.com/plugin/skinsrestorer
+    - uses: Kir-Antipov/mc-publish@v3.3
+      with:
+        modrinth-id: skinsrestorer
+        modrinth-featured: true
+        modrinth-unfeature-mode: subset
+        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+        github-tag: ${{ steps.set-version.outputs.version }}
+        github-generate-changelog: true
+        github-draft: false
+        github-prerelease: false
+        github-commitish: dev
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+        files: |
+          build/libs/SkinsRestorer.jar
+
+        name: SkinsRestorer ${{ steps.set-version.outputs.version }}
+        version: ${{ steps.set-version.outputs.version }}
+        version-type: release
+        changelog-file: CHANGELOG.md
+
+        loaders: |
+          bukkit
+          bungeecord
+          folia
+          paper
+          purpur
+          spigot
+          velocity
+          waterfall
+        game-versions: |
+          >=1.8.0
+        game-version-filter: releases
+        java: |
+          8
+          11
+          17
+          21
+
+        retry-attempts: 2
+        retry-delay: 10000
+        fail-mode: fail
