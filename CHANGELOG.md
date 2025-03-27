@@ -1,0 +1,2 @@
+- Added support for 1.21.5
+- Fixed links in messages
