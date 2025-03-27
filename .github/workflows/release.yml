@@ -71,6 +71,11 @@ jobs:
         retry-delay: 10000
         fail-mode: fail
 
+    - name: Publish on Hangar
+      env:
+        HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+      run: ./gradlew build publishPluginPublicationToHangar --stacktrace
+
     - name: Discord Webhook Action
       uses: tsickert/discord-webhook@v7.0.0
       with:
