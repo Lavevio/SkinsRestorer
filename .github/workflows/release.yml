@@ -25,7 +25,7 @@ jobs:
       id: set-version
       run: |
         projectVersion=$(grep '^maven_version=' gradle.properties | cut -d'=' -f2)
-        echo "::set-output name=version::$projectVersion"
+        run: echo "version=$projectVersion" >> $GITHUB_OUTPUT
 
     - name: Discord Webhook Action
       uses: tsickert/discord-webhook@v7.0.0
