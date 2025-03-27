@@ -77,6 +77,6 @@ jobs:
         webhook-url: ${{ secrets.WEBHOOK_URL }}
         content: <@&1201133350916739173> New SkinsRestorer version released!
         embed-title: SkinsRestorer ${{ steps.set-version.outputs.version }}
-        embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Changelog and download can be found at https://modrinth.com/plugin/skinsrestorer/versions/${{ steps.set-version.outputs.version }}
+        embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Changelog and download can be found at https://modrinth.com/plugin/skinsrestorer/version/${{ steps.set-version.outputs.version }}
         embed-color: 16641028
         embed-thumbnail-url: https://skinsrestorer.net/logo.png
