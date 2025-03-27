@@ -27,14 +27,6 @@ jobs:
         projectVersion=$(grep '^maven_version=' gradle.properties | cut -d'=' -f2)
         run: echo "version=$projectVersion" >> $GITHUB_OUTPUT
 
-    - name: Discord Webhook Action
-      uses: tsickert/discord-webhook@v7.0.0
-      with:
-        webhook-url: ${{ secrets.WEBHOOK_URL }}
-        embed-title: SkinsRestorer ${{ steps.set-version.outputs.version }}
-        embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Download it at https://modrinth.com/plugin/skinsrestorer
-        embed-color: 16641028
-        embed-thumbnail-url: https://skinsrestorer.net/logo.png
     - uses: Kir-Antipov/mc-publish@v3.3
       with:
         modrinth-id: skinsrestorer
@@ -78,3 +70,13 @@ jobs:
         retry-attempts: 2
         retry-delay: 10000
         fail-mode: fail
+
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        content: <&1201133350916739173> New SkinsRestorer version released!
+        embed-title: SkinsRestorer ${{ steps.set-version.outputs.version }}
+        embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Download it at https://modrinth.com/plugin/skinsrestorer
+        embed-color: 16641028
+        embed-thumbnail-url: https://skinsrestorer.net/logo.png
