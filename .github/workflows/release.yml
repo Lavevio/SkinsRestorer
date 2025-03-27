@@ -33,6 +33,8 @@ jobs:
         webhook-url: ${{ secrets.WEBHOOK_URL }}
         embed-title: SkinsRestorer ${{ steps.set-version.outputs.version }}
         embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Download it at https://modrinth.com/plugin/skinsrestorer
+        embed-color: 16641028
+        embed-thumbnail-url: https://skinsrestorer.net/logo.png
     - uses: Kir-Antipov/mc-publish@v3.3
       with:
         modrinth-id: skinsrestorer
