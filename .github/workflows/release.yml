@@ -27,6 +27,14 @@ jobs:
         projectVersion=$(grep '^maven_version=' gradle.properties | cut -d'=' -f2)
         echo "version=$projectVersion" >> $GITHUB_OUTPUT
 
+    - name: Build Changelog
+      id: github_release
+      uses: mikepenz/release-changelog-builder-action@v5
+      with:
+        mode: COMMIT
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - uses: Kir-Antipov/mc-publish@v3.3
       with:
         modrinth-id: skinsrestorer
@@ -35,7 +43,7 @@ jobs:
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         github-tag: ${{ steps.set-version.outputs.version }}
-        github-generate-changelog: true
+        github-generate-changelog: false
         github-draft: false
         github-prerelease: false
         github-commitish: dev
@@ -47,7 +55,7 @@ jobs:
         name: SkinsRestorer ${{ steps.set-version.outputs.version }}
         version: ${{ steps.set-version.outputs.version }}
         version-type: release
-        changelog-file: CHANGELOG.md
+        changelog: ${{ steps.github_release.outputs.changelog }}
 
         loaders: |
           bukkit
