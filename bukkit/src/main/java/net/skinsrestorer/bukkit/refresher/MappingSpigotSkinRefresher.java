@@ -62,6 +62,11 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         mapping.accept(player, viaProvider);
     }
 
+    @Override
+    public void resendInfoPackets(Player toResend, Player toSendTo) {
+        mapping.resendInfoPackets(toResend, toSendTo);
+    }
+
     private record UnsupportedMapping(WrapperBukkit wrapper) implements IMapping {
         @Inject
         private UnsupportedMapping {
@@ -70,6 +75,11 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         @Override
         public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
             wrapper.player(player).sendMessage(Message.ERROR_PLAYER_REFRESH_NO_MAPPING);
+        }
+
+        @Override
+        public void resendInfoPackets(Player toResend, Player toSendTo) {
+            // No-op
         }
 
         @Override

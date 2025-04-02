@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.paper.PaperSkinApplier;
@@ -27,12 +28,15 @@ import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBukkit implements SkinApplierAccess<Player> {
@@ -42,6 +46,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     private final EventBusImpl eventBus;
     private final SkinRefresher refresh;
     private final SpigotPassengerUtil passengerUtil;
+    private final SettingsManager settingsManager;
 
     @Override
     public void applySkin(Player player, SkinProperty property) {
@@ -80,19 +85,30 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
         applyAdapter.applyProperty(player, property);
 
-        for (Player otherPlayer : getOnlinePlayers()) {
-            // Do not hide the player from itself or do anything if the other player cannot see the player
-            if (otherPlayer.getUniqueId().equals(player.getUniqueId())
-                    || !otherPlayer.canSee(player)) {
-                continue;
-            }
-
-            // Force player to be re-added to the player-list of every player on the server
-            hideAndShow(otherPlayer, player);
+        if (settingsManager.getProperty(AdvancedConfig.TELEPORT_REFRESH)) {
+            teleportOtherRefresh(player);
+        } else {
+            normalOtherRefresh(player);
         }
 
         // Refresh the players own skin
         refresh.refresh(player);
+    }
+
+    private void normalOtherRefresh(Player player) {
+        for (Player otherPlayer : getSeenByPlayers(player)) {
+            // Force player to be re-added to the player-list of every player on the server
+            hideAndShow(otherPlayer, player);
+        }
+    }
+
+    private List<? extends Player> getSeenByPlayers(Player player) {
+        // Do not hide the player from itself or do anything if the other player cannot see the player
+        return getOnlinePlayers()
+                .stream()
+                .filter(other -> !other.getUniqueId().equals(player.getUniqueId()))
+                .filter(other -> other.canSee(player))
+                .toList();
     }
 
     @SuppressWarnings("deprecation")
@@ -110,6 +126,26 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             // Backwards compatibility
             player.showPlayer(other);
         }
+    }
+
+    private void teleportOtherRefresh(Player player) {
+        for (Player otherPlayer : getSeenByPlayers(player)) {
+            // Force player to be re-added to the player-list of every player on the server
+            // This however sends only the player list packet, while the hide/show method
+            // de-spawns the player and sends the spawn packet
+            refresh.resendInfoPackets(player, otherPlayer);
+        }
+
+        Location location = player.getLocation();
+        // Teleport the player to a far away location
+        player.teleport(new Location(server.getWorlds()
+                .stream()
+                .filter(world -> world != location.getWorld())
+                .findFirst()
+                .orElse(location.getWorld()),
+                0, 0, 0));
+        // Teleport the player back to the original location
+        player.teleport(location);
     }
 
     private Collection<? extends Player> getOnlinePlayers() {

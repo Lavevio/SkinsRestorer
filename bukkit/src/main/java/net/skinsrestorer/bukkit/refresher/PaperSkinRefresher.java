@@ -60,4 +60,9 @@ public final class PaperSkinRefresher implements SkinRefresher {
         refreshPlayerMethod.invoke(player);
         triggerHealthUpdate.accept(player);
     }
+
+    @Override
+    public void resendInfoPackets(Player toResend, Player toSendTo) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }
