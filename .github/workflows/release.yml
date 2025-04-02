@@ -1,8 +1,22 @@
 name: Publish Release
 
-on: [ workflow_dispatch ]
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+      after-version:
+        description: 'Snapshot version after release'
+        required: true
 
 jobs:
+  set-release-version:
+    uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets: inherit
+
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -93,3 +107,13 @@ jobs:
         embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Changelog and download can be found at https://modrinth.com/plugin/skinsrestorer/version/${{ steps.set-version.outputs.version }}
         embed-color: 16641028
         embed-thumbnail-url: https://skinsrestorer.net/logo.png
+
+  deploy-javadoc:
+    uses: SkinsRestorer/SkinsRestorer/.github/workflows/deploy-javadoc.yml@main
+    secrets: inherit
+
+  set-after-version:
+    uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@main
+    with:
+      version: ${{ github.event.inputs.after-version }}
+    secrets: inherit
