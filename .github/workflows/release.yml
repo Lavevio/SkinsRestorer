@@ -18,6 +18,7 @@ jobs:
     secrets: inherit
 
   build:
+    needs: set-release-version
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -109,10 +110,12 @@ jobs:
         embed-thumbnail-url: https://skinsrestorer.net/logo.png
 
   deploy-javadoc:
+    needs: build
     uses: SkinsRestorer/SkinsRestorer/.github/workflows/deploy-javadoc.yml@main
     secrets: inherit
 
   set-after-version:
+    needs: deploy-javadoc
     uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@main
     with:
       version: ${{ github.event.inputs.after-version }}
