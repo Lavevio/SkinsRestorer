@@ -1,0 +1,49 @@
+name: set-version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to set'
+        required: true
+
+jobs:
+  set-version:
+    name: Set Version
+
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 'Shared: Checkout repository'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: 'Shared: Setup node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: 'Shared: Install pnpm'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 'Shared: Install Rust toolchain'
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: 'Set JS Version'
+        run: |
+          pnpm version --no-git-tag-version ${{ github.event.inputs.version }}
+
+      - name: 'Set Cargo Version'
+        run: |
+          cargo install cargo-edit
+          cargo set-version ${{ github.event.inputs.version }} --manifest-path src-tauri/Cargo.toml
+
+      - name: 'Commit Version'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Bump version to ${{ github.event.inputs.version }}'
