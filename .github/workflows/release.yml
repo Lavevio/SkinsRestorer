@@ -14,7 +14,7 @@ jobs:
   set-release-version:
     uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@main
     with:
-      version: ${{ github.event.inputs.version }}
+      version: ${{ inputs.version }}
     secrets: inherit
 
   build:
@@ -118,5 +118,5 @@ jobs:
     needs: deploy-javadoc
     uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@main
     with:
-      version: ${{ github.event.inputs.after-version }}
+      version: ${{ inputs.after-version }}
     secrets: inherit
