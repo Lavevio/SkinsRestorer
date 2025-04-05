@@ -38,17 +38,13 @@ jobs:
       uses: gradle/actions/setup-gradle@v4
     - name: Build with Gradle
       run: ./gradlew build test --stacktrace --scan
-    - name: Set version
-      id: set-version
-      run: |
-        projectVersion=$(grep '^maven_version=' gradle.properties | cut -d'=' -f2)
-        echo "version=$projectVersion" >> $GITHUB_OUTPUT
 
     - name: Build Changelog
       id: github_release
       uses: mikepenz/release-changelog-builder-action@v5
       with:
         mode: COMMIT
+        toTag: ${{ github.ref }}
         configurationJson: |
           {
             "template": "#{{CHANGELOG}}",
@@ -108,7 +104,7 @@ jobs:
         modrinth-unfeature-mode: subset
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-        github-tag: ${{ steps.set-version.outputs.version }}
+        github-tag: ${{ inputs.version }}
         github-generate-changelog: false
         github-draft: false
         github-prerelease: false
@@ -118,8 +114,8 @@ jobs:
         files: |
           build/libs/SkinsRestorer.jar
 
-        name: SkinsRestorer ${{ steps.set-version.outputs.version }}
-        version: ${{ steps.set-version.outputs.version }}
+        name: SkinsRestorer ${{ inputs.version }}
+        version: ${{ inputs.version }}
         version-type: release
         changelog: ${{ steps.github_release.outputs.changelog }}
 
@@ -155,8 +151,8 @@ jobs:
       with:
         webhook-url: ${{ secrets.WEBHOOK_URL }}
         content: <@&1201133350916739173> New SkinsRestorer version released!
-        embed-title: SkinsRestorer ${{ steps.set-version.outputs.version }}
-        embed-description: SkinsRestorer ${{ steps.set-version.outputs.version }} has been released! Changelog and download can be found at https://modrinth.com/plugin/skinsrestorer/version/${{ steps.set-version.outputs.version }}
+        embed-title: SkinsRestorer ${{ inputs.version }}
+        embed-description: SkinsRestorer ${{ inputs.version }} has been released! Changelog and download can be found at https://modrinth.com/plugin/skinsrestorer/version/${{ inputs.version }}
         embed-color: 16641028
         embed-thumbnail-url: https://skinsrestorer.net/logo.png
 
