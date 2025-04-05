@@ -26,27 +26,9 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: 'Shared: Setup node'
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: 'Shared: Install pnpm'
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: 'Shared: Install Rust toolchain'
-        uses: dtolnay/rust-toolchain@nightly
-
-      - name: 'Set JS Version'
+      - name: 'Set Version'
         run: |
-          pnpm version --no-git-tag-version ${{ inputs.version }}
-
-      - name: 'Set Cargo Version'
-        run: |
-          cargo install cargo-edit
-          cargo set-version ${{ inputs.version }} --manifest-path src-tauri/Cargo.toml
+          sed -i 's/^maven_version=.*/maven_version='"${{ inputs.version }}"'/g' gradle.properties
 
       - name: 'Commit Version'
         uses: stefanzweifel/git-auto-commit-action@v5
