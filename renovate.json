@@ -26,6 +26,12 @@
         "digest"
       ],
       "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "**"
+      ],
+      "allowedVersions": "!/\\-SNAPSHOT$/"
     }
   ]
 }
