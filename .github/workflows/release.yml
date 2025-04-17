@@ -12,7 +12,7 @@ on:
 
 jobs:
   set-release-version:
-    uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@main
+    uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@dev
     with:
       version: ${{ inputs.version }}
     secrets: inherit
@@ -173,12 +173,12 @@ jobs:
 
   deploy-javadoc:
     needs: build
-    uses: SkinsRestorer/SkinsRestorer/.github/workflows/deploy-javadoc.yml@main
+    uses: SkinsRestorer/SkinsRestorer/.github/workflows/deploy-javadoc.yml@dev
     secrets: inherit
 
   set-after-version:
     needs: deploy-javadoc
-    uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@main
+    uses: SkinsRestorer/SkinsRestorer/.github/workflows/set-version.yml@dev
     with:
       version: ${{ inputs.after-version }}
     secrets: inherit
