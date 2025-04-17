@@ -25,6 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
+          token: ${{ secrets.SR_TEAM_RELEASE_TOKEN }}
 
       - name: 'Set Version'
         run: |
