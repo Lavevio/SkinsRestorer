@@ -23,7 +23,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle
-        run: ./gradlew javadoc --stacktrace
+        run: ./gradlew :skinsrestorer-api:javadoc --stacktrace
       - name: Move files
         run: |
           mv ./api/build/docs/javadoc ./docs
