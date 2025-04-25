@@ -161,7 +161,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                                 },
                                 null,
                                 settings.getProperty(APIConfig.MINESKIN_SECRET_SKINS)
-                                        ? MineSkinVisibility.PRIVATE : MineSkinVisibility.PUBLIC,
+                                        ? MineSkinVisibility.UNLISTED : MineSkinVisibility.PUBLIC,
                                 null,
                                 url
                         )), HttpClient.HttpType.JSON),
