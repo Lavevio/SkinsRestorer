@@ -103,15 +103,15 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             return Optional.of(MineSkinResponse.of(property, skin.getUuid(),
                     skinVariant, PropertyUtils.getSkinVariant(property)));
         } else {
-            if (response.getRateLimit() != null) {
-                // If "Too many requests"
-                TimeUnit.MILLISECONDS.sleep(response.getRateLimit().getDelay().getMillis());
-                return Optional.empty(); // try again
-            }
+            TimeUnit.MILLISECONDS.sleep(response.getRateLimit().getDelay().getMillis());
 
             for (MineSkinUrlResponse.Error error : response.getErrors()) {
                 logger.debug("[ERROR] MineSkin Failed! Reason: %s Image URL: %s".formatted(error, imageUrl));
                 return switch (error.getCode()) {
+                    case "rate_limit" -> {
+                        TimeUnit.SECONDS.sleep(6);
+                        yield Optional.empty(); // try again
+                    }
                     case "failed_to_create_id", "skin_change_failed" -> {
                         logger.debug("Trying again in 6 seconds...");
                         TimeUnit.SECONDS.sleep(6);
