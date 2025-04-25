@@ -105,7 +105,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         } else {
             if (response.getRateLimit() != null) {
                 // If "Too many requests"
-                TimeUnit.SECONDS.sleep(response.getRateLimit().getDelay().getMillis());
+                TimeUnit.MILLISECONDS.sleep(response.getRateLimit().getDelay().getMillis());
                 return Optional.empty(); // try again
             }
 
