@@ -173,7 +173,7 @@ public class SRPlugin {
             }
         }
 
-        if (!settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT).equalsIgnoreCase(CommandConfig.CONSENT_MESSAGE)) {
+        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT).equalsIgnoreCase(CommandConfig.CONSENT_MESSAGE)) {
             logger.warning("You must agree to the rules at '%s' in the config to use per skin permissions.".formatted(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT.getPath()));
         }
 
