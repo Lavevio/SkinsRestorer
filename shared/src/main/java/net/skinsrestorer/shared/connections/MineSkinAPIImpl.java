@@ -103,13 +103,20 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             return Optional.of(MineSkinResponse.of(property, skin.getUuid(),
                     skinVariant, PropertyUtils.getSkinVariant(property)));
         } else {
-            TimeUnit.MILLISECONDS.sleep(response.getRateLimit().getDelay().getMillis());
+            long requestedDelay = response.getRateLimit().getDelay().getMillis();
+
+            logger.debug("[INFO] MineSkin API Rate Limit: %dms".formatted(requestedDelay));
+            TimeUnit.MILLISECONDS.sleep(requestedDelay);
 
             for (MineSkinUrlResponse.Error error : response.getErrors()) {
                 logger.debug("[ERROR] MineSkin Failed! Reason: %s Image URL: %s".formatted(error, imageUrl));
                 return switch (error.getCode()) {
                     case "rate_limit" -> {
-                        TimeUnit.SECONDS.sleep(6);
+                        if (response.getRateLimit().getLimit().getRemaining() == 0) {
+                            logger.debug("[INFO] MineSkin waiting 30s for limit reset...");
+                            TimeUnit.SECONDS.sleep(30);
+                        }
+
                         yield Optional.empty(); // try again
                     }
                     case "failed_to_create_id", "skin_change_failed" -> {
