@@ -107,12 +107,13 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
         MineSkinUrlResponse response = httpResponse.getBodyAs(MineSkinUrlResponse.class);
 
-        {
-            long serverNextRequestAt = response.getRateLimit().getNext().getAbsolute();
+        MineSkinUrlResponse.RateLimit rateLimit = response.getRateLimit();
+        if (rateLimit != null) {
+            long serverNextRequestAt = rateLimit.getNext().getAbsolute();
             nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, serverNextRequestAt));
 
-            long resetMillis = TimeUnit.SECONDS.toMillis(response.getRateLimit().getLimit().getReset());
-            if (response.getRateLimit().getLimit().getRemaining() == 0) {
+            long resetMillis = TimeUnit.SECONDS.toMillis(rateLimit.getLimit().getReset());
+            if (rateLimit.getLimit().getRemaining() == 0) {
                 nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, resetMillis));
             }
         }
