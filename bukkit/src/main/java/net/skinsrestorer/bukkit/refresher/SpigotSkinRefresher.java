@@ -245,7 +245,8 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             // TODO: Send proper permission level instead of this workaround
             OPRefreshUtil.refreshOP(player, adapter);
         } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to refresh skin for player %s".formatted(player.getName()), e);
+            logger.severe("Failed to refresh skin for player %s because of %s (more info in debug)".formatted(player.getName(), e.getClass().getSimpleName()));
+            logger.debug(e);
         }
     }
 
