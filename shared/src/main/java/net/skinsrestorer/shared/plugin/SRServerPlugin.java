@@ -17,12 +17,14 @@
  */
 package net.skinsrestorer.shared.plugin;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.shared.config.DatabaseConfig;
+import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -34,6 +36,7 @@ public class SRServerPlugin {
     private final SRPlugin plugin;
     private final SRServerAdapter serverAdapter;
     private final SRLogger logger;
+    private final SettingsManager settingsManager;
     @Getter
     @Setter
     private boolean proxyMode;
@@ -42,13 +45,7 @@ public class SRServerPlugin {
         proxyMode = checkProxy();
 
         try {
-            Path warning = plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt");
-            if (proxyMode) {
-                SRHelpers.createDirectoriesSafe(plugin.getDataFolder());
-                SRHelpers.writeIfNeeded(warning, serverAdapter.getResouceAsString("proxy_warning.txt"));
-            } else {
-                Files.deleteIfExists(warning);
-            }
+            Files.deleteIfExists(plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt"));
         } catch (IOException e) {
             logger.severe("Failed to create proxy warning file", e);
         }
@@ -56,26 +53,34 @@ public class SRServerPlugin {
         if (proxyMode) {
             logger.info("-------------------------/Warning\\-------------------------");
             logger.info("This plugin is running in PROXY mode!");
-            logger.info("You have to do all configuration at config file");
-            logger.info("inside your BungeeCord/Velocity server.");
+            logger.info("You have to put the same config.yml on all servers and on the proxy.");
             logger.info("(<proxy>/plugins/SkinsRestorer/)");
             logger.info("-------------------------\\Warning/-------------------------");
         }
     }
 
     private boolean checkProxy() {
-        Path proxyModeEnabled = plugin.getDataFolder().resolve("enableProxyMode.txt");
-        Path proxyModeDisabled = plugin.getDataFolder().resolve("disableProxyMode.txt");
+        ServerConfig.ProxyMode proxyModeDetection = settingsManager.getProperty(ServerConfig.PROXY_MODE_DETECTION);
+        return switch (proxyModeDetection) {
+            case ENABLED -> true;
+            case DISABLED -> false;
+            case AUTO -> {
+                Path proxyModeEnabled = plugin.getDataFolder().resolve("enableProxyMode.txt");
+                Path proxyModeDisabled = plugin.getDataFolder().resolve("disableProxyMode.txt");
 
-        if (Files.exists(proxyModeEnabled)) {
-            return true;
-        }
+                if (Files.exists(proxyModeEnabled)) {
+                    logger.warning("Proxy mode files are deprecated, please use the config file instead.");
+                    yield true;
+                }
 
-        if (Files.exists(proxyModeDisabled)) {
-            return false;
-        }
+                if (Files.exists(proxyModeDisabled)) {
+                    logger.warning("Proxy mode files are deprecated, please use the config file instead.");
+                    yield false;
+                }
 
-        return serverAdapter.determineProxy();
+                yield serverAdapter.determineProxy();
+            }
+        };
     }
 
     public void startupPlatform(SRServerPlatformInit init) throws InitializeException {
@@ -88,12 +93,21 @@ public class SRServerPlugin {
         init.initAdminInfoListener();
 
         if (proxyMode) {
-            if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
-                plugin.loadStorage();
-                plugin.registerAPI();
+            boolean proxyModeApiFile = Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"));
+            if (proxyModeApiFile) {
+                logger.warning("Proxy mode API files are deprecated, please use the config file instead.");
+            }
 
-                // Load Floodgate hook
-                plugin.registerFloodgate();
+            if (proxyModeApiFile || settingsManager.getProperty(ServerConfig.PROXY_MODE_API)) {
+                if (settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
+                    plugin.loadStorage();
+                    plugin.registerAPI();
+
+                    // Load Floodgate hook
+                    plugin.registerFloodgate();
+                } else {
+                    logger.warning("Proxy mode API is enabled (server.proxyMode.api), but MySQL is not set up, this is not supported. You must configure MySQL on all servers and on the proxy and use the same database.");
+                }
             }
 
             init.initMessageChannel();
