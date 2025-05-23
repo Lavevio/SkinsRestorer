@@ -36,7 +36,7 @@ public class SRBootstrapper {
             Class<? extends SRPlatformAdapter> adapterClass,
             Class<?> srPlatformClass,
             Path dataFolder,
-            Class<? extends SRPlatformInit> initCLass) {
+            Class<? extends SRPlatformInit> initClass) {
         SRPlugin srPlugin = null;
         try {
             Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
@@ -59,7 +59,7 @@ public class SRBootstrapper {
             // Allow a platform to call plugin shutdown
             shutdownHookConsumer.accept(srPlugin::shutdown);
 
-            srPlugin.startup(initCLass);
+            srPlugin.startup(initClass);
         } catch (Throwable t) {
             isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while starting the plugin. Please check the console for more details.", t);
 

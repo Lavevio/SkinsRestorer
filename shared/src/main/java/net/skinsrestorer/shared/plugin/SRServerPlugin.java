@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.plugin;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.injector.Injector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -36,7 +37,7 @@ public class SRServerPlugin {
     private final SRPlugin plugin;
     private final SRServerAdapter serverAdapter;
     private final SRLogger logger;
-    private final SettingsManager settingsManager;
+    private final Injector injector;
     @Getter
     @Setter
     private boolean proxyMode;
@@ -60,6 +61,7 @@ public class SRServerPlugin {
     }
 
     private boolean checkProxy() {
+        SettingsManager settingsManager = injector.getSingleton(SettingsManager.class);
         ServerConfig.ProxyMode proxyModeDetection = settingsManager.getProperty(ServerConfig.PROXY_MODE_DETECTION);
         return switch (proxyModeDetection) {
             case ENABLED -> true;
@@ -98,6 +100,7 @@ public class SRServerPlugin {
                 logger.warning("Proxy mode API files are deprecated, please use the config file instead.");
             }
 
+            SettingsManager settingsManager = injector.getSingleton(SettingsManager.class);
             if (proxyModeApiFile || settingsManager.getProperty(ServerConfig.PROXY_MODE_API)) {
                 if (settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
                     plugin.loadStorage();
