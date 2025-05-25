@@ -38,10 +38,11 @@ tasks {
 
 hangarPublish {
     publications.register("plugin") {
-        version.set(project.version as String)
+        version.set(project.version.toString())
         channel.set("Release")
         id.set("SkinsRestorer")
-        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
+        apiKey.set(providers.environmentVariable("HANGAR_TOKEN"))
+        changelog.set(providers.environmentVariable("HANGAR_CHANGELOG"))
         platforms {
             register(Platforms.PAPER) {
                 jar.set(tasks.shadeDowngradedApi.flatMap { it.archiveFile })
