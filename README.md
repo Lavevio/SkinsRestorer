@@ -1,25 +1,23 @@
-# SkinsRestorer
+<img align="right" src="https://github.com/SkinsRestorer/skinsrestorer.net/blob/main/public/logo.png?raw=true" height="150" width="150">
 
-<p align="center">
 <a href="https://github.com/SkinsRestorer/SkinsRestorer/releases/latest/download/SkinsRestorer.jar"><img src="https://img.shields.io/github/downloads/SkinsRestorer/SkinsRestorer/latest/total.svg" alt="Downloads"></a>
-<a href="https://www.spigotmc.org/resources/2124/"><img src="https://img.shields.io/spiget/downloads/2124?label=Spigot%20downloads" alt="Spigot downloads"></a>
-<a href="https://www.spigotmc.org/resources/2124/"><img src="https://img.shields.io/spiget/rating/2124?label=Spigot%20rating" alt="Spigot rating"></a>
-<a title="Crowdin" target="_blank" href="https://crowdin.com/project/SkinsRestorer"><img src="https://badges.crowdin.net/SkinsRestorer/localized.svg" alt="SkinsRestorer Crowdin badge"></a>
-</p>
-<p align="center">
+<a href="https://modrinth.com/plugin/skinsrestorer"><img src="https://img.shields.io/modrinth/dt/skinsrestorer?label=Modrinth%20downloads" alt="Modrinth downloads"></a>
+<a href="https://modrinth.com/plugin/skinsrestorer"><img src="https://img.shields.io/modrinth/followers/skinsrestorer?label=Modrinth%20followers&style=flat" alt="Modrinth followers"></a>
+<a href="https://crowdin.com/project/SkinsRestorer"><img src="https://badges.crowdin.net/SkinsRestorer/localized.svg" alt="SkinsRestorer Crowdin badge"></a>
+
 <a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer/"><img src="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer/badge/icon" alt="Build Status"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorer/releases/latest"><img src="https://img.shields.io/github/release/SkinsRestorer/SkinsRestorer.svg" alt="Current Release"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorer/graphs/contributors"><img src="https://img.shields.io/github/contributors/SkinsRestorer/SkinsRestorer.svg" alt="Contributors"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorer/commits/dev"><img src="https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorer/latest.svg" alt="Commits since last release"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorer/blob/HEAD/LICENSE"><img src="https://img.shields.io/github/license/SkinsRestorer/SkinsRestorer.svg" alt="License"></a>
-</p>
-<p align="center"><a href="https://skinsrestorer.net/discord"><img src="https://discord.com/api/guilds/186794372468178944/embed.png" alt="Discord embed"></a></p>
-<p align="center"><a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/contains-cat-gifs.svg" alt="Contains Cat GIFs"></a></p>
 
-<p align="center">
-<a href="https://github.com/SkinsRestorer/SkinsRestorer/releases/latest/download/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge" alt="download badge"></a>
-<a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer/lastSuccessfulBuild/artifact/build/libs/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge" alt="download2 badge"></a>
-</p>
+<a href="https://skinsrestorer.net/discord"><img src="https://discordapp.com/api/guilds/186794372468178944/embed.png" alt="Discord embed"></a>
+
+# SkinsRestorer
+
+[![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/plugin/skinsrestorer) [![hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg)](https://hangar.papermc.io/SRTeam/SkinsRestorer)
+
+[![documentation](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/ghpages_vector.svg)](https://skinsrestorer.net/docs) [![discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-plural_vector.svg)](https://skinsrestorer.net/discord) [![crowdin](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/translate/crowdin_vector.svg)](https://translate.skinsrestorer.net/)
 
 This is the development repository for [SkinsRestorer](https://skinsrestorer.net/) (Minecraft plugin).
 
@@ -27,14 +25,11 @@ Restoring offline mode skins & changing skins for Bukkit/Spigot/Paper/Purpur/etc
 
 ## :telescope: Compatibility
 
-**WE DO NOT SUPPORT FORGE / FABRIC**
+![bukkit](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/bukkit_vector.svg) ![bungeecord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/bungeecord_vector.svg) ![paper](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/paper_vector.svg) ![purpur](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/purpur_vector.svg) ![spigot](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/spigot_vector.svg)
 
-- Java 17+ ([Get Adoptium](https://adoptium.net/))
-- Minecraft 1.8.0 - 1.21.4
+![velocity](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/velocity_vector.svg) ![waterfall](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/waterfall_vector.svg)
 
-Implementation:
-- Proxy: BungeeCord (Waterfall) & Velocity
-- Backend: Bukkit (Spigot, Paper, Purpur, etc.)
+![Modrinth Game Versions](https://img.shields.io/modrinth/game-versions/skinsrestorer?style=for-the-badge)
 
 ## :link: Links
 
