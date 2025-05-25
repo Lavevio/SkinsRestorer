@@ -8,6 +8,11 @@
 
 **🎨 The most popular skin plugin for Minecraft**
 
+## 📥 How to install? / Installation / Setup
+
+You can [read on our website](https://skinsrestorer.net/docs/installation) how to
+install SkinsRestorer. Make sure to follow all steps before reporting issues!
+
 ## :telescope: Compatibility
 
 ![bukkit](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/bukkit_vector.svg) ![bungeecord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/bungeecord_vector.svg) ![paper](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/paper_vector.svg) ![purpur](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/purpur_vector.svg) ![spigot](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/spigot_vector.svg)
@@ -15,11 +20,6 @@
 ![velocity](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/velocity_vector.svg) ![waterfall](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/waterfall_vector.svg)
 
 ![Modrinth Game Versions](https://img.shields.io/modrinth/game-versions/skinsrestorer?style=for-the-badge)
-
-## 📥 How to install? / Installation / Setup
-
-You can [read on our website](https://skinsrestorer.net/docs/installation) how to
-install SkinsRestorer. Make sure to follow all steps before reporting issues!
 
 ## 🌈 Community
 
