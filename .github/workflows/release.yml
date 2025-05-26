@@ -162,7 +162,7 @@ jobs:
     - name: Publish to Hangar
       run: ./gradlew publishPluginPublicationToHangar --stacktrace
       env:
-        HANGAR_TOKEN: ${{ secrets.HANGAR_TOKEN }}
+        HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
         HANGAR_CHANGELOG: ${{ steps.github_release.outputs.changelog }}
 
     - name: Discord Webhook Action
