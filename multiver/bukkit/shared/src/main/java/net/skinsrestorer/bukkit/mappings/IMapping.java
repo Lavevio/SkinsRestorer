@@ -26,6 +26,8 @@ import java.util.function.Predicate;
 public interface IMapping {
     void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction);
 
+    void resendInfoPackets(Player toResend, Player toSendTo);
+
     /**
      * Can be found at <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java">SpigotMC</a>
      *

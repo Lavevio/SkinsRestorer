@@ -50,8 +50,7 @@ public class Mapping1_21_5 implements IMapping {
                 ClientboundRespawnPacket.KEEP_ALL_DATA
         );
 
-        sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(entityPlayer.getUUID())));
-        sendPacket(entityPlayer, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer)));
+        resendInfoPackets(player, player);
 
         if (viaFunction.test(() -> new ViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
             sendPacket(entityPlayer, respawn);
@@ -73,6 +72,15 @@ public class Mapping1_21_5 implements IMapping {
         for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
             sendPacket(entityPlayer, new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect, false));
         }
+    }
+
+    @Override
+    public void resendInfoPackets(Player toResend, Player toSendTo) {
+        ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
+        ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
+
+        sendPacket(toSendToInternal, new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
+        sendPacket(toSendToInternal, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));
     }
 
     @Override

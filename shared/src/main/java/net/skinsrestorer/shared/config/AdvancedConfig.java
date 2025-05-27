@@ -41,6 +41,13 @@ public class AdvancedConfig implements SettingsHolder {
     public static final Property<Boolean> ENABLE_PAPER_JOIN_LISTENER = newProperty("advanced.enablePaperJoinListener", true);
     @Comment({
             "<!! Warning !!>",
+            "This is a very dangerous feature that should only be used if you know what you are doing.",
+            "Instead of resending player skins to other players by hiding and shadowing them, we will teleport them to a far away location and back",
+            "This is a workaround for some server software with broken vanishing support, like Arclight.",
+    })
+    public static final Property<Boolean> TELEPORT_REFRESH = newProperty("advanced.teleportRefresh", false);
+    @Comment({
+            "<!! Warning !!>",
             "When enabled SkinsRestorer will not try to connect to any web server, which means the follow things won't work:",
             "Getting new skins from Mojang, looking up uuids of players, skin url, update checking and more.",
             "SkinsRestorer will only be able to access already downloaded skins.",

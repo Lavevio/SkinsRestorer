@@ -1,7 +1,8 @@
 {
   "extends": [
     "config:recommended",
-    "group:allNonMajor"
+    "group:allNonMajor",
+    ":semanticCommits"
   ],
   "baseBranches": [
     "dev"
@@ -25,6 +26,12 @@
         "digest"
       ],
       "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "**"
+      ],
+      "allowedVersions": "!/\\-SNAPSHOT$/"
     }
   ]
 }

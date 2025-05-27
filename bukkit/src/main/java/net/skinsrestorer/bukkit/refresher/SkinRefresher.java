@@ -20,8 +20,19 @@ package net.skinsrestorer.bukkit.refresher;
 import org.bukkit.entity.Player;
 
 public interface SkinRefresher {
-    SkinRefresher NO_OP = player -> {
+    SkinRefresher NO_OP = new SkinRefresher() {
+        @Override
+        public void refresh(Player player) {
+            // No-op
+        }
+
+        @Override
+        public void resendInfoPackets(Player toResend, Player toSendTo) {
+            // No-op
+        }
     };
 
     void refresh(Player player);
+
+    void resendInfoPackets(Player toResend, Player toSendTo);
 }

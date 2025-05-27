@@ -94,6 +94,15 @@ public class Mapping1_19_1 implements IMapping {
     }
 
     @Override
+    public void resendInfoPackets(Player toResend, Player toSendTo) {
+        ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
+        ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
+
+        sendPacket(toSendToInternal, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(toResendInternal)));
+        sendPacket(toSendToInternal, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(toResendInternal)));
+    }
+
+    @Override
     public Set<String> getSupportedVersions() {
         return Set.of(
                 "4cc0cc97cac491651bff3af8b124a214" // 1.19.1

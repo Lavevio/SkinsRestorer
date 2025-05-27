@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.bukkit.refresher;
 
+import lombok.SneakyThrows;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
@@ -98,9 +99,12 @@ public final class SpigotSkinRefresher implements SkinRefresher {
         }
     }
 
-    private void sendPacket(Object playerConnection, Object packet) throws ReflectiveOperationException {
+    private void sendPacket(Player player, Object packet) throws ReflectiveOperationException {
+        Object entityPlayer = HandleReflection.getHandle(player, Object.class);
+        Object playerCon = ReflectionUtil.getFieldByType(entityPlayer, "PlayerConnection");
+
         ReflectionUtil.invokeObjectMethod(
-                playerConnection,
+                playerCon,
                 "sendPacket",
                 new ReflectionUtil.ParameterPair<>(packetClass, packet)
         );
@@ -110,22 +114,6 @@ public final class SpigotSkinRefresher implements SkinRefresher {
     public void refresh(Player player) {
         try {
             final Object entityPlayer = HandleReflection.getHandle(player, Object.class);
-            Object removePlayer;
-            Object addPlayer;
-            try {
-                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, removePlayerEnum, List.of(entityPlayer));
-                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, addPlayerEnum, List.of(entityPlayer));
-            } catch (ReflectiveOperationException e) {
-                try {
-                    int ping = ReflectionUtil.getObject(entityPlayer, "ping");
-                    removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, player.getPlayerListName(), false, 9999);
-                    addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, player.getPlayerListName(), true, ping);
-                } catch (ReflectiveOperationException e2) {
-                    // 1.7.10 and below | pre-netty
-                    removePlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "removePlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
-                    addPlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "addPlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
-                }
-            }
 
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet
@@ -224,10 +212,8 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             }
 
             Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlotClass, player.getInventory().getHeldItemSlot());
-            Object playerCon = ReflectionUtil.getFieldByType(entityPlayer, "PlayerConnection");
 
-            sendPacket(playerCon, removePlayer);
-            sendPacket(playerCon, addPlayer);
+            resendInfoPackets(player, player);
 
             boolean sendRespawnPacketDirectly = viaProvider.test(() -> {
                 Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
@@ -242,13 +228,13 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             });
 
             if (sendRespawnPacketDirectly) {
-                sendPacket(playerCon, respawn);
+                sendPacket(player, respawn);
             }
 
             ReflectionUtil.invokeObjectMethod(entityPlayer, "updateAbilities");
 
-            sendPacket(playerCon, pos);
-            sendPacket(playerCon, slot);
+            sendPacket(player, pos);
+            sendPacket(player, slot);
 
             ReflectionUtil.invokeObjectMethod(player, "updateScaledHealth");
             player.updateInventory();
@@ -259,8 +245,35 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             // TODO: Send proper permission level instead of this workaround
             OPRefreshUtil.refreshOP(player, adapter);
         } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to refresh skin for player %s".formatted(player.getName()), e);
+            logger.severe("Failed to refresh skin for player %s because of %s (more info in debug)".formatted(player.getName(), e.getClass().getSimpleName()));
+            logger.debug(e);
         }
+    }
+
+    @Override
+    @SneakyThrows
+    public void resendInfoPackets(Player toResend, Player toSendTo) {
+        Object entityPlayer = HandleReflection.getHandle(toResend, Object.class);
+
+        Object removePlayer;
+        Object addPlayer;
+        try {
+            removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, removePlayerEnum, List.of(entityPlayer));
+            addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, addPlayerEnum, List.of(entityPlayer));
+        } catch (ReflectiveOperationException e) {
+            try {
+                int ping = ReflectionUtil.getObject(entityPlayer, "ping");
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, toResend.getPlayerListName(), false, 9999);
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, toResend.getPlayerListName(), true, ping);
+            } catch (ReflectiveOperationException e2) {
+                // 1.7.10 and below | pre-netty
+                removePlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "removePlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
+                addPlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "addPlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
+            }
+        }
+
+        sendPacket(toSendTo, removePlayer);
+        sendPacket(toSendTo, addPlayer);
     }
 
     private Object getFromListExcluded(List<Object> list, Object... excluded) {

@@ -61,8 +61,7 @@ public class Mapping1_19 implements IMapping {
                 entityPlayer.getLastDeathLocation()
         );
 
-        sendPacket(entityPlayer, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer)));
-        sendPacket(entityPlayer, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer)));
+        resendInfoPackets(player, player);
 
         if (viaFunction.test(() -> new ViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
             sendPacket(entityPlayer, respawn);
@@ -84,6 +83,15 @@ public class Mapping1_19 implements IMapping {
         for (MobEffectInstance mobEffect : entityPlayer.getActiveEffects()) {
             sendPacket(entityPlayer, new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), mobEffect));
         }
+    }
+
+    @Override
+    public void resendInfoPackets(Player toResend, Player toSendTo) {
+        ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
+        ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
+
+        sendPacket(toSendToInternal, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(toResendInternal)));
+        sendPacket(toSendToInternal, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(toResendInternal)));
     }
 
     @Override

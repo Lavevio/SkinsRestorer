@@ -33,18 +33,15 @@ public class ServerConfig implements SettingsHolder {
     public static final Property<Boolean> RESOURCE_PACK_FIX = newProperty("server.resourcePackFix", true);
     @Comment({
             "Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.",
-            "File override = ./plugins/SkinsRestorer/disableDismountPlayer.txt"
     })
     public static final Property<Boolean> DISMOUNT_PLAYER_ON_UPDATE = newProperty("server.dismountPlayerOnSkinUpdate", true);
     @Comment({
             "Remounts a player that was dismounted after a skin update (above option must be true).",
             "Disabling this is only recommended if you use plugins that allow you ride other players, or use sit. Otherwise you could get errors or players could be kicked for flying.",
-            "File override = ./plugins/SkinsRestorer/disableRemountPlayer.txt"
     })
     public static final Property<Boolean> REMOUNT_PLAYER_ON_UPDATE = newProperty("server.remountPlayerOnSkinUpdate", true);
     @Comment({
             "Dismounts all passengers mounting a player (such as plugins that let you ride another player), preventing those players from becoming desynced.",
-            "File override = ./plugins/SkinsRestorer/enableDismountEntities.txt"
     })
     public static final Property<Boolean> DISMOUNT_PASSENGERS_ON_UPDATE = newProperty("server.dismountPassengersOnSkinUpdate", false);
     @Comment({
@@ -57,6 +54,14 @@ public class ServerConfig implements SettingsHolder {
             "https://javadoc.io/static/com.github.cryptomorin/XSeries/11.0.0/com/cryptomorin/xseries/XSound.html#parse(java.lang.String)"
     })
     public static final Property<String> SOUND_VALUE = newProperty("server.sound.value", "ENTITY_PLAYER_TELEPORT, 0.7");
+    @Comment({
+            "Proxy mode detection. Valid values are ENABLED, DISABLED, AUTO. Auto will auto detect based on your server configuration.",
+    })
+    public static final Property<ProxyMode> PROXY_MODE_DETECTION = newProperty(ProxyMode.class, "server.proxyMode.detection", ProxyMode.AUTO);
+    @Comment({
+            "Proxy mode API will make server-side plugin calls to SkinsRestorer API possible. Only works if a database is set up instead of file storage.",
+    })
+    public static final Property<Boolean> PROXY_MODE_API = newProperty("server.proxyMode.api", true);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
@@ -68,5 +73,14 @@ public class ServerConfig implements SettingsHolder {
                 "\n",
                 "Change server specific settings here."
         );
+        conf.setComment("server.proxyMode",
+                "Proxy mode settings. Allows SkinsRestorer to work with proxies."
+        );
+    }
+
+    public enum ProxyMode {
+        ENABLED,
+        DISABLED,
+        AUTO
     }
 }

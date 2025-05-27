@@ -1,6 +1,9 @@
+import io.papermc.hangarpublishplugin.model.Platforms
+
 plugins {
     java
     id("xyz.wagyourtail.jvmdowngrader")
+    id("io.papermc.hangar-publish-plugin") version "0.1.3"
 }
 
 dependencies {
@@ -30,5 +33,41 @@ tasks {
     }
     build {
         dependsOn(shadeDowngradedApi)
+    }
+}
+
+hangarPublish {
+    publications.register("plugin") {
+        version.set(project.version.toString())
+        channel.set("Release")
+        id.set("SkinsRestorer")
+        apiKey.set(providers.environmentVariable("HANGAR_TOKEN"))
+        changelog.set(providers.environmentVariable("HANGAR_CHANGELOG"))
+        platforms {
+            register(Platforms.PAPER) {
+                jar.set(tasks.shadeDowngradedApi.flatMap { it.archiveFile })
+
+                val versions: List<String> = (property("paperVersion") as String)
+                    .split(",")
+                    .map { it.trim() }
+                platformVersions.set(versions)
+            }
+            register(Platforms.VELOCITY) {
+                jar.set(tasks.shadeDowngradedApi.flatMap { it.archiveFile })
+
+                val versions: List<String> = (property("velocityVersion") as String)
+                    .split(",")
+                    .map { it.trim() }
+                platformVersions.set(versions)
+            }
+            register(Platforms.WATERFALL) {
+                jar.set(tasks.shadeDowngradedApi.flatMap { it.archiveFile })
+
+                val versions: List<String> = (property("waterfallVersion") as String)
+                    .split(",")
+                    .map { it.trim() }
+                platformVersions.set(versions)
+            }
+        }
     }
 }

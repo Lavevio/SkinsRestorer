@@ -9,7 +9,7 @@ dependencies {
         exclude("org.google.code.gson", "gson")
     }
 
-    api("com.google.code.gson:gson:2.12.1")
+    api("com.google.code.gson:gson:2.13.1")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.3") {
         exclude("com.github.waffle", "waffle-jna")
     }
@@ -28,16 +28,16 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.21.0")
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 
     testImplementation("org.bstats:bstats-base:3.1.0")
 
-    testImplementation("org.testcontainers:testcontainers:1.20.6")
-    testImplementation("org.testcontainers:mariadb:1.20.6")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.6")
+    testImplementation("org.testcontainers:testcontainers:1.21.0")
+    testImplementation("org.testcontainers:mariadb:1.21.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.0")
 
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.17")
 }
