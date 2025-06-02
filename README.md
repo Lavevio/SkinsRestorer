@@ -47,8 +47,3 @@ You can find instructions on how to use the SkinsRestorer API on [our website](h
 
 See [Contributors](https://skinsrestorer.net/contributors) for a list of people that have
 supported this project by contributing.
-
-## :scroll: License
-
-SkinsRestorer is licensed under GNU General Public License v3.0. Please
-see [`LICENSE`](https://github.com/SkinsRestorer/SkinsRestorer/blob/HEAD/LICENSE) for more info.
