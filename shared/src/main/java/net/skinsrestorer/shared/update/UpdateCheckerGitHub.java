@@ -76,14 +76,8 @@ public class UpdateCheckerGitHub {
                 throw new DataRequestExceptionShared("No release info found");
             }
 
-            Optional<String> jarAssetUrl = releaseInfo.getAssets().stream()
+            Optional<GitHubAssetInfo> jarAssetUrl = releaseInfo.getAssets().stream()
                     .filter(asset -> asset.getName().equals(JAR_ASSET_NAME))
-                    .map(GitHubAssetInfo::getBrowserDownloadUrl)
-                    .findFirst();
-
-            Optional<String> verificationAssetUrl = releaseInfo.getAssets().stream()
-                    .filter(asset -> asset.getName().equals(VERIFICATION_ASSET_NAME))
-                    .map(GitHubAssetInfo::getBrowserDownloadUrl)
                     .findFirst();
 
             if (jarAssetUrl.isEmpty()) {
@@ -98,9 +92,8 @@ public class UpdateCheckerGitHub {
                     return;
                 }
 
-                String downloadUrl = jarAssetUrl.get();
                 printUpdateAvailable(cause, releaseInfo.getTagName(), downloader != null);
-                if (downloader != null && downloader.downloadUpdate(downloadUrl, verificationAssetUrl.orElse(null))) {
+                if (downloader != null && downloader.downloadUpdate(jarAssetUrl.get())) {
                     updateDownloaded = true;
                 }
             } else {

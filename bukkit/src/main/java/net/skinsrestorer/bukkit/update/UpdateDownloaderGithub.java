@@ -23,6 +23,7 @@ import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.UpdateDownloader;
+import net.skinsrestorer.shared.update.model.GitHubAssetInfo;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Server;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,6 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -46,7 +46,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
     private final Server server;
     private final PluginJarProvider jarProvider;
 
-    private void download(String downloadUrl, Path targetFile, @Nullable String expectedHash) throws UpdateException {
+    private void download(String downloadUrl, Path targetFile, @Nullable String sha256Hash) throws UpdateException {
         try {
             // We don't use HttpClient because this writes to a file directly
             HttpsURLConnection connection = (HttpsURLConnection) URI.create(downloadUrl).toURL().openConnection();
@@ -62,9 +62,9 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
                 }
 
                 fileData = is.readAllBytes();
-                if (expectedHash != null && !expectedHash.equals(SRHelpers.hashSha256ToHex(fileData))) {
+                if (sha256Hash != null && !sha256Hash.equals(SRHelpers.hashSha256ToHex(fileData))) {
                     throw new UpdateException("Downloaded file is corrupted. SHA256 hash does not match.");
-                } else if (expectedHash == null) {
+                } else if (sha256Hash == null) {
                     logger.warning("[GitHubUpdate] SHA256 hash not found, cannot verify integrity");
                 } else {
                     logger.debug("[GitHubUpdate] SHA256 hash successfully verified");
@@ -77,28 +77,8 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         }
     }
 
-    private String readStringFromUrl(String url) throws UpdateException {
-        try {
-            HttpsURLConnection connection = (HttpsURLConnection) URI.create(url).toURL().openConnection();
-            connection.setRequestProperty("User-Agent", plugin.getUserAgent());
-            if (connection.getResponseCode() != 200) {
-                throw new UpdateException("Download returned status code %d".formatted(connection.getResponseCode()));
-            }
-
-            try (InputStream is = connection.getInputStream()) {
-                if (is == null) {
-                    throw new IOException("Failed to open input stream");
-                }
-
-                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            }
-        } catch (IOException e) {
-            throw new UpdateException("Download failed", e);
-        }
-    }
-
     @Override
-    public boolean downloadUpdate(String downloadUrl, @Nullable String verificationAssetUrl) {
+    public boolean downloadUpdate(GitHubAssetInfo asset) {
         Path pluginFile = jarProvider.get(); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
         SRHelpers.createDirectoriesSafe(updateFolder);
@@ -108,8 +88,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         logger.info("[GitHubUpdate] Downloading update...");
         try {
             long start = System.currentTimeMillis();
-            String expectedHash = verificationAssetUrl == null ? null : readStringFromUrl(verificationAssetUrl).lines().findFirst().orElse(null);
-            download(downloadUrl, updateFile, expectedHash);
+            download(asset.getBrowserDownloadUrl(), updateFile, parseSha256Digest(asset.getDigest()));
 
             logger.info("[GitHubUpdate] Downloaded update in %dms".formatted(System.currentTimeMillis() - start));
             logger.info("[GitHubUpdate] Update saved as %s".formatted(updateFile.getFileName()));
@@ -120,5 +99,15 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         }
 
         return true;
+    }
+
+    private @Nullable String parseSha256Digest(@Nullable String digest) {
+        if (digest == null || digest.isBlank()) {
+            return null;
+        } else if (digest.startsWith("sha256:")) {
+            return digest.substring(7).strip();
+        } else {
+            return null;
+        }
     }
 }

@@ -17,8 +17,8 @@
  */
 package net.skinsrestorer.shared.update;
 
-import org.jetbrains.annotations.Nullable;
+import net.skinsrestorer.shared.update.model.GitHubAssetInfo;
 
 public interface UpdateDownloader {
-    boolean downloadUpdate(String downloadUrl, @Nullable String verificationAssetUrl);
+    boolean downloadUpdate(GitHubAssetInfo asset);
 }

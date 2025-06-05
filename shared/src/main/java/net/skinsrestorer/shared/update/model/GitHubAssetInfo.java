@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.update.model;
 import com.google.gson.annotations.SerializedName;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @SuppressWarnings("unused")
@@ -30,4 +31,6 @@ public class GitHubAssetInfo {
     private String name;
     @SerializedName("browser_download_url")
     private String browserDownloadUrl;
+    @Nullable
+    private String digest;
 }
