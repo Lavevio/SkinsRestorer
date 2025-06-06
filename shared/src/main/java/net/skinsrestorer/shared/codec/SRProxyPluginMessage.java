@@ -113,7 +113,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             }
         }
 
-        public interface GUIActionPayload<T extends GUIActionPayload<T>> {
+        public sealed interface GUIActionPayload<T extends GUIActionPayload<T>> {
             GUIActionType<T> getType();
 
             T cast();
