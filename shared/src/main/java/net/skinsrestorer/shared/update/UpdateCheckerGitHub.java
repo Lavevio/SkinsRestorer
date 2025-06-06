@@ -44,7 +44,6 @@ import java.util.Optional;
 public class UpdateCheckerGitHub {
     private static final URI RELEASES_URL_LATEST = URI.create("https://api.github.com/repos/SkinsRestorer/SkinsRestorer/releases/latest");
     private static final String JAR_ASSET_NAME = "SkinsRestorer.jar";
-    private static final String VERIFICATION_ASSET_NAME = "verification-hash.txt";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
     private final SRPlugin plugin;
