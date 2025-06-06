@@ -52,7 +52,7 @@ public final class SRServerMessageAdapter {
                 case SRServerPluginMessage.GiveSkullChannelPayload payload ->
                         () -> serverAdapter.giveSkullItem(event.getPlayer(), payload);
                 case SRServerPluginMessage.UnknownChannelPayload ignored ->
-                        () -> logger.warning("Received unknown channel payload from proxy, please update SkinsRestorer on proxy and server");
+                        () -> logger.warning("Received unknown channel payload from proxy (Make sure the server and proxy are running the same version of SkinsRestorer)");
             });
         });
     }
