@@ -54,7 +54,7 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         }
     }
 
-    public interface ChannelPayload<T extends ChannelPayload<T>> {
+    public sealed interface ChannelPayload<T extends ChannelPayload<T>> {
         ChannelType<T> getType();
 
         T cast();

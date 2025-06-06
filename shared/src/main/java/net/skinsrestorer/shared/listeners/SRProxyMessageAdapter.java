@@ -48,9 +48,10 @@ public final class SRProxyMessageAdapter {
         adapter.runAsync(() -> {
             SRInputReader in = new SRInputReader(event.getData());
             SRProxyPluginMessage.ChannelPayload<?> msg = SRProxyPluginMessage.CODEC.read(in).channelPayload();
-            if (msg instanceof SRProxyPluginMessage.GUIActionChannelPayloadList actionChannelPayload) {
-                guiActionListener.handle(event.getPlayer(), actionChannelPayload.actions());
-            }
+            SRHelpers.mustSupply(() -> switch (msg) {
+                case SRProxyPluginMessage.GUIActionChannelPayloadList(var actions) ->
+                        () -> guiActionListener.handle(event.getPlayer(), actions);
+            });
         });
     }
 }

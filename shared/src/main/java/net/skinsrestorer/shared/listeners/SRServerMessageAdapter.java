@@ -42,13 +42,14 @@ public final class SRServerMessageAdapter {
         serverAdapter.runAsync(() -> {
             SRServerPluginMessage message = SRServerPluginMessage.CODEC.read(new SRInputReader(event.getData()));
             SRServerPluginMessage.ChannelPayload<?> channelPayload = message.channelPayload();
-            if (channelPayload instanceof SRServerPluginMessage.GUIPageChannelPayload(SRInventory srInventory)) {
-                serverAdapter.openGUI(event.getPlayer(), srInventory);
-            } else if (channelPayload instanceof SRServerPluginMessage.SkinUpdateChannelPayload(SkinProperty skinProperty)) {
-                skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
-            } else if (channelPayload instanceof SRServerPluginMessage.GiveSkullChannelPayload payload) {
-                serverAdapter.giveSkullItem(event.getPlayer(), payload);
-            }
+            SRHelpers.mustSupply(() -> switch (channelPayload) {
+                case SRServerPluginMessage.GUIPageChannelPayload(SRInventory srInventory) ->
+                        () -> serverAdapter.openGUI(event.getPlayer(), srInventory);
+                case SRServerPluginMessage.SkinUpdateChannelPayload(SkinProperty skinProperty) ->
+                        () -> skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
+                case SRServerPluginMessage.GiveSkullChannelPayload payload ->
+                        () -> serverAdapter.giveSkullItem(event.getPlayer(), payload);
+            });
         });
     }
 }

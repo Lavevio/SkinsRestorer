@@ -41,6 +41,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class SRHelpers {
@@ -297,5 +298,9 @@ public class SRHelpers {
             SRHelpers.createDirectoriesSafe(path.getParent());
             Files.writeString(path, content);
         }
+    }
+
+    public static void mustSupply(Supplier<Runnable> supplier) {
+        supplier.get().run();
     }
 }
