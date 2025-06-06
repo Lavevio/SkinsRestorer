@@ -48,8 +48,8 @@ public class BuiltInCodecs {
                     STRING_CODEC.read(is)
             )
     );
-    public static final NetworkCodec<SkinVariant> SKIN_VARIANT_CODEC = NetworkCodec.ofEnumDynamic(SkinVariant.class, t -> t.name().toLowerCase(Locale.ROOT));
-    public static final NetworkCodec<SkinType> SKIN_TYPE_CODEC = NetworkCodec.ofEnumDynamic(SkinType.class, t -> t.name().toLowerCase(Locale.ROOT));
+    public static final NetworkCodec<SkinVariant> SKIN_VARIANT_CODEC = NetworkCodec.ofEnumDynamic(SkinVariant.class, t -> t.name().toLowerCase(Locale.ROOT), SkinVariant.CLASSIC);
+    public static final NetworkCodec<SkinType> SKIN_TYPE_CODEC = NetworkCodec.ofEnumDynamic(SkinType.class, t -> t.name().toLowerCase(Locale.ROOT), SkinType.CUSTOM);
     public static final NetworkCodec<SkinIdentifier> SKIN_IDENTIFIER_CODEC = NetworkCodec.of(
             (os, s) -> {
                 STRING_CODEC.write(os, s.getIdentifier());

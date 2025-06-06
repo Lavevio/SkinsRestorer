@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.storage.GUIStorage;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
@@ -33,6 +34,7 @@ import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GUIActionListener {
+    private final SRLogger logger;
     private final SRPlatformAdapter adapter;
     private final GUIStorage guiStorage;
     private final SharedGUI sharedGUI;
@@ -53,6 +55,8 @@ public class GUIActionListener {
                         () -> playerStorage.addFavourite(player.getUniqueId(), FavouriteData.of(SRHelpers.getEpochSecond(), skinIdentifier));
                 case SRProxyPluginMessage.GUIActionChannelPayload.RemoveFavouritePayload(var skinIdentifier) ->
                         () -> playerStorage.removeFavourite(player.getUniqueId(), skinIdentifier);
+                case SRProxyPluginMessage.GUIActionChannelPayload.UnknownActionPayload ignored ->
+                        () -> logger.warning("Received unknown action payload from server, please update SkinsRestorer on proxy and server");
             });
         }
     }

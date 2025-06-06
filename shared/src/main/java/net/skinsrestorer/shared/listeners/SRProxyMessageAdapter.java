@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.codec.SRInputReader;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRProxyMessageAdapter {
+    private final SRLogger logger;
     private final SRPlatformAdapter adapter;
     private final GUIActionListener guiActionListener;
 
@@ -51,6 +53,8 @@ public final class SRProxyMessageAdapter {
             SRHelpers.mustSupply(() -> switch (msg) {
                 case SRProxyPluginMessage.GUIActionChannelPayloadList(var actions) ->
                         () -> guiActionListener.handle(event.getPlayer(), actions);
+                case SRProxyPluginMessage.UnknownChannelPayload ignored ->
+                        () -> logger.warning("Received unknown channel payload from server, please update SkinsRestorer on proxy and server");
             });
         });
     }

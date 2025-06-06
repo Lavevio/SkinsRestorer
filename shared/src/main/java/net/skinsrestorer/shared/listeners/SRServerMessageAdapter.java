@@ -24,6 +24,7 @@ import net.skinsrestorer.shared.codec.SRInputReader;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
@@ -31,6 +32,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
+    private final SRLogger logger;
     private final SRServerAdapter serverAdapter;
     private final SharedSkinApplier<Object> skinApplier;
 
@@ -49,6 +51,8 @@ public final class SRServerMessageAdapter {
                         () -> skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
                 case SRServerPluginMessage.GiveSkullChannelPayload payload ->
                         () -> serverAdapter.giveSkullItem(event.getPlayer(), payload);
+                case SRServerPluginMessage.UnknownChannelPayload ignored ->
+                        () -> logger.warning("Received unknown channel payload from proxy, please update SkinsRestorer on proxy and server");
             });
         });
     }

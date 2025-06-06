@@ -17,52 +17,47 @@
  */
 package net.skinsrestorer.shared.codec;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-@SuppressWarnings("unused")
 public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
     public static <T> NetworkCodec<T> of(Writer<T> writer, Reader<T> reader) {
         return new NetworkCodec<>(writer, reader);
     }
 
-    public static <T> NetworkCodec<T> ofMapBackedDynamic(Map<String, T> idToValue, Function<T, String> dynamicMapper) {
-        return ofMapBackedDynamic(idToValue, dynamicMapper, null);
+    public static <T> NetworkCodec<T> unit(T instance) {
+        return new NetworkCodec<>((out, t) -> {
+        }, in -> instance);
     }
 
-    public static <T> NetworkCodec<T> ofMapBackedDynamic(Map<String, T> idToValue, Function<T, String> dynamicMapper, @Nullable Function<String, String> messageSupplier) {
-        Function<String, String> actualMessageSupplier = Objects.requireNonNullElse(messageSupplier, "Unknown id: %s"::formatted);
-        return BuiltInCodecs.STRING_CODEC.map(dynamicMapper, id -> idToValue.computeIfAbsent(id, i -> {
-            throw new IllegalArgumentException(actualMessageSupplier.apply(i));
-        }));
+    private static <T, D extends T> NetworkCodec<T> ofMapBackedDynamic(Map<String, T> idToValue, Function<T, String> dynamicMapper, D defaultValue) {
+        return BuiltInCodecs.STRING_CODEC.map(dynamicMapper, id -> idToValue.getOrDefault(id, defaultValue));
     }
 
-    public static <T extends Enum<T>> NetworkCodec<T> ofEnumDynamic(Class<T> clazz, Function<T, String> dynamicMapper) {
-        return ofEnumDynamic(clazz, dynamicMapper, null);
+    public static <T extends NetworkId, D extends T> NetworkCodec<T> ofNetworkIdDynamic(Map<String, T> idToValue, D defaultValue) {
+        return ofMapBackedDynamic(
+                idToValue,
+                NetworkId::getId,
+                defaultValue
+        );
     }
 
-    public static <T extends Enum<T>> NetworkCodec<T> ofEnumDynamic(Class<T> clazz, Function<T, String> dynamicMapper, @Nullable Function<String, String> messageSupplier) {
-        Map<String, T> idToValue = new HashMap<>();
-        for (T value : clazz.getEnumConstants()) {
-            idToValue.put(dynamicMapper.apply(value), value);
-        }
-
-        return ofMapBackedDynamic(idToValue, dynamicMapper, messageSupplier);
+    public static <T extends Enum<T>> NetworkCodec<T> ofEnumDynamic(Class<T> clazz, Function<T, String> dynamicMapper, T defaultValue) {
+        return ofMapBackedDynamic(
+                Arrays.stream(clazz.getEnumConstants()).collect(Collectors.toMap(dynamicMapper, Function.identity())),
+                dynamicMapper,
+                defaultValue
+        );
     }
 
-    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz) {
-        return ofEnum(clazz, null);
-    }
-
-    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz, @Nullable Function<String, String> messageSupplier) {
-        return ofEnumDynamic(clazz, NetworkId::getId, messageSupplier);
+    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz, T defaultValue) {
+        return ofEnumDynamic(clazz, NetworkId::getId, defaultValue);
     }
 
     public void write(SROutputWriter buf, T t) {

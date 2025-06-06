@@ -43,6 +43,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
     @SuppressWarnings("UnstableApiUsage")
     private ItemStack createItem(SRInventory.Item entry) {
         XMaterial material = switch (entry.materialType()) {
+            case DIRT -> XMaterial.DIRT;
             case SKULL -> XMaterial.PLAYER_HEAD;
             case ARROW -> XMaterial.ARROW;
             case BARRIER -> XMaterial.BARRIER.or(XMaterial.RED_WOOL);

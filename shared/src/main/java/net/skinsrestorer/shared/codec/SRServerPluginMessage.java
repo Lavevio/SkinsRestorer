@@ -33,15 +33,16 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
             in -> new SRServerPluginMessage(ChannelType.CODEC.read(in).codec().read(in))
     );
 
-    public record ChannelType<T extends ChannelPayload<T>>(String channelName, NetworkCodec<T> codec) implements NetworkId {
-        private static final Map<String,ChannelType<?>> ID_TO_VALUE = new HashMap<>();
+    public record ChannelType<T extends ChannelPayload<T>>(String channelName,
+                                                           NetworkCodec<T> codec) implements NetworkId {
+        private static final Map<String, ChannelType<?>> ID_TO_VALUE = new HashMap<>();
 
         public static final ChannelType<GUIPageChannelPayload> OPEN_GUI = register(new ChannelType<>("openGUI", GUIPageChannelPayload.CODEC));
         public static final ChannelType<SkinUpdateChannelPayload> SKIN_UPDATE = register(new ChannelType<>("SkinUpdateV2", SkinUpdateChannelPayload.CODEC));
         public static final ChannelType<GiveSkullChannelPayload> GIVE_SKULL = register(new ChannelType<>("giveSkull", GiveSkullChannelPayload.CODEC));
+        public static final ChannelType<UnknownChannelPayload> UNKNOWN = register(new ChannelType<>("unknown", UnknownChannelPayload.CODEC));
 
-        public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
-                "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
+        public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofNetworkIdDynamic(ID_TO_VALUE, UNKNOWN);
 
         private static <T extends ChannelPayload<T>> ChannelType<T> register(ChannelType<T> channelType) {
             ID_TO_VALUE.put(channelType.getId(), channelType);
@@ -117,6 +118,21 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
 
         @Override
         public GiveSkullChannelPayload cast() {
+            return this;
+        }
+    }
+
+    public record UnknownChannelPayload() implements ChannelPayload<UnknownChannelPayload> {
+        public static final UnknownChannelPayload INSTANCE = new UnknownChannelPayload();
+        public static final NetworkCodec<UnknownChannelPayload> CODEC = NetworkCodec.unit(INSTANCE);
+
+        @Override
+        public ChannelType<UnknownChannelPayload> getType() {
+            return ChannelType.UNKNOWN;
+        }
+
+        @Override
+        public UnknownChannelPayload cast() {
             return this;
         }
     }

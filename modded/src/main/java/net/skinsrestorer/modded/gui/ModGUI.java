@@ -60,6 +60,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
     @SuppressWarnings("deprecation")
     private ItemStack createItem(SRInventory.Item entry) {
         Item item = switch (entry.materialType()) {
+            case DIRT -> Items.DIRT;
             case SKULL -> Items.PLAYER_HEAD;
             case ARROW -> Items.ARROW;
             case BARRIER -> Items.BARRIER;

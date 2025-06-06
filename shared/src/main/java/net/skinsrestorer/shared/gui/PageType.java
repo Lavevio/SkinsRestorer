@@ -33,7 +33,7 @@ public enum PageType implements NetworkId {
     HISTORY(Message.SKINSMENU_TITLE_HISTORY),
     FAVOURITES(Message.SKINSMENU_TITLE_FAVOURITES);
 
-    public static final NetworkCodec<PageType> CODEC = NetworkCodec.ofEnum(PageType.class);
+    public static final NetworkCodec<PageType> CODEC = NetworkCodec.ofEnum(PageType.class, PageType.SELECT);
     private final Message title;
 
     @Override

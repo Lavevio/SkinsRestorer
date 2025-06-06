@@ -38,9 +38,9 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         private static final Map<String, ChannelType<?>> ID_TO_VALUE = new HashMap<>();
 
         public static final ChannelType<GUIActionChannelPayloadList> GUI_ACTION_LIST = register(new ChannelType<>("guiActionList", GUIActionChannelPayloadList.CODEC));
+        public static final ChannelType<UnknownChannelPayload> UNKNOWN_CHANNEL = register(new ChannelType<>("unknownChannel", UnknownChannelPayload.CODEC));
 
-        public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
-                "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
+        public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofNetworkIdDynamic(ID_TO_VALUE, UNKNOWN_CHANNEL);
 
         private static <T extends ChannelPayload<T>> ChannelType<T> register(ChannelType<T> channelType) {
             ID_TO_VALUE.put(channelType.getId(), channelType);
@@ -98,9 +98,9 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             public static final GUIActionType<SetSkinPayload> SET_SKIN = register(new GUIActionType<>("setSkin", SetSkinPayload.CODEC));
             public static final GUIActionType<AddFavouritePayload> ADD_FAVOURITE = register(new GUIActionType<>("addFavourite", AddFavouritePayload.CODEC));
             public static final GUIActionType<RemoveFavouritePayload> REMOVE_FAVOURITE = register(new GUIActionType<>("removeFavourite", RemoveFavouritePayload.CODEC));
+            public static final GUIActionType<UnknownActionPayload> UNKNOWN_ACTION = register(new GUIActionType<>("unknownAction", UnknownActionPayload.CODEC));
 
-            public static final NetworkCodec<GUIActionType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
-                    "Unknown GUI action type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
+            public static final NetworkCodec<GUIActionType<?>> CODEC = NetworkCodec.ofNetworkIdDynamic(ID_TO_VALUE, UNKNOWN_ACTION);
 
             private static <T extends GUIActionPayload<T>> GUIActionType<T> register(GUIActionType<T> guiActionType) {
                 ID_TO_VALUE.put(guiActionType.getId(), guiActionType);
@@ -212,6 +212,36 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             public RemoveFavouritePayload cast() {
                 return this;
             }
+        }
+
+        public record UnknownActionPayload() implements GUIActionPayload<UnknownActionPayload> {
+            public static final UnknownActionPayload INSTANCE = new UnknownActionPayload();
+            public static final NetworkCodec<UnknownActionPayload> CODEC = NetworkCodec.unit(INSTANCE);
+
+            @Override
+            public GUIActionType<UnknownActionPayload> getType() {
+                return GUIActionType.UNKNOWN_ACTION;
+            }
+
+            @Override
+            public UnknownActionPayload cast() {
+                return this;
+            }
+        }
+    }
+
+    public record UnknownChannelPayload() implements ChannelPayload<UnknownChannelPayload> {
+        public static final UnknownChannelPayload INSTANCE = new UnknownChannelPayload();
+        public static final NetworkCodec<UnknownChannelPayload> CODEC = NetworkCodec.unit(INSTANCE);
+
+        @Override
+        public ChannelType<UnknownChannelPayload> getType() {
+            return ChannelType.UNKNOWN_CHANNEL;
+        }
+
+        @Override
+        public UnknownChannelPayload cast() {
+            return this;
         }
     }
 }

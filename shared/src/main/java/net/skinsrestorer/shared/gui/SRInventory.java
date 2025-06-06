@@ -45,6 +45,7 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
 
     @Getter
     public enum MaterialType implements NetworkId {
+        DIRT,
         SKULL,
         ARROW,
         BARRIER,
@@ -52,7 +53,7 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
         ENDER_EYE,
         ENCHANTING_TABLE;
 
-        public static final NetworkCodec<MaterialType> CODEC = NetworkCodec.ofEnum(MaterialType.class);
+        public static final NetworkCodec<MaterialType> CODEC = NetworkCodec.ofEnum(MaterialType.class, MaterialType.DIRT);
 
         @Override
         public String getId() {

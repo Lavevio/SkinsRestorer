@@ -28,7 +28,7 @@ public enum ClickEventType implements NetworkId {
     SHIFT_LEFT,
     OTHER;
 
-    public static final NetworkCodec<ClickEventType> CODEC = NetworkCodec.ofEnum(ClickEventType.class);
+    public static final NetworkCodec<ClickEventType> CODEC = NetworkCodec.ofEnum(ClickEventType.class, ClickEventType.OTHER);
 
     @Override
     public String getId() {
