@@ -66,9 +66,10 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public record GUIPageChannelPayload(SRInventory srInventory) implements ChannelPayload<GUIPageChannelPayload> {
-        public static final NetworkCodec<GUIPageChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> SRInventory.CODEC.write(out, msg.srInventory()),
-                in -> new GUIPageChannelPayload(SRInventory.CODEC.read(in))
+        public static final NetworkCodec<GUIPageChannelPayload> CODEC = NetworkCodec.list(
+                SRInventory.CODEC,
+                GUIPageChannelPayload::srInventory,
+                GUIPageChannelPayload::new
         );
 
         @Override
@@ -84,9 +85,10 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
 
     public record SkinUpdateChannelPayload(
             SkinProperty skinProperty) implements ChannelPayload<SkinUpdateChannelPayload> {
-        public static final NetworkCodec<SkinUpdateChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> BuiltInCodecs.SKIN_PROPERTY_CODEC.write(out, msg.skinProperty()),
-                in -> new SkinUpdateChannelPayload(BuiltInCodecs.SKIN_PROPERTY_CODEC.read(in))
+        public static final NetworkCodec<SkinUpdateChannelPayload> CODEC = NetworkCodec.list(
+                BuiltInCodecs.SKIN_PROPERTY_CODEC,
+                SkinUpdateChannelPayload::skinProperty,
+                SkinUpdateChannelPayload::new
         );
 
         @Override
@@ -103,12 +105,12 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     public record GiveSkullChannelPayload(
             ComponentString displayName,
             String textureHash) implements ChannelPayload<GiveSkullChannelPayload> {
-        public static final NetworkCodec<GiveSkullChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> {
-                    ComponentString.CODEC.write(out, msg.displayName());
-                    BuiltInCodecs.STRING_CODEC.write(out, msg.textureHash());
-                },
-                in -> new GiveSkullChannelPayload(ComponentString.CODEC.read(in), BuiltInCodecs.STRING_CODEC.read(in))
+        public static final NetworkCodec<GiveSkullChannelPayload> CODEC = NetworkCodec.list(
+                ComponentString.CODEC,
+                GiveSkullChannelPayload::displayName,
+                BuiltInCodecs.STRING_CODEC,
+                GiveSkullChannelPayload::textureHash,
+                GiveSkullChannelPayload::new
         );
 
         @Override
@@ -123,8 +125,7 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public record UnknownChannelPayload() implements ChannelPayload<UnknownChannelPayload> {
-        public static final UnknownChannelPayload INSTANCE = new UnknownChannelPayload();
-        public static final NetworkCodec<UnknownChannelPayload> CODEC = NetworkCodec.unit(INSTANCE);
+        public static final NetworkCodec<UnknownChannelPayload> CODEC = NetworkCodec.unit(new UnknownChannelPayload());
 
         @Override
         public ChannelType<UnknownChannelPayload> getType() {

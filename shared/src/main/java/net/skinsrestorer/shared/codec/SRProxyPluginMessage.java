@@ -64,9 +64,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public record GUIActionListChannelPayload(List<GUIActionChannelPayload> actions) implements ChannelPayload<GUIActionListChannelPayload> {
-        public static final NetworkCodec<GUIActionListChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> GUIActionChannelPayload.CODEC.list().write(out, msg.actions),
-                in -> new GUIActionListChannelPayload(GUIActionChannelPayload.CODEC.list().read(in))
+        public static final NetworkCodec<GUIActionListChannelPayload> CODEC = NetworkCodec.list(
+                GUIActionChannelPayload.CODEC.list(),
+                GUIActionListChannelPayload::actions,
+                GUIActionListChannelPayload::new
         );
 
         @Override
@@ -124,12 +125,12 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         }
 
         public record OpenPagePayload(int page, PageType type) implements GUIActionPayload<OpenPagePayload> {
-            public static final NetworkCodec<OpenPagePayload> CODEC = NetworkCodec.of(
-                    (out, msg) -> {
-                        BuiltInCodecs.INT_CODEC.write(out, msg.page());
-                        PageType.CODEC.write(out, msg.type());
-                    },
-                    in -> new OpenPagePayload(BuiltInCodecs.INT_CODEC.read(in), PageType.CODEC.read(in))
+            public static final NetworkCodec<OpenPagePayload> CODEC = NetworkCodec.list(
+                    BuiltInCodecs.INT_CODEC,
+                    OpenPagePayload::page,
+                    PageType.CODEC,
+                    OpenPagePayload::type,
+                    OpenPagePayload::new
             );
 
             @Override
@@ -144,11 +145,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         }
 
         public record ClearSkinPayload() implements GUIActionPayload<ClearSkinPayload> {
-            public static final NetworkCodec<ClearSkinPayload> CODEC = NetworkCodec.of(
-                    (out, msg) -> {
-                    },
-                    in -> new ClearSkinPayload()
-            );
+            public static final ClearSkinPayload INSTANCE = new ClearSkinPayload();
+            public static final NetworkCodec<ClearSkinPayload> CODEC = NetworkCodec.unit(INSTANCE);
 
             @Override
             public GUIActionType<ClearSkinPayload> getType() {
@@ -162,9 +160,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         }
 
         public record SetSkinPayload(SkinIdentifier skinIdentifier) implements GUIActionPayload<SetSkinPayload> {
-            public static final NetworkCodec<SetSkinPayload> CODEC = NetworkCodec.of(
-                    (out, msg) -> BuiltInCodecs.SKIN_IDENTIFIER_CODEC.write(out, msg.skinIdentifier()),
-                    in -> new SetSkinPayload(BuiltInCodecs.SKIN_IDENTIFIER_CODEC.read(in))
+            public static final NetworkCodec<SetSkinPayload> CODEC = NetworkCodec.list(
+                    BuiltInCodecs.SKIN_IDENTIFIER_CODEC,
+                    SetSkinPayload::skinIdentifier,
+                    SetSkinPayload::new
             );
 
             @Override
@@ -180,9 +179,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
 
         public record AddFavouritePayload(
                 SkinIdentifier skinIdentifier) implements GUIActionPayload<AddFavouritePayload> {
-            public static final NetworkCodec<AddFavouritePayload> CODEC = NetworkCodec.of(
-                    (out, msg) -> BuiltInCodecs.SKIN_IDENTIFIER_CODEC.write(out, msg.skinIdentifier()),
-                    in -> new AddFavouritePayload(BuiltInCodecs.SKIN_IDENTIFIER_CODEC.read(in))
+            public static final NetworkCodec<AddFavouritePayload> CODEC = NetworkCodec.list(
+                    BuiltInCodecs.SKIN_IDENTIFIER_CODEC,
+                    AddFavouritePayload::skinIdentifier,
+                    AddFavouritePayload::new
             );
 
             @Override
@@ -198,9 +198,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
 
         public record RemoveFavouritePayload(
                 SkinIdentifier skinIdentifier) implements GUIActionPayload<RemoveFavouritePayload> {
-            public static final NetworkCodec<RemoveFavouritePayload> CODEC = NetworkCodec.of(
-                    (out, msg) -> BuiltInCodecs.SKIN_IDENTIFIER_CODEC.write(out, msg.skinIdentifier()),
-                    in -> new RemoveFavouritePayload(BuiltInCodecs.SKIN_IDENTIFIER_CODEC.read(in))
+            public static final NetworkCodec<RemoveFavouritePayload> CODEC = NetworkCodec.list(
+                    BuiltInCodecs.SKIN_IDENTIFIER_CODEC,
+                    RemoveFavouritePayload::skinIdentifier,
+                    RemoveFavouritePayload::new
             );
 
             @Override
@@ -215,8 +216,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         }
 
         public record UnknownActionPayload() implements GUIActionPayload<UnknownActionPayload> {
-            public static final UnknownActionPayload INSTANCE = new UnknownActionPayload();
-            public static final NetworkCodec<UnknownActionPayload> CODEC = NetworkCodec.unit(INSTANCE);
+            public static final NetworkCodec<UnknownActionPayload> CODEC = NetworkCodec.unit(new UnknownActionPayload());
 
             @Override
             public GUIActionType<UnknownActionPayload> getType() {
@@ -231,8 +231,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public record UnknownChannelPayload() implements ChannelPayload<UnknownChannelPayload> {
-        public static final UnknownChannelPayload INSTANCE = new UnknownChannelPayload();
-        public static final NetworkCodec<UnknownChannelPayload> CODEC = NetworkCodec.unit(INSTANCE);
+        public static final NetworkCodec<UnknownChannelPayload> CODEC = NetworkCodec.unit(new UnknownChannelPayload());
 
         @Override
         public ChannelType<UnknownChannelPayload> getType() {

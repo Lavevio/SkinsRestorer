@@ -30,17 +30,14 @@ import java.util.Map;
 import java.util.Optional;
 
 public record SRInventory(int rows, ComponentString title, Map<Integer, Item> items) {
-    public static final NetworkCodec<SRInventory> CODEC = NetworkCodec.of(
-            (stream, inventory) -> {
-                BuiltInCodecs.INT_CODEC.write(stream, inventory.rows());
-                ComponentString.CODEC.write(stream, inventory.title());
-                BuiltInCodecs.INT_CODEC.mappedTo(Item.CODEC).write(stream, inventory.items());
-            },
-            stream -> new SRInventory(
-                    BuiltInCodecs.INT_CODEC.read(stream),
-                    ComponentString.CODEC.read(stream),
-                    BuiltInCodecs.INT_CODEC.mappedTo(Item.CODEC).read(stream)
-            )
+    public static final NetworkCodec<SRInventory> CODEC = NetworkCodec.list(
+            BuiltInCodecs.INT_CODEC,
+            SRInventory::rows,
+            ComponentString.CODEC,
+            SRInventory::title,
+            BuiltInCodecs.INT_CODEC.mappedTo(Item.CODEC),
+            SRInventory::items,
+            SRInventory::new
     ).compressed();
 
     @Getter
@@ -69,37 +66,31 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
             boolean enchantmentGlow,
             Map<ClickEventType, ClickEventAction> clickHandlers
     ) {
-        public static final NetworkCodec<Item> CODEC = NetworkCodec.of(
-                (stream, item) -> {
-                    MaterialType.CODEC.write(stream, item.materialType());
-                    ComponentString.CODEC.write(stream, item.displayName());
-                    ComponentString.CODEC.list().write(stream, item.lore());
-                    BuiltInCodecs.STRING_CODEC.optional().write(stream, item.textureHash());
-                    BuiltInCodecs.BOOLEAN_CODEC.write(stream, item.enchantmentGlow());
-                    ClickEventType.CODEC.mappedTo(ClickEventAction.CODEC).write(stream, item.clickHandlers());
-                },
-                stream -> new Item(
-                        MaterialType.CODEC.read(stream),
-                        ComponentString.CODEC.read(stream),
-                        ComponentString.CODEC.list().read(stream),
-                        BuiltInCodecs.STRING_CODEC.optional().read(stream),
-                        BuiltInCodecs.BOOLEAN_CODEC.read(stream),
-                        ClickEventType.CODEC.mappedTo(ClickEventAction.CODEC).read(stream)
-                )
+        public static final NetworkCodec<Item> CODEC = NetworkCodec.list(
+                MaterialType.CODEC,
+                Item::materialType,
+                ComponentString.CODEC,
+                Item::displayName,
+                ComponentString.CODEC.list(),
+                Item::lore,
+                BuiltInCodecs.STRING_CODEC.optional(),
+                Item::textureHash,
+                BuiltInCodecs.BOOLEAN_CODEC,
+                Item::enchantmentGlow,
+                ClickEventType.CODEC.mappedTo(ClickEventAction.CODEC),
+                Item::clickHandlers,
+                Item::new
         );
     }
 
     public record ClickEventAction(List<SRProxyPluginMessage.GUIActionChannelPayload> actionChannelPayload,
                                    boolean closeInventory) {
-        public static final NetworkCodec<ClickEventAction> CODEC = NetworkCodec.of(
-                (stream, action) -> {
-                    SRProxyPluginMessage.GUIActionChannelPayload.CODEC.list().write(stream, action.actionChannelPayload());
-                    BuiltInCodecs.BOOLEAN_CODEC.write(stream, action.closeInventory());
-                },
-                stream -> new ClickEventAction(
-                        SRProxyPluginMessage.GUIActionChannelPayload.CODEC.list().read(stream),
-                        BuiltInCodecs.BOOLEAN_CODEC.read(stream)
-                )
+        public static final NetworkCodec<ClickEventAction> CODEC = NetworkCodec.list(
+                SRProxyPluginMessage.GUIActionChannelPayload.CODEC.list(),
+                ClickEventAction::actionChannelPayload,
+                BuiltInCodecs.BOOLEAN_CODEC,
+                ClickEventAction::closeInventory,
+                ClickEventAction::new
         );
 
         public ClickEventAction(SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload,

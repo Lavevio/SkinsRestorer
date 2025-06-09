@@ -104,7 +104,7 @@ public class SharedGUI {
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload()), true))
+                        Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload.INSTANCE), true))
                 )
         ));
 

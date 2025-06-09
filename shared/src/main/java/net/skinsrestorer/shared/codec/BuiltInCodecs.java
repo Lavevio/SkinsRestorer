@@ -38,28 +38,22 @@ public class BuiltInCodecs {
             SROutputWriter::writeBoolean,
             SRInputReader::readBoolean
     );
-    public static final NetworkCodec<SkinProperty> SKIN_PROPERTY_CODEC = NetworkCodec.of(
-            (os, s) -> {
-                STRING_CODEC.write(os, s.getValue());
-                STRING_CODEC.write(os, s.getSignature());
-            },
-            is -> SkinProperty.of(
-                    STRING_CODEC.read(is),
-                    STRING_CODEC.read(is)
-            )
+    public static final NetworkCodec<SkinProperty> SKIN_PROPERTY_CODEC = NetworkCodec.list(
+            STRING_CODEC,
+            SkinProperty::getValue,
+            STRING_CODEC,
+            SkinProperty::getSignature,
+            SkinProperty::of
     );
     public static final NetworkCodec<SkinVariant> SKIN_VARIANT_CODEC = NetworkCodec.ofEnumDynamic(SkinVariant.class, t -> t.name().toLowerCase(Locale.ROOT), SkinVariant.CLASSIC);
     public static final NetworkCodec<SkinType> SKIN_TYPE_CODEC = NetworkCodec.ofEnumDynamic(SkinType.class, t -> t.name().toLowerCase(Locale.ROOT), SkinType.CUSTOM);
-    public static final NetworkCodec<SkinIdentifier> SKIN_IDENTIFIER_CODEC = NetworkCodec.of(
-            (os, s) -> {
-                STRING_CODEC.write(os, s.getIdentifier());
-                SKIN_VARIANT_CODEC.optional().write(os, Optional.ofNullable(s.getSkinVariant()));
-                SKIN_TYPE_CODEC.write(os, s.getSkinType());
-            },
-            is -> SkinIdentifier.of(
-                    STRING_CODEC.read(is),
-                    SKIN_VARIANT_CODEC.optional().read(is).orElse(null),
-                    SKIN_TYPE_CODEC.read(is)
-            )
+    public static final NetworkCodec<SkinIdentifier> SKIN_IDENTIFIER_CODEC = NetworkCodec.list(
+            STRING_CODEC,
+            SkinIdentifier::getIdentifier,
+            SKIN_VARIANT_CODEC.optional(),
+            (skinIdentifier) -> Optional.ofNullable(skinIdentifier.getSkinVariant()),
+            SKIN_TYPE_CODEC,
+            SkinIdentifier::getSkinType,
+            (identifier, variant, type) -> SkinIdentifier.of(identifier, variant.orElse(null), type)
     );
 }

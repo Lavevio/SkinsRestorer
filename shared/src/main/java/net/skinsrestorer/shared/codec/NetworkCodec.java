@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.shared.codec;
 
+import net.skinsrestorer.shared.utils.SRFunction;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -29,6 +31,149 @@ import java.util.zip.GZIPOutputStream;
 public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
     public static <T> NetworkCodec<T> of(Writer<T> writer, Reader<T> reader) {
         return new NetworkCodec<>(writer, reader);
+    }
+
+    public static <T, F1> NetworkCodec<T> list(
+            NetworkCodec<F1> f1Codec,
+            Function<T, F1> f1Getter,
+            SRFunction.Function1<F1, T> constructor
+    ) {
+        return NetworkCodec.of(
+                (out, t) -> f1Codec.write(out, f1Getter.apply(t)),
+                in -> constructor.apply(f1Codec.read(in))
+        );
+    }
+
+    public static <T, F1, F2> NetworkCodec<T> list(
+            NetworkCodec<F1> f1Codec,
+            Function<T, F1> f1Getter,
+            NetworkCodec<F2> f2Codec,
+            Function<T, F2> f2Getter,
+            SRFunction.Function2<F1, F2, T> constructor
+    ) {
+        return NetworkCodec.of(
+                (out, t) -> {
+                    f1Codec.write(out, f1Getter.apply(t));
+                    f2Codec.write(out, f2Getter.apply(t));
+                },
+                in -> constructor.apply(f1Codec.read(in), f2Codec.read(in))
+        );
+    }
+
+    public static <T, F1, F2, F3> NetworkCodec<T> list(
+            NetworkCodec<F1> f1Codec,
+            Function<T, F1> f1Getter,
+            NetworkCodec<F2> f2Codec,
+            Function<T, F2> f2Getter,
+            NetworkCodec<F3> f3Codec,
+            Function<T, F3> f3Getter,
+            SRFunction.Function3<F1, F2, F3, T> constructor
+    ) {
+        return NetworkCodec.of(
+                (out, t) -> {
+                    f1Codec.write(out, f1Getter.apply(t));
+                    f2Codec.write(out, f2Getter.apply(t));
+                    f3Codec.write(out, f3Getter.apply(t));
+                },
+                in -> constructor.apply(
+                        f1Codec.read(in),
+                        f2Codec.read(in),
+                        f3Codec.read(in)
+                )
+        );
+    }
+
+    public static <T, F1, F2, F3, F4> NetworkCodec<T> list(
+            NetworkCodec<F1> f1Codec,
+            Function<T, F1> f1Getter,
+            NetworkCodec<F2> f2Codec,
+            Function<T, F2> f2Getter,
+            NetworkCodec<F3> f3Codec,
+            Function<T, F3> f3Getter,
+            NetworkCodec<F4> f4Codec,
+            Function<T, F4> f4Getter,
+            SRFunction.Function4<F1, F2, F3, F4, T> constructor
+    ) {
+        return NetworkCodec.of(
+                (out, t) -> {
+                    f1Codec.write(out, f1Getter.apply(t));
+                    f2Codec.write(out, f2Getter.apply(t));
+                    f3Codec.write(out, f3Getter.apply(t));
+                    f4Codec.write(out, f4Getter.apply(t));
+                },
+                in -> constructor.apply(
+                        f1Codec.read(in),
+                        f2Codec.read(in),
+                        f3Codec.read(in),
+                        f4Codec.read(in)
+                )
+        );
+    }
+
+    public static <T, F1, F2, F3, F4, F5> NetworkCodec<T> list(
+            NetworkCodec<F1> f1Codec,
+            Function<T, F1> f1Getter,
+            NetworkCodec<F2> f2Codec,
+            Function<T, F2> f2Getter,
+            NetworkCodec<F3> f3Codec,
+            Function<T, F3> f3Getter,
+            NetworkCodec<F4> f4Codec,
+            Function<T, F4> f4Getter,
+            NetworkCodec<F5> f5Codec,
+            Function<T, F5> f5Getter,
+            SRFunction.Function5<F1, F2, F3, F4, F5, T> constructor
+    ) {
+        return NetworkCodec.of(
+                (out, t) -> {
+                    f1Codec.write(out, f1Getter.apply(t));
+                    f2Codec.write(out, f2Getter.apply(t));
+                    f3Codec.write(out, f3Getter.apply(t));
+                    f4Codec.write(out, f4Getter.apply(t));
+                    f5Codec.write(out, f5Getter.apply(t));
+                },
+                in -> constructor.apply(
+                        f1Codec.read(in),
+                        f2Codec.read(in),
+                        f3Codec.read(in),
+                        f4Codec.read(in),
+                        f5Codec.read(in)
+                )
+        );
+    }
+
+    public static <T, F1, F2, F3, F4, F5, F6> NetworkCodec<T> list(
+            NetworkCodec<F1> f1Codec,
+            Function<T, F1> f1Getter,
+            NetworkCodec<F2> f2Codec,
+            Function<T, F2> f2Getter,
+            NetworkCodec<F3> f3Codec,
+            Function<T, F3> f3Getter,
+            NetworkCodec<F4> f4Codec,
+            Function<T, F4> f4Getter,
+            NetworkCodec<F5> f5Codec,
+            Function<T, F5> f5Getter,
+            NetworkCodec<F6> f6Codec,
+            Function<T, F6> f6Getter,
+            SRFunction.Function6<F1, F2, F3, F4, F5, F6, T> constructor
+    ) {
+        return NetworkCodec.of(
+                (out, t) -> {
+                    f1Codec.write(out, f1Getter.apply(t));
+                    f2Codec.write(out, f2Getter.apply(t));
+                    f3Codec.write(out, f3Getter.apply(t));
+                    f4Codec.write(out, f4Getter.apply(t));
+                    f5Codec.write(out, f5Getter.apply(t));
+                    f6Codec.write(out, f6Getter.apply(t));
+                },
+                in -> constructor.apply(
+                        f1Codec.read(in),
+                        f2Codec.read(in),
+                        f3Codec.read(in),
+                        f4Codec.read(in),
+                        f5Codec.read(in),
+                        f6Codec.read(in)
+                )
+        );
     }
 
     public static <T> NetworkCodec<T> unit(T instance) {
