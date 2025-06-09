@@ -37,7 +37,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
                                                            NetworkCodec<T> codec) implements NetworkId {
         private static final Map<String, ChannelType<?>> ID_TO_VALUE = new HashMap<>();
 
-        public static final ChannelType<GUIActionChannelPayloadList> GUI_ACTION_LIST = register(new ChannelType<>("guiActionList", GUIActionChannelPayloadList.CODEC));
+        public static final ChannelType<GUIActionListChannelPayload> GUI_ACTION_LIST = register(new ChannelType<>("guiActionList", GUIActionListChannelPayload.CODEC));
         public static final ChannelType<UnknownChannelPayload> UNKNOWN_CHANNEL = register(new ChannelType<>("unknownChannel", UnknownChannelPayload.CODEC));
 
         public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofNetworkIdDynamic(ID_TO_VALUE, UNKNOWN_CHANNEL);
@@ -63,19 +63,19 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         }
     }
 
-    public record GUIActionChannelPayloadList(List<GUIActionChannelPayload> actions) implements ChannelPayload<GUIActionChannelPayloadList> {
-        public static final NetworkCodec<GUIActionChannelPayloadList> CODEC = NetworkCodec.of(
+    public record GUIActionListChannelPayload(List<GUIActionChannelPayload> actions) implements ChannelPayload<GUIActionListChannelPayload> {
+        public static final NetworkCodec<GUIActionListChannelPayload> CODEC = NetworkCodec.of(
                 (out, msg) -> GUIActionChannelPayload.CODEC.list().write(out, msg.actions),
-                in -> new GUIActionChannelPayloadList(GUIActionChannelPayload.CODEC.list().read(in))
+                in -> new GUIActionListChannelPayload(GUIActionChannelPayload.CODEC.list().read(in))
         );
 
         @Override
-        public ChannelType<GUIActionChannelPayloadList> getType() {
+        public ChannelType<GUIActionListChannelPayload> getType() {
             return ChannelType.GUI_ACTION_LIST;
         }
 
         @Override
-        public GUIActionChannelPayloadList cast() {
+        public GUIActionListChannelPayload cast() {
             return this;
         }
     }
