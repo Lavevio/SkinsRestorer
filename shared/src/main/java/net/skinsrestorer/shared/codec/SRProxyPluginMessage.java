@@ -23,6 +23,7 @@ import net.skinsrestorer.shared.gui.PageType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     public static final NetworkCodec<SRProxyPluginMessage> CODEC = NetworkCodec.of(
@@ -38,6 +39,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         private static final Map<String, ChannelType<?>> ID_TO_VALUE = new HashMap<>();
 
         public static final ChannelType<GUIActionListChannelPayload> GUI_ACTION_LIST = register(new ChannelType<>("guiActionList", GUIActionListChannelPayload.CODEC));
+        public static final ChannelType<AckChannelPayload> ACK = register(new ChannelType<>("ack", AckChannelPayload.CODEC));
         public static final ChannelType<UnknownChannelPayload> UNKNOWN_CHANNEL = register(new ChannelType<>("unknownChannel", UnknownChannelPayload.CODEC));
 
         public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofNetworkIdDynamic(ID_TO_VALUE, UNKNOWN_CHANNEL);
@@ -227,6 +229,24 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             public UnknownActionPayload cast() {
                 return this;
             }
+        }
+    }
+
+    public record AckChannelPayload(UUID ackId) implements ChannelPayload<AckChannelPayload> {
+        public static final NetworkCodec<AckChannelPayload> CODEC = NetworkCodec.list(
+                BuiltInCodecs.UUID_CODEC,
+                AckChannelPayload::ackId,
+                AckChannelPayload::new
+        );
+
+        @Override
+        public ChannelType<AckChannelPayload> getType() {
+            return ChannelType.ACK;
+        }
+
+        @Override
+        public AckChannelPayload cast() {
+            return this;
         }
     }
 

@@ -38,6 +38,14 @@ public class SRInputReader {
         }
     }
 
+    public String readString() {
+        try {
+            return dataInput.readUTF();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int readInt() {
         try {
             return dataInput.readInt();
@@ -46,9 +54,9 @@ public class SRInputReader {
         }
     }
 
-    public String readString() {
+    public long readLong() {
         try {
-            return dataInput.readUTF();
+            return dataInput.readLong();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

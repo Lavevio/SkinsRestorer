@@ -23,6 +23,8 @@ import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     public static final NetworkCodec<SRServerPluginMessage> CODEC = NetworkCodec.of(
@@ -38,7 +40,8 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         private static final Map<String, ChannelType<?>> ID_TO_VALUE = new HashMap<>();
 
         public static final ChannelType<GUIPageChannelPayload> OPEN_GUI = register(new ChannelType<>("openGUI", GUIPageChannelPayload.CODEC));
-        public static final ChannelType<SkinUpdateChannelPayload> SKIN_UPDATE = register(new ChannelType<>("SkinUpdateV2", SkinUpdateChannelPayload.CODEC));
+        public static final ChannelType<SkinUpdateV2ChannelPayload> SKIN_UPDATE_V2 = register(new ChannelType<>("SkinUpdateV2", SkinUpdateV2ChannelPayload.CODEC));
+        public static final ChannelType<SkinUpdateV3ChannelPayload> SKIN_UPDATE_V3 = register(new ChannelType<>("skinUpdateV3", SkinUpdateV3ChannelPayload.CODEC));
         public static final ChannelType<GiveSkullChannelPayload> GIVE_SKULL = register(new ChannelType<>("giveSkull", GiveSkullChannelPayload.CODEC));
         public static final ChannelType<UnknownChannelPayload> UNKNOWN = register(new ChannelType<>("unknown", UnknownChannelPayload.CODEC));
 
@@ -83,21 +86,42 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         }
     }
 
-    public record SkinUpdateChannelPayload(
-            SkinProperty skinProperty) implements ChannelPayload<SkinUpdateChannelPayload> {
-        public static final NetworkCodec<SkinUpdateChannelPayload> CODEC = NetworkCodec.list(
+    public record SkinUpdateV2ChannelPayload(
+            SkinProperty skinProperty) implements ChannelPayload<SkinUpdateV2ChannelPayload> {
+        public static final NetworkCodec<SkinUpdateV2ChannelPayload> CODEC = NetworkCodec.list(
                 BuiltInCodecs.SKIN_PROPERTY_CODEC,
-                SkinUpdateChannelPayload::skinProperty,
-                SkinUpdateChannelPayload::new
+                SkinUpdateV2ChannelPayload::skinProperty,
+                SkinUpdateV2ChannelPayload::new
         );
 
         @Override
-        public ChannelType<SkinUpdateChannelPayload> getType() {
-            return ChannelType.SKIN_UPDATE;
+        public ChannelType<SkinUpdateV2ChannelPayload> getType() {
+            return ChannelType.SKIN_UPDATE_V2;
         }
 
         @Override
-        public SkinUpdateChannelPayload cast() {
+        public SkinUpdateV2ChannelPayload cast() {
+            return this;
+        }
+    }
+
+    public record SkinUpdateV3ChannelPayload(
+            SkinProperty skinProperty, Optional<UUID> ackId) implements ChannelPayload<SkinUpdateV3ChannelPayload> {
+        public static final NetworkCodec<SkinUpdateV3ChannelPayload> CODEC = NetworkCodec.list(
+                BuiltInCodecs.SKIN_PROPERTY_CODEC,
+                SkinUpdateV3ChannelPayload::skinProperty,
+                BuiltInCodecs.UUID_CODEC.optional(),
+                SkinUpdateV3ChannelPayload::ackId,
+                SkinUpdateV3ChannelPayload::new
+        );
+
+        @Override
+        public ChannelType<SkinUpdateV3ChannelPayload> getType() {
+            return ChannelType.SKIN_UPDATE_V3;
+        }
+
+        @Override
+        public SkinUpdateV3ChannelPayload cast() {
             return this;
         }
     }

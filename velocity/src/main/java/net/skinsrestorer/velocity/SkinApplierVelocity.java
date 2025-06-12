@@ -26,7 +26,8 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
-import net.skinsrestorer.shared.utils.AuthLibHelper;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.utils.ProxyAckTracker;
 import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
@@ -38,6 +39,7 @@ import java.util.Optional;
 public class SkinApplierVelocity implements SkinApplierAccess<Player> {
     private final WrapperVelocity wrapper;
     private final EventBusImpl eventBus;
+    private final ProxyAckTracker proxyAckTracker;
 
     @Override
     public void applySkin(Player player, SkinProperty property) {
@@ -51,7 +53,11 @@ public class SkinApplierVelocity implements SkinApplierAccess<Player> {
         SkinProperty appliedProperty = applyEvent.getProperty();
 
         player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), appliedProperty));
-        wrapper.player(player).sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateChannelPayload(property)));
+        SRProxyPlayer srPlayer = wrapper.player(player);
+        srPlayer.sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateV3ChannelPayload(
+                property,
+                proxyAckTracker.shouldAckPayload(srPlayer)
+        )));
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, SkinProperty property) {

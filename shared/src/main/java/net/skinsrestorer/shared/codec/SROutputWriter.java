@@ -52,6 +52,14 @@ public class SROutputWriter {
         }
     }
 
+    public void writeLong(long value) {
+        try {
+            dataOutput.writeLong(value);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public OutputStream wrapper() {
         return new OutputStream() {
             @Override

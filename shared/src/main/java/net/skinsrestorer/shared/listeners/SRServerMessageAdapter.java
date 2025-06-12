@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.codec.SRInputReader;
+import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
@@ -29,6 +30,8 @@ import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
@@ -47,8 +50,14 @@ public final class SRServerMessageAdapter {
             SRHelpers.mustSupply(() -> switch (channelPayload) {
                 case SRServerPluginMessage.GUIPageChannelPayload(SRInventory srInventory) ->
                         () -> serverAdapter.openGUI(event.getPlayer(), srInventory);
-                case SRServerPluginMessage.SkinUpdateChannelPayload(SkinProperty skinProperty) ->
+                case SRServerPluginMessage.SkinUpdateV2ChannelPayload(SkinProperty skinProperty) ->
                         () -> skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
+                case SRServerPluginMessage.SkinUpdateV3ChannelPayload(SkinProperty skinProperty, Optional<UUID> ackId) ->
+                        () -> {
+                            skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
+                            ackId.ifPresent(value -> event.getPlayer().sendToMessageChannel(new SRProxyPluginMessage(
+                                    new SRProxyPluginMessage.AckChannelPayload(value))));
+                        };
                 case SRServerPluginMessage.GiveSkullChannelPayload payload ->
                         () -> serverAdapter.giveSkullItem(event.getPlayer(), payload);
                 case SRServerPluginMessage.UnknownChannelPayload ignored ->

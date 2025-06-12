@@ -28,6 +28,8 @@ import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.utils.ProxyAckTracker;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +43,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     private final WrapperBungee wrapper;
     private final EventBusImpl eventBus;
     private final SRLogger logger;
+    private final ProxyAckTracker proxyAckTracker;
 
     /*
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.
@@ -89,6 +92,10 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
             return;
         }
 
-        wrapper.player(player).sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateChannelPayload(property)));
+        SRProxyPlayer srPlayer = wrapper.player(player);
+        srPlayer.sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateV3ChannelPayload(
+                property,
+                proxyAckTracker.shouldAckPayload(srPlayer)
+        )));
     }
 }
