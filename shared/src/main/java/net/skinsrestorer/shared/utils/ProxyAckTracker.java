@@ -29,4 +29,7 @@ public class ProxyAckTracker {
     public Optional<UUID> shouldAckPayload(SRProxyPlayer player) {
         return Optional.empty();
     }
+
+    public void receivedAck(SRProxyPlayer player, UUID ackId) {
+    }
 }

@@ -23,6 +23,7 @@ import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.utils.ProxyAckTracker;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
@@ -32,6 +33,7 @@ public final class SRProxyMessageAdapter {
     private final SRLogger logger;
     private final SRPlatformAdapter adapter;
     private final GUIActionListener guiActionListener;
+    private final ProxyAckTracker proxyAckTracker;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
         if (event.isCancelled()) {
@@ -53,6 +55,8 @@ public final class SRProxyMessageAdapter {
             SRHelpers.mustSupply(() -> switch (msg) {
                 case SRProxyPluginMessage.GUIActionListChannelPayload(var actions) ->
                         () -> guiActionListener.handle(event.getPlayer(), actions);
+                case SRProxyPluginMessage.AckChannelPayload(var ackId) ->
+                        () -> proxyAckTracker.receivedAck(event.getPlayer(), ackId);
                 case SRProxyPluginMessage.UnknownChannelPayload ignored ->
                         () -> logger.warning("Received unknown channel payload from server (Make sure the server and proxy are running the same version of SkinsRestorer)");
             });
