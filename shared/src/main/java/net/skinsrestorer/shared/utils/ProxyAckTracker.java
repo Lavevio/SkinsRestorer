@@ -67,6 +67,9 @@ public class ProxyAckTracker {
                     "Please make sure that the server has SkinsRestorer installed and is running the latest version.").formatted(server));
             brokenServers.add(server);
             serverNackCounts.remove(server);
+        } else {
+            logger.debug(("Server '%s' did not respond to ACK message in time. " +
+                    "This may indicate that the server is not running SkinsRestorer or is not responding to ACK messages.").formatted(server));
         }
     }
 
