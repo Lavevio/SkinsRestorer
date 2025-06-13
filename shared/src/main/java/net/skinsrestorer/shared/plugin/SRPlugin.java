@@ -289,7 +289,6 @@ public class SRPlugin {
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_SKIN)));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS)));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
         metrics.addCustomChart(new SingleLineChart("eclipse_uuid", () -> metricsCounter.collect(MetricsCounter.Service.ECLIPSE_UUID)));
         metrics.addCustomChart(new SingleLineChart("eclipse_profile", () -> metricsCounter.collect(MetricsCounter.Service.ECLIPSE_PROFILE)));

@@ -76,19 +76,6 @@ public class ServiceCheckerService {
             response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Mojang", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
-        try {
-            Optional<UUID> uuid = mojangAPI.getUUIDMineTools(selectedUsername);
-
-            if (uuid.isPresent()) {
-                response.addResult(UUID_MESSAGE.formatted("MineTools", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
-            } else {
-                response.addResult(MESSAGE_ERROR.formatted("MineTools", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
-            }
-        } catch (DataRequestException e) {
-            logger.debug("Error getting MineTools UUID", e);
-            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("MineTools", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
-        }
-
         // ##### Profile requests #####
         try {
             Optional<SkinProperty> eclipse = mojangAPI.getProfileEclipse(selectedUUID);
@@ -114,17 +101,6 @@ public class ServiceCheckerService {
             response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Mojang", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
-        try {
-            Optional<SkinProperty> mineTools = mojangAPI.getProfileMineTools(selectedUUID);
-            if (mineTools.isPresent()) {
-                response.addResult(PROFILE_MESSAGE.formatted("MineTools", selectedUUID, mineTools.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
-            } else {
-                response.addResult(MESSAGE_ERROR.formatted("MineTools", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
-            }
-        } catch (DataRequestException e) {
-            logger.debug("Error getting MineTools Profile", e);
-            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("MineTools", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
-        }
         return response;
     }
 

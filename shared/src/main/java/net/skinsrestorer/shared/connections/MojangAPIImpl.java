@@ -25,11 +25,9 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.profile.EclipseProfileResponse;
-import net.skinsrestorer.shared.connections.responses.profile.MineToolsProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.MojangProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.PropertyResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.EclipseUUIDResponse;
-import net.skinsrestorer.shared.connections.responses.uuid.MineToolsUUIDResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -49,10 +47,8 @@ import java.util.UUID;
 public class MojangAPIImpl implements MojangAPI {
     private static final String UUID_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%";
     private static final String UUID_MOJANG = "https://api.minecraftservices.com/minecraft/profile/lookup/name/%playerName%";
-    private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%playerName%";
     private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
-    private static final String PROFILE_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
 
     private final MetricsCounter metricsCounter;
     private final SRLogger logger;
@@ -100,13 +96,6 @@ public class MojangAPIImpl implements MojangAPI {
             logger.debug(e);
         }
 
-        // Fall back to MineTools API
-        try {
-            return getUUIDMineTools(playerName);
-        } catch (DataRequestException e) {
-            logger.debug(e);
-        }
-
         throw new DataRequestExceptionShared("Failed to get UUID for player: %s".formatted(playerName));
     }
 
@@ -143,18 +132,6 @@ public class MojangAPIImpl implements MojangAPI {
                 .map(UUIDUtils::convertToDashed);
     }
 
-    protected Optional<UUID> getUUIDMineTools(String playerName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(UUID_MINETOOLS.replace("%playerName%", playerName)), MetricsCounter.Service.MINE_TOOLS, 10_000);
-        MineToolsUUIDResponse response = httpResponse.getBodyAs(MineToolsUUIDResponse.class);
-
-        if (response.getStatus() != null && response.getStatus().equals("ERR")) {
-            throw new DataRequestExceptionShared("MineTools error: %s".formatted(response.getStatus()));
-        }
-
-        return Optional.ofNullable(response.getId())
-                .map(UUIDUtils::convertToDashed);
-    }
-
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
         try {
             return getProfileEclipse(uuid);
@@ -165,13 +142,6 @@ public class MojangAPIImpl implements MojangAPI {
         // Fall back to Mojang API
         try {
             return getProfileMojang(uuid);
-        } catch (DataRequestException e) {
-            logger.debug(e);
-        }
-
-        // Fall back to MineTools API
-        try {
-            return getProfileMineTools(uuid);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
@@ -201,26 +171,6 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         PropertyResponse property = response.getProperties()[0];
-        if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
-    }
-
-    protected Optional<SkinProperty> getProfileMineTools(UUID uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(PROFILE_MINETOOLS.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MINE_TOOLS, 10_000);
-        MineToolsProfileResponse response = httpResponse.getBodyAs(MineToolsProfileResponse.class);
-        if (response.getRaw() == null) {
-            return Optional.empty();
-        }
-
-        MineToolsProfileResponse.Raw raw = response.getRaw();
-        if (raw.getStatus() != null && raw.getStatus().equals("ERR")) {
-            throw new DataRequestExceptionShared("MineTools error: %s".formatted(raw.getStatus()));
-        }
-
-        PropertyResponse property = raw.getProperties()[0];
         if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
             return Optional.empty();
         }

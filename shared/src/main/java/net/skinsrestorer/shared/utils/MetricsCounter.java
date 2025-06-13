@@ -62,7 +62,6 @@ public class MetricsCounter {
 
     public enum Service {
         MINE_SKIN,
-        MINE_TOOLS,
         MOJANG,
         ECLIPSE_UUID,
         ECLIPSE_PROFILE

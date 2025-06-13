@@ -65,8 +65,8 @@ public class ServicesTest {
         assertEquals(3, serviceChecker.getWorkingUUID());
         assertEquals(3, serviceChecker.getWorkingProfile());
 
-        assertEquals(2, metricsCounter.collect(MetricsCounter.Service.ASHCON));
-        assertEquals(2, metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS));
+        assertEquals(2, metricsCounter.collect(MetricsCounter.Service.ECLIPSE_UUID));
+        assertEquals(2, metricsCounter.collect(MetricsCounter.Service.ECLIPSE_PROFILE));
         assertEquals(2, metricsCounter.collect(MetricsCounter.Service.MOJANG));
          */
     }
