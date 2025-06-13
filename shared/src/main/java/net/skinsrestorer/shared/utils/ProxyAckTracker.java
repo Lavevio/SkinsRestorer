@@ -59,9 +59,9 @@ public class ProxyAckTracker {
 
     private void handleProxyServerState(String server) {
         if (verifiedServers.contains(server)) {
-            // Server is already verified, no need to check again
+            logger.debug("Server '%s' is already verified, skipping state check.".formatted(server));
         } else if (brokenServers.contains(server)) {
-            // Message was already printed when the server was marked as broken
+            logger.debug("Server '%s' is already marked as broken, skipping state check.".formatted(server));
         } else if (serverNackCounts.compute(server, (key, count) -> count == null ? 1 : count + 1) >= 3) {
             logger.warning(("Server '%s' does likely not have SkinsRestorer installed or is not responding to ACK messages. " +
                     "Please make sure that the server has SkinsRestorer installed and is running the latest version.").formatted(server));
