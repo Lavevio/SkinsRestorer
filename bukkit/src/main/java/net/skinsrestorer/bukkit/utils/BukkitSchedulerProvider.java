@@ -27,12 +27,19 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BukkitSchedulerProvider implements SchedulerProvider {
+    // Milliseconds to ticks (20 ticks = 1 second, 50 ms = 1 tick)
+    private static final long MILLISECONDS_PER_TICK = 50L;
     private final Server server;
     private final JavaPlugin plugin;
 
     @Override
     public void runAsync(Runnable runnable) {
         server.getScheduler().runTaskAsynchronously(plugin, runnable);
+    }
+
+    @Override
+    public void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit) {
+        server.getScheduler().runTaskLaterAsynchronously(plugin, runnable, timeUnit.toMillis(delay) / MILLISECONDS_PER_TICK);
     }
 
     @Override
@@ -56,8 +63,8 @@ public class BukkitSchedulerProvider implements SchedulerProvider {
     }
 
     @Override
-    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        server.getScheduler().runTaskTimerAsynchronously(plugin, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
+    public void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit) {
+        server.getScheduler().runTaskTimerAsynchronously(plugin, runnable, timeUnit.toMillis(delay) / MILLISECONDS_PER_TICK, timeUnit.toMillis(interval) / MILLISECONDS_PER_TICK);
     }
 
     @Override

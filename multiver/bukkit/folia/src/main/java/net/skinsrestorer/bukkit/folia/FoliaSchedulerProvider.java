@@ -48,6 +48,11 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
     }
 
     @Override
+    public void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit) {
+        server.getAsyncScheduler().runDelayed(plugin, getCancellingTaskConsumer(runnable), delay, timeUnit);
+    }
+
+    @Override
     public void runSync(Runnable runnable) {
         server.getGlobalRegionScheduler().run(plugin, getCancellingTaskConsumer(runnable));
     }
@@ -68,7 +73,7 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
     }
 
     @Override
-    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit) {
         server.getAsyncScheduler().runAtFixedRate(plugin, getCancellingTaskConsumer(runnable), delay, interval, timeUnit);
     }
 

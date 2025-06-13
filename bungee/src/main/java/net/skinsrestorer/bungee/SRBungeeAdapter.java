@@ -84,7 +84,12 @@ public class SRBungeeAdapter implements SRProxyAdapter {
     }
 
     @Override
-    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit) {
+        proxy.getScheduler().schedule(pluginInstance, runnable, delay, timeUnit);
+    }
+
+    @Override
+    public void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit) {
         proxy.getScheduler().schedule(pluginInstance, runnable, delay, interval, timeUnit);
     }
 

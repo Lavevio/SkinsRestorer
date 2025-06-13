@@ -126,6 +126,11 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
+    public void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit) {
+        schedulerProvider.runAsyncDelayed(runnable, delay, timeUnit);
+    }
+
+    @Override
     public void runSync(SRCommandSender sender, Runnable runnable) {
         schedulerProvider.runSync(runnable);
     }
@@ -183,7 +188,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit) {
         schedulerProvider.runRepeatAsync(runnable, delay, interval, timeUnit);
     }
 

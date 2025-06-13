@@ -55,8 +55,8 @@ public final class SRProxyMessageAdapter {
             SRHelpers.mustSupply(() -> switch (msg) {
                 case SRProxyPluginMessage.GUIActionListChannelPayload(var actions) ->
                         () -> guiActionListener.handle(event.getPlayer(), actions);
-                case SRProxyPluginMessage.AckChannelPayload(var ackId) ->
-                        () -> proxyAckTracker.receivedAck(event.getPlayer(), ackId);
+                case SRProxyPluginMessage.AckChannelPayload(var ackId, var serverSrVersion) ->
+                        () -> proxyAckTracker.receivedAck(event.getPlayer(), ackId, serverSrVersion);
                 case SRProxyPluginMessage.UnknownChannelPayload ignored ->
                         () -> logger.warning("Received unknown channel payload from server (Make sure the server and proxy are running the same version of SkinsRestorer)");
             });

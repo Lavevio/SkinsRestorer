@@ -83,7 +83,12 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     }
 
     @Override
-    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit) {
+        proxy.getScheduler().buildTask(pluginInstance, runnable).delay(delay, timeUnit).schedule();
+    }
+
+    @Override
+    public void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit) {
         proxy.getScheduler().buildTask(pluginInstance, runnable).delay(delay, timeUnit).repeat(interval, timeUnit).schedule();
     }
 

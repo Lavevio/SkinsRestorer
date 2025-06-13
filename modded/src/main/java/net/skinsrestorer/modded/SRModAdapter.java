@@ -91,6 +91,11 @@ public class SRModAdapter implements SRServerAdapter {
     }
 
     @Override
+    public void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit) {
+        asyncScheduler.schedule(runnable, delay, timeUnit);
+    }
+
+    @Override
     public void runSync(SRCommandSender sender, Runnable runnable) {
         runSync(sender.getAs(CommandSourceStack.class).getServer(), runnable);
     }
@@ -135,7 +140,7 @@ public class SRModAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit) {
         asyncScheduler.scheduleWithFixedDelay(runnable, delay, interval, timeUnit);
     }
 

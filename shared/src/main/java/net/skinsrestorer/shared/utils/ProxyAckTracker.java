@@ -18,18 +18,75 @@
 package net.skinsrestorer.shared.utils;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import javax.inject.Inject;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ProxyAckTracker {
-    public Optional<UUID> shouldAckPayload(SRProxyPlayer player) {
-        return Optional.empty();
+    private final SRLogger logger;
+    private final SRPlatformAdapter adapter;
+    private final Set<String> verifiedServers = Collections.synchronizedSet(new HashSet<>());
+    private final Set<String> brokenServers = Collections.synchronizedSet(new HashSet<>());
+    private final Map<String, Integer> serverNackCounts = new ConcurrentHashMap<>();
+
+    public Optional<SRServerPluginMessage.SkinUpdateV3ChannelPayload.AckPayload> shouldAckPayload(SRProxyPlayer player) {
+        var optionalServer = player.getCurrentServer();
+        if (optionalServer.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var server = optionalServer.get();
+        if (verifiedServers.contains(server)) {
+            logger.debug("Server '%s' already verified. Skipping ACK payload.".formatted(server));
+            return Optional.empty();
+        }
+
+        var ackId = UUID.randomUUID();
+        logger.debug("Sending ack payload to player '%s' with ACK id %s for server '%s'".formatted(player.getName(), ackId, server));
+
+        adapter.runAsyncDelayed(() -> handleProxyServerState(server), 30, TimeUnit.SECONDS);
+
+        return Optional.of(new SRServerPluginMessage.SkinUpdateV3ChannelPayload.AckPayload(ackId, BuildData.VERSION));
     }
 
-    public void receivedAck(SRProxyPlayer player, UUID ackId) {
+    private void handleProxyServerState(String server) {
+        if (verifiedServers.contains(server)) {
+            // Server is already verified, no need to check again
+        } else if (brokenServers.contains(server)) {
+            // Message was already printed when the server was marked as broken
+        } else if (serverNackCounts.compute(server, (key, count) -> count == null ? 1 : count + 1) >= 3) {
+            logger.warning(("Server '%s' does likely not have SkinsRestorer installed or is not responding to ACK messages. " +
+                    "Please make sure that the server has SkinsRestorer installed and is running the latest version.").formatted(server));
+            brokenServers.add(server);
+            serverNackCounts.remove(server);
+        }
+    }
+
+    public void receivedAck(SRProxyPlayer player, UUID ackId, String serverSrVersion) {
+        logger.debug("Received ack from player '%s' with ACK id %s".formatted(player.getName(), ackId));
+
+        var optionalServer = player.getCurrentServer();
+        if (optionalServer.isEmpty()) {
+            return;
+        }
+
+        var server = optionalServer.get();
+        if (!verifiedServers.add(server)) {
+            logger.debug("Server '%s' already verified. Skipping version check.".formatted(server));
+            return;
+        }
+
+        if (!serverSrVersion.equalsIgnoreCase(BuildData.VERSION)) {
+            logger.warning("The server '%s' is running a different version of SkinsRestorer (%s) than this proxy (%s). Make sure both server and proxy run the latest version of SkinsRestorer."
+                    .formatted(server, serverSrVersion, BuildData.VERSION));
+        }
     }
 }

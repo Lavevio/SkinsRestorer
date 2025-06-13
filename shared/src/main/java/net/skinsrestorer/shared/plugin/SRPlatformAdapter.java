@@ -58,7 +58,9 @@ public interface SRPlatformAdapter {
 
     void runAsync(Runnable runnable);
 
-    void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
+    void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit);
+
+    void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit);
 
     String getPlatformVersion();
 

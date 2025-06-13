@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.codec.SRInputReader;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
@@ -31,7 +32,6 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.util.Optional;
-import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
@@ -52,11 +52,18 @@ public final class SRServerMessageAdapter {
                         () -> serverAdapter.openGUI(event.getPlayer(), srInventory);
                 case SRServerPluginMessage.SkinUpdateV2ChannelPayload(SkinProperty skinProperty) ->
                         () -> skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
-                case SRServerPluginMessage.SkinUpdateV3ChannelPayload(SkinProperty skinProperty, Optional<UUID> ackId) ->
+                case SRServerPluginMessage.SkinUpdateV3ChannelPayload(SkinProperty skinProperty, Optional<SRServerPluginMessage.SkinUpdateV3ChannelPayload.AckPayload> ackPayload) ->
                         () -> {
                             skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
-                            ackId.ifPresent(value -> event.getPlayer().sendToMessageChannel(new SRProxyPluginMessage(
-                                    new SRProxyPluginMessage.AckChannelPayload(value))));
+                            ackPayload.ifPresent(value -> {
+                                if (!value.proxySrVersion().equalsIgnoreCase(BuildData.VERSION)) {
+                                    logger.warning("The proxy is running a different version of SkinsRestorer (%s) than this server (%s). Make sure both proxy and server run the latest version of SkinsRestorer."
+                                            .formatted(value.proxySrVersion(), BuildData.VERSION));
+                                }
+
+                                event.getPlayer().sendToMessageChannel(new SRProxyPluginMessage(
+                                        new SRProxyPluginMessage.AckChannelPayload(value.ackId(), BuildData.VERSION)));
+                            });
                         };
                 case SRServerPluginMessage.GiveSkullChannelPayload payload ->
                         () -> serverAdapter.giveSkullItem(event.getPlayer(), payload);

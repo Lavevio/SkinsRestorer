@@ -232,10 +232,12 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         }
     }
 
-    public record AckChannelPayload(UUID ackId) implements ChannelPayload<AckChannelPayload> {
+    public record AckChannelPayload(UUID ackId, String serverSrVersion) implements ChannelPayload<AckChannelPayload> {
         public static final NetworkCodec<AckChannelPayload> CODEC = NetworkCodec.list(
                 BuiltInCodecs.UUID_CODEC,
                 AckChannelPayload::ackId,
+                BuiltInCodecs.STRING_CODEC,
+                AckChannelPayload::serverSrVersion,
                 AckChannelPayload::new
         );
 

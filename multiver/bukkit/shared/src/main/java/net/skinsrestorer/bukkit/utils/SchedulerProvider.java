@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 public interface SchedulerProvider {
     void runAsync(Runnable runnable);
 
+    void runAsyncDelayed(Runnable runnable, long delay, TimeUnit timeUnit);
+
     void runSync(Runnable runnable);
 
     void runSyncDelayed(Runnable runnable, long ticks);
@@ -32,7 +34,7 @@ public interface SchedulerProvider {
 
     void runSyncToEntityDelayed(Entity entity, Runnable runnable, long ticks);
 
-    void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
+    void runRepeatAsync(Runnable runnable, long delay, long interval, TimeUnit timeUnit);
 
     void unregisterTasks();
 }

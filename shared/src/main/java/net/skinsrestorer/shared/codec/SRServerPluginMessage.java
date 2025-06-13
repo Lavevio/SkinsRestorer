@@ -106,12 +106,12 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public record SkinUpdateV3ChannelPayload(
-            SkinProperty skinProperty, Optional<UUID> ackId) implements ChannelPayload<SkinUpdateV3ChannelPayload> {
+            SkinProperty skinProperty, Optional<AckPayload> ackPayload) implements ChannelPayload<SkinUpdateV3ChannelPayload> {
         public static final NetworkCodec<SkinUpdateV3ChannelPayload> CODEC = NetworkCodec.list(
                 BuiltInCodecs.SKIN_PROPERTY_CODEC,
                 SkinUpdateV3ChannelPayload::skinProperty,
-                BuiltInCodecs.UUID_CODEC.optional(),
-                SkinUpdateV3ChannelPayload::ackId,
+                AckPayload.CODEC.optional(),
+                SkinUpdateV3ChannelPayload::ackPayload,
                 SkinUpdateV3ChannelPayload::new
         );
 
@@ -123,6 +123,16 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         @Override
         public SkinUpdateV3ChannelPayload cast() {
             return this;
+        }
+
+        public record AckPayload(UUID ackId, String proxySrVersion) {
+            public static final NetworkCodec<AckPayload> CODEC = NetworkCodec.list(
+                    BuiltInCodecs.UUID_CODEC,
+                    AckPayload::ackId,
+                    BuiltInCodecs.STRING_CODEC,
+                    AckPayload::proxySrVersion,
+                    AckPayload::new
+            );
         }
     }
 
