@@ -45,12 +45,12 @@ public class ProxyAckTracker {
 
         var server = optionalServer.get();
         if (verifiedServers.contains(server)) {
-            logger.debug("Server '%s' already verified. Skipping ACK payload.".formatted(server));
+            logger.debug("Backend server '%s' already verified. Skipping ACK payload.".formatted(server));
             return Optional.empty();
         }
 
         var ackId = UUID.randomUUID();
-        logger.debug("Sending ack payload to player '%s' with ACK id %s for server '%s'".formatted(player.getName(), ackId, server));
+        logger.debug("Sending ACK payload to player '%s' with ACK id %s to backend server '%s'".formatted(player.getName(), ackId, server));
 
         adapter.runAsyncDelayed(() -> handleProxyServerState(server), 30, TimeUnit.SECONDS);
 
@@ -59,22 +59,22 @@ public class ProxyAckTracker {
 
     private void handleProxyServerState(String server) {
         if (verifiedServers.contains(server)) {
-            logger.debug("Server '%s' is already verified, skipping state check.".formatted(server));
+            logger.debug("Backend server '%s' is already verified, skipping state check.".formatted(server));
         } else if (brokenServers.contains(server)) {
-            logger.debug("Server '%s' is already marked as broken, skipping state check.".formatted(server));
+            logger.debug("Backend server '%s' is already marked as broken, skipping state check.".formatted(server));
         } else if (serverNackCounts.compute(server, (key, count) -> count == null ? 1 : count + 1) >= 3) {
-            logger.warning(("Server '%s' does likely not have SkinsRestorer installed or is not responding to ACK messages. " +
+            logger.warning(("Backend server '%s' does likely not have SkinsRestorer installed or is not responding to ACK messages. " +
                     "Please make sure that the server has SkinsRestorer installed and is running the latest version.").formatted(server));
             brokenServers.add(server);
             serverNackCounts.remove(server);
         } else {
-            logger.debug(("Server '%s' did not respond to ACK message in time. " +
+            logger.debug(("Backend server '%s' did not respond to ACK message in time. " +
                     "This may indicate that the server is not running SkinsRestorer or is not responding to ACK messages.").formatted(server));
         }
     }
 
     public void receivedAck(SRProxyPlayer player, UUID ackId, String serverSrVersion) {
-        logger.debug("Received ack from player '%s' with ACK id %s".formatted(player.getName(), ackId));
+        logger.debug("Received ACK from player '%s' with ACK id %s".formatted(player.getName(), ackId));
 
         var optionalServer = player.getCurrentServer();
         if (optionalServer.isEmpty()) {
@@ -83,14 +83,14 @@ public class ProxyAckTracker {
 
         var server = optionalServer.get();
         if (!verifiedServers.add(server)) {
-            logger.debug("Server '%s' already verified. Skipping version check.".formatted(server));
+            logger.debug("Backend server '%s' already verified. Skipping version check.".formatted(server));
             return;
         }
 
         if (serverSrVersion.equalsIgnoreCase(BuildData.VERSION)) {
-            logger.debug("Server '%s' is verified with SkinsRestorer version %s.".formatted(server, serverSrVersion));
+            logger.debug("Backend server '%s' is verified with SkinsRestorer version %s.".formatted(server, serverSrVersion));
         } else {
-            logger.warning("The server '%s' is running a different version of SkinsRestorer (%s) than this proxy (%s). Make sure both server and proxy run the latest version of SkinsRestorer."
+            logger.warning("Backend server '%s' is running a different version of SkinsRestorer (%s) than this proxy (%s). Make sure both server and proxy run the latest version of SkinsRestorer."
                     .formatted(server, serverSrVersion, BuildData.VERSION));
         }
     }
