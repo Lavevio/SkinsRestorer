@@ -111,11 +111,6 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         if (rateLimit != null) {
             long serverNextRequestAt = System.currentTimeMillis() + rateLimit.getNext().getRelative();
             nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, serverNextRequestAt));
-
-            if (rateLimit.getLimit().getRemaining() == 0) {
-                long resetMillis = TimeUnit.SECONDS.toMillis(rateLimit.getLimit().getReset());
-                nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, resetMillis));
-            }
         }
 
         if (response.isSuccess()) {
