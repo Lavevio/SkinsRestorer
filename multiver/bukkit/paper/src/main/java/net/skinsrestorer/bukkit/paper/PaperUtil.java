@@ -17,16 +17,26 @@
  */
 package net.skinsrestorer.bukkit.paper;
 
+import io.papermc.paper.ServerBuildInfo;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.Optional;
 
 public class PaperUtil {
+    @SuppressWarnings("removal")
     public static Optional<YamlConfiguration> getPaperConfig(Server server) {
         try {
             return Optional.of(server.spigot().getPaperConfig());
         } catch (Throwable ignored) { // We're not running paper
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<String> getMinecraftVersionId() {
+        try {
+            return ServerBuildInfo.buildInfo().minecraftVersionId().describeConstable();
+        } catch (Throwable ignored) { // We're not running Paper or a version that doesn't support this
             return Optional.empty();
         }
     }

@@ -18,6 +18,7 @@
 package net.skinsrestorer.bukkit.utils;
 
 import net.skinsrestorer.bukkit.mappings.*;
+import net.skinsrestorer.bukkit.paper.PaperUtil;
 import org.bukkit.Server;
 
 import java.lang.reflect.Method;
@@ -68,6 +69,7 @@ public class MappingManager {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
             return ((String) method.invoke(craftMagicNumbers, new Object[0])).describeConstable();
         } catch (UnsupportedOperationException e) {
+            // Happens on paper >= 1.21.6
             return Optional.empty();
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Failed to get mappings version", e);
@@ -75,6 +77,6 @@ public class MappingManager {
     }
 
     public static Optional<String> getPaperMinecraftVersionId() {
-        return Optional.empty();
+        return PaperUtil.getMinecraftVersionId();
     }
 }
