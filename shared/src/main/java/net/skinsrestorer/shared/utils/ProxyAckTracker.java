@@ -90,8 +90,8 @@ public class ProxyAckTracker {
         if (serverSrVersion.equalsIgnoreCase(BuildData.VERSION)) {
             logger.debug("Backend server '%s' is verified with SkinsRestorer version %s.".formatted(server, serverSrVersion));
         } else {
-            logger.warning("Backend server '%s' is running a different version of SkinsRestorer (%s) than this proxy (%s). Make sure both server and proxy run the latest version of SkinsRestorer."
-                    .formatted(server, serverSrVersion, BuildData.VERSION));
+            logger.warning("Backend server '%s' is running a different version of SkinsRestorer (%s) than this proxy (%s). Make sure both server and proxy run the latest version of SkinsRestorer. %s"
+                    .formatted(server, serverSrVersion, BuildData.VERSION, SRHelpers.DOWNLOAD_URL));
         }
     }
 }

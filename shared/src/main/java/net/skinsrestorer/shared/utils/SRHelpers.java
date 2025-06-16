@@ -47,6 +47,7 @@ import java.util.stream.Stream;
 public class SRHelpers {
     public static final String MESSAGE_CHANNEL = "sr:messagechannel";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
+    public static final String DOWNLOAD_URL = "https://modrinth.com/plugin/skinsrestorer";
 
     private SRHelpers() {
     }

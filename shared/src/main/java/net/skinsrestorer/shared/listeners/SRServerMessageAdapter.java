@@ -66,8 +66,8 @@ public final class SRServerMessageAdapter {
                         if (value.proxySrVersion().equalsIgnoreCase(BuildData.VERSION)) {
                             logger.debug("Proxy version %s matches server version %s.".formatted(value.proxySrVersion(), BuildData.VERSION));
                         } else {
-                            logger.warning("The proxy is running a different version of SkinsRestorer (%s) than this server (%s). Make sure both proxy and server run the latest version of SkinsRestorer."
-                                    .formatted(value.proxySrVersion(), BuildData.VERSION));
+                            logger.warning("The proxy is running a different version of SkinsRestorer (%s) than this server (%s). Make sure both proxy and server run the latest version of SkinsRestorer. %s"
+                                    .formatted(value.proxySrVersion(), BuildData.VERSION, SRHelpers.DOWNLOAD_URL));
                         }
 
                         event.getPlayer().sendToMessageChannel(new SRProxyPluginMessage(
@@ -77,7 +77,7 @@ public final class SRServerMessageAdapter {
                 case SRServerPluginMessage.GiveSkullChannelPayload payload ->
                         () -> serverAdapter.giveSkullItem(event.getPlayer(), payload);
                 case SRServerPluginMessage.UnknownChannelPayload ignored ->
-                        () -> logger.warning("Received unknown channel payload from proxy (Make sure the server and proxy are running the same version of SkinsRestorer)");
+                        () -> logger.warning("Received unknown channel payload from proxy (Make sure the server and proxy are running the same version of SkinsRestorer) %s".formatted(SRHelpers.DOWNLOAD_URL));
             });
         });
     }

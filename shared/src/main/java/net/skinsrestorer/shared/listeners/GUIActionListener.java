@@ -56,7 +56,7 @@ public class GUIActionListener {
                 case SRProxyPluginMessage.GUIActionChannelPayload.RemoveFavouritePayload(var skinIdentifier) ->
                         () -> playerStorage.removeFavourite(player.getUniqueId(), skinIdentifier);
                 case SRProxyPluginMessage.GUIActionChannelPayload.UnknownActionPayload ignored ->
-                        () -> logger.warning("Received unknown action payload from server (Make sure the server and proxy are running the same version of SkinsRestorer)");
+                        () -> logger.warning("Received unknown action payload from server (Make sure the server and proxy are running the same version of SkinsRestorer) %s".formatted(SRHelpers.DOWNLOAD_URL));
             });
         }
     }
