@@ -45,7 +45,11 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         if (mapping.isEmpty()) {
             logger.severe(("Your Minecraft version (%s) is not supported by this version of SkinsRestorer! " +
                     "Is there a newer version available? " +
-                    "If not, join our discord server!").formatted(MappingManager.getVersion(server)));
+                    "If not, join our discord server!").formatted(
+                    MappingManager.getSpigotMappingVersion(server)
+                            .or(MappingManager::getPaperMinecraftVersionId)
+                            .orElse("unknown version")
+            ));
 
             if (Boolean.getBoolean("sr.throw-if-mapping-unsupported")) {
                 throw new IllegalStateException("Unsupported Minecraft version");

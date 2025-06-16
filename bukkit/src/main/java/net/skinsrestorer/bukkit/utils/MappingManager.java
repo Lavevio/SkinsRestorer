@@ -44,20 +44,37 @@ public class MappingManager {
     );
 
     public static Optional<IMapping> getMapping(Server server) {
-        String version = getVersion(server);
+        Optional<String> spigotMappingVersion = getSpigotMappingVersion(server);
+        Optional<String> paperMinecraftVersionId = getPaperMinecraftVersionId();
+
+        if (spigotMappingVersion.isEmpty() && paperMinecraftVersionId.isEmpty()) {
+            return Optional.empty();
+        }
+
         return MAPPINGS.stream()
-                .filter(mapping -> mapping.getSpigotMappingVersion().contains(version))
+                .filter(mapping -> spigotMappingVersion
+                        .map(mapping.getSpigotMappingVersion()::contains)
+                        .orElse(true))
+                .filter(mapping -> paperMinecraftVersionId
+                        .map(mapping.getPaperMinecraftVersionId()::contains)
+                        .orElse(true))
                 .findFirst();
     }
 
     @SuppressWarnings({"deprecation"})
-    public static String getVersion(Server server) {
+    public static Optional<String> getSpigotMappingVersion(Server server) {
         var craftMagicNumbers = server.getUnsafe();
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
-            return (String) method.invoke(craftMagicNumbers, new Object[0]);
+            return ((String) method.invoke(craftMagicNumbers, new Object[0])).describeConstable();
+        } catch (UnsupportedOperationException e) {
+            return Optional.empty();
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Failed to get mappings version", e);
         }
+    }
+
+    public static Optional<String> getPaperMinecraftVersionId() {
+        return Optional.empty();
     }
 }
