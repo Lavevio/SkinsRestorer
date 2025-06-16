@@ -29,9 +29,16 @@ public interface IMapping {
     void resendInfoPackets(Player toResend, Player toSendTo);
 
     /**
+     * Format as in ServerBuildInfo#minecraftVersionId.
+     *
+     * @return The supported paper minecraft version ids versions of the mapping
+     */
+    Set<String> getPaperMinecraftVersionId();
+
+    /**
      * Can be found at <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java">SpigotMC</a>
      *
-     * @return The supported versions of the mapping
+     * @return The supported spigot mapping versions of the mapping
      */
-    Set<String> getSupportedVersions();
+    Set<String> getSpigotMappingVersion();
 }

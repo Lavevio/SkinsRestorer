@@ -46,7 +46,7 @@ public class MappingManager {
     public static Optional<IMapping> getMapping(Server server) {
         String version = getVersion(server);
         return MAPPINGS.stream()
-                .filter(mapping -> mapping.getSupportedVersions().contains(version))
+                .filter(mapping -> mapping.getSpigotMappingVersion().contains(version))
                 .findFirst();
     }
 
