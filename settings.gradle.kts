@@ -37,7 +37,7 @@ setOf("shared", "v1-7", "spigot", "paper", "folia").forEach {
 
 include("multiver:kyori")
 
-new File(rootProject.projectDir, "mappings").list().toList().forEach { include ":mappings:$it" }
+rootProject.projectDir.resolve("mappings").list().toList().forEach { include(":mappings:$it") }
 
 include("modded")
 setupSRSubproject("build-data")
