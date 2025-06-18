@@ -69,11 +69,9 @@ public class MappingManager {
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
             return ((String) method.invoke(craftMagicNumbers, new Object[0])).describeConstable();
-        } catch (UnsupportedOperationException e) {
+        } catch (ReflectiveOperationException e) {
             // Happens on paper >= 1.21.6
             return Optional.empty();
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to get mappings version", e);
         }
     }
 
