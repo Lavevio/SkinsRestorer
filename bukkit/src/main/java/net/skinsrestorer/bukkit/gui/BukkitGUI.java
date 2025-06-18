@@ -40,7 +40,6 @@ public class BukkitGUI implements GUIManager<Inventory> {
     private final Injector injector;
     private final Server server;
 
-    @SuppressWarnings("UnstableApiUsage")
     private ItemStack createItem(SRInventory.Item entry) {
         XMaterial material = switch (entry.materialType()) {
             case DIRT -> XMaterial.DIRT;
@@ -52,7 +51,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
             case ENCHANTING_TABLE -> XMaterial.ENCHANTING_TABLE;
         };
         ItemStack itemStack = Objects.requireNonNull(material.parseItem());
-        entry.textureHash().ifPresent(hash -> SkullUtil.setSkull(itemStack, hash));
+        entry.textureHash().ifPresent(hash -> SkullUtil.setSkull(itemStack, server, hash));
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
         skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(entry.displayName()));

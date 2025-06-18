@@ -144,7 +144,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
     public void giveSkullItem(SRPlayer player, SRServerPluginMessage.GiveSkullChannelPayload giveSkullPayload) {
         Player bukkitPlayer = player.getAs(Player.class);
         ItemStack itemStack = Objects.requireNonNull(XMaterial.PLAYER_HEAD.parseItem());
-        SkullUtil.setSkull(itemStack, giveSkullPayload.textureHash());
+        SkullUtil.setSkull(itemStack, server, giveSkullPayload.textureHash());
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
         skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(giveSkullPayload.displayName()));
