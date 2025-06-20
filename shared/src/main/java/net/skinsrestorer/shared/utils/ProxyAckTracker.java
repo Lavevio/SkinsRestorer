@@ -64,7 +64,7 @@ public class ProxyAckTracker {
             logger.debug("Backend server '%s' is already marked as broken, skipping state check.".formatted(server));
         } else if (serverNackCounts.compute(server, (key, count) -> count == null ? 1 : count + 1) >= 3) {
             logger.warning(("Backend server '%s' does likely not have SkinsRestorer installed or is not responding to ACK messages. " +
-                    "Please make sure that the server has SkinsRestorer installed and is running the latest version.").formatted(server));
+                    "Please make sure that the server has SkinsRestorer installed and is running the latest version. %s").formatted(server, SRHelpers.DOWNLOAD_URL));
             brokenServers.add(server);
             serverNackCounts.remove(server);
         } else {

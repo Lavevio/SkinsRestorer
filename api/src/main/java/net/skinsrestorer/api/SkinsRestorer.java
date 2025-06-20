@@ -30,7 +30,7 @@ import org.jetbrains.annotations.ApiStatus;
  * SkinsRestorer API <br>
  * Check out our <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">API example</a> plugin <br>
  * For more info please refer first to the <a href="https://skinsrestorer.net/docs/development/api">SkinsRestorer API Docs</a> <br>
- * Advanced help or getting problems? join our discord before submitting issues!!
+ * Advanced help or getting problems? join our Discord before submitting issues!!
  */
 @SuppressWarnings({"unused"})
 public interface SkinsRestorer {

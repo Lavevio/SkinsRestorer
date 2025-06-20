@@ -25,6 +25,7 @@ import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -44,11 +45,12 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (mapping.isEmpty()) {
             logger.severe(("Your Minecraft version (%s) is not supported by this version of SkinsRestorer! " +
-                    "Is there a newer version available? " +
-                    "If not, join our discord server!").formatted(
+                    "Is there a newer version available? %s " +
+                    "If not, join our Discord server!").formatted(
                     MappingManager.getSpigotMappingVersion(server)
                             .or(MappingManager::getPaperMinecraftVersionId)
-                            .orElse("unknown version")
+                            .orElse("unknown version"),
+                    SRHelpers.DOWNLOAD_URL
             ));
 
             if (Boolean.getBoolean("sr.throw-if-mapping-unsupported")) {

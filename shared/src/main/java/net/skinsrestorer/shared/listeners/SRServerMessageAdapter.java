@@ -54,7 +54,7 @@ public final class SRServerMessageAdapter {
                         () -> serverAdapter.openGUI(event.getPlayer(), srInventory);
                 case SRServerPluginMessage.SkinUpdateV2ChannelPayload(SkinProperty skinProperty) -> () -> {
                     UPDATE_V2_PROXY_WARNING.run(() ->
-                            logger.warning("The proxy is running an outdated version of SkinsRestorer. Please update the proxy to the latest version."));
+                            logger.warning("The proxy is running an outdated version of SkinsRestorer. Please update the proxy to the latest version. %s".formatted(SRHelpers.DOWNLOAD_URL)));
                     skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
                 };
                 case SRServerPluginMessage.SkinUpdateV3ChannelPayload(

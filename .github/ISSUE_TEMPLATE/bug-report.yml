@@ -29,7 +29,7 @@ body:
       description: |
         Please check conduct our installation guide and check if all step's have been performed at the [installation guide](https://skinsrestorer.net/docs/installation)
 
-        Unsure or have questions? -> Ask in our [SkinsRestorer discord server](https://skinsrestorer.net/discord)
+        Unsure or have questions? -> Ask in our [SkinsRestorer Discord server](https://skinsrestorer.net/discord)
       options:
       - label: I have read the installation guide and performed all steps
         required: true

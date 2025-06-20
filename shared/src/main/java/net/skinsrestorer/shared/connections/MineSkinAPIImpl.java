@@ -144,7 +144,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                                     logger.severe("This server Origin is not on the api key allowed Origins list!");
                             case "Agent not allowed" ->
                                     logger.severe("SkinsRestorer's agent \"%s\" is not on the api key allowed agents list!".formatted(MINESKIN_USER_AGENT));
-                            default -> logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
+                            default -> logger.severe("Unknown error, please report this to SkinsRestorer's Discord!");
                         }
 
                         throw new MineSkinExceptionShared(Message.ERROR_MS_API_KEY_INVALID);
