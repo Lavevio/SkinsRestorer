@@ -24,6 +24,7 @@ import org.bukkit.Server;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class MappingManager {
     private static final List<IMapping> MAPPINGS = List.of(
@@ -53,13 +54,15 @@ public class MappingManager {
             return Optional.empty();
         }
 
+        Predicate<IMapping> isSupportedSpigotMapping = mapping -> spigotMappingVersion
+                .map(mapping.getSpigotMappingVersion()::contains)
+                .orElse(false);
+        Predicate<IMapping> isSupportedPaperMinecraftVersion = mapping -> paperMinecraftVersionId
+                .map(mapping.getPaperMinecraftVersionId()::contains)
+                .orElse(false);
+
         return MAPPINGS.stream()
-                .filter(mapping -> spigotMappingVersion
-                        .map(mapping.getSpigotMappingVersion()::contains)
-                        .orElse(true))
-                .filter(mapping -> paperMinecraftVersionId
-                        .map(mapping.getPaperMinecraftVersionId()::contains)
-                        .orElse(true))
+                .filter(mapping -> isSupportedSpigotMapping.test(mapping) || isSupportedPaperMinecraftVersion.test(mapping))
                 .findFirst();
     }
 
