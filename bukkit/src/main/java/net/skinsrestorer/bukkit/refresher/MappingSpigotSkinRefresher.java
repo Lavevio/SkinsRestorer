@@ -89,12 +89,12 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         }
 
         @Override
-        public Set<String> getPaperMinecraftVersionId() {
+        public Set<String> getPaperMinecraftVersionIds() {
             return Set.of(); // This is fine, it's not used
         }
 
         @Override
-        public Set<String> getSpigotMappingVersion() {
+        public Set<String> getSpigotMappingVersions() {
             return Set.of(); // This is fine, it's not used
         }
     }

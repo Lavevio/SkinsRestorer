@@ -33,12 +33,12 @@ public interface IMapping {
      *
      * @return The supported paper minecraft version ids versions of the mapping
      */
-    Set<String> getPaperMinecraftVersionId();
+    Set<String> getPaperMinecraftVersionIds();
 
     /**
      * Can be found at <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java">SpigotMC</a>
      *
      * @return The supported spigot mapping versions of the mapping
      */
-    Set<String> getSpigotMappingVersion();
+    Set<String> getSpigotMappingVersions();
 }

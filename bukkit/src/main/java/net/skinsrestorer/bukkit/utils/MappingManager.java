@@ -55,14 +55,14 @@ public class MappingManager {
         }
 
         Predicate<IMapping> isSupportedSpigotMapping = mapping -> spigotMappingVersion
-                .map(mapping.getSpigotMappingVersion()::contains)
+                .map(mapping.getSpigotMappingVersions()::contains)
                 .orElse(false);
-        Predicate<IMapping> isSupportedPaperMinecraftVersion = mapping -> paperMinecraftVersionId
-                .map(mapping.getPaperMinecraftVersionId()::contains)
+        Predicate<IMapping> isSupportedPaperMapping = mapping -> paperMinecraftVersionId
+                .map(mapping.getPaperMinecraftVersionIds()::contains)
                 .orElse(false);
 
         return MAPPINGS.stream()
-                .filter(mapping -> isSupportedSpigotMapping.test(mapping) || isSupportedPaperMinecraftVersion.test(mapping))
+                .filter(mapping -> isSupportedSpigotMapping.test(mapping) || isSupportedPaperMapping.test(mapping))
                 .findFirst();
     }
 
