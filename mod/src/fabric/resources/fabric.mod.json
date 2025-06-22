@@ -17,7 +17,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.skinsrestorer.modded.fabric.SRFabricMod"
+      "net.skinsrestorer.mod.fabric.SRFabricMod"
     ]
   },
   "depends": {
