@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    testFixturesApi(projects.skinsrestorerShared)
+    testFixturesApi(project(":skinsrestorer-shared", "shadow"))
 
     testImplementation("org.bstats:bstats-base:3.1.0")
 
