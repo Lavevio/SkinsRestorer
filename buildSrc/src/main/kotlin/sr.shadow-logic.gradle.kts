@@ -99,10 +99,6 @@ tasks {
     }
 
     shadowJar {
-        minimize {
-            exclude(dependency("org.mariadb.jdbc:mariadb-java-client"))
-            exclude(project(":skinsrestorer-api"))
-        }
         configureRelocations()
         transform(ShadowResourceTransformer())
     }
