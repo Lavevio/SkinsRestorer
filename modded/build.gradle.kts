@@ -3,6 +3,10 @@ plugins {
     id("xyz.wagyourtail.unimined") version "1.3.14"
 }
 
+base {
+    archivesName = "SkinsRestorer"
+}
+
 val main: SourceSet by sourceSets.getting
 val fabric: SourceSet by sourceSets.creating
 val neoforge: SourceSet by sourceSets.creating
