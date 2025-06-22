@@ -110,13 +110,14 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Read modMcVersion from gradle.properties
+      id: modMcVersion
+      run: |
+        modMcVersion=$(grep '^modMcVersion=' gradle.properties | cut -d'=' -f2-)
+        echo "modMcVersion=$modMcVersion" >> "$GITHUB_OUTPUT"
+
     - uses: Kir-Antipov/mc-publish@v3.3
       with:
-        modrinth-id: skinsrestorer
-        modrinth-featured: true
-        modrinth-unfeature-mode: subset
-        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
         github-tag: ${{ inputs.version }}
         github-generate-changelog: false
         github-draft: false
@@ -126,16 +127,35 @@ jobs:
 
         files: |
           build/libs/SkinsRestorer.jar
+          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
+          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+
+        name: SkinsRestorer ${{ inputs.version }}
+        version: ${{ inputs.version }}
+        version-type: release
+        changelog: |
+          [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/plugin/skinsrestorer/version/${{ inputs.version }}) [![hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg)](https://hangar.papermc.io/SRTeam/SkinsRestorer/versions/${{ inputs.version }})
+
+          ${{ steps.github_release.outputs.changelog }}
+
+        retry-attempts: 2
+        retry-delay: 10000
+        fail-mode: fail
+
+    - uses: Kir-Antipov/mc-publish@v3.3
+      with:
+        modrinth-id: skinsrestorer
+        modrinth-featured: true
+        modrinth-unfeature-mode: subset
+        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+        files: |
+          build/libs/SkinsRestorer.jar
 
         name: SkinsRestorer ${{ inputs.version }}
         version: ${{ inputs.version }}
         version-type: release
         changelog: ${{ steps.github_release.outputs.changelog }}
-
-        github-changelog: |
-          [![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/plugin/skinsrestorer/version/${{ inputs.version }}) [![hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg)](https://hangar.papermc.io/SRTeam/SkinsRestorer/versions/${{ inputs.version }})
-
-          ${{ steps.github_release.outputs.changelog }}
 
         loaders: |
           bukkit
@@ -153,6 +173,60 @@ jobs:
           8
           11
           17
+          21
+
+        retry-attempts: 2
+        retry-delay: 10000
+        fail-mode: fail
+
+    - uses: Kir-Antipov/mc-publish@v3.3
+      with:
+        modrinth-id: skinsrestorer
+        modrinth-featured: true
+        modrinth-unfeature-mode: subset
+        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+        files: |
+          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
+
+        name: SkinsRestorer ${{ inputs.version }} Fabric
+        version: ${{ inputs.version }}-fabric
+        version-type: release
+        changelog: ${{ steps.github_release.outputs.changelog }}
+
+        loaders: |
+          fabric
+        game-versions: |
+          ${{ steps.modMcVersion.outputs.modMcVersion }}
+        game-version-filter: releases
+        java: |
+          21
+
+        retry-attempts: 2
+        retry-delay: 10000
+        fail-mode: fail
+
+    - uses: Kir-Antipov/mc-publish@v3.3
+      with:
+        modrinth-id: skinsrestorer
+        modrinth-featured: true
+        modrinth-unfeature-mode: subset
+        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+        files: |
+          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+
+        name: SkinsRestorer ${{ inputs.version }} NeoForge
+        version: ${{ inputs.version }}-neoforge
+        version-type: release
+        changelog: ${{ steps.github_release.outputs.changelog }}
+
+        loaders: |
+          neoforge
+        game-versions: |
+          ${{ steps.modMcVersion.outputs.modMcVersion }}
+        game-version-filter: releases
+        java: |
           21
 
         retry-attempts: 2

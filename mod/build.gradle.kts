@@ -12,7 +12,7 @@ val fabric: SourceSet by sourceSets.creating
 val neoforge: SourceSet by sourceSets.creating
 
 unimined.minecraft {
-    version = "1.21.6"
+    version = property("modMcVersion") as String
 
     mappings {
         intermediary()
