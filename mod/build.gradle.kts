@@ -112,6 +112,9 @@ dependencies {
     modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.5.0-SNAPSHOT")
     modImplementation("dev.architectury:architectury:17.0.6")
 
+    // Mixins
+    compileOnly("org.spongepowered:mixin:0.8.7")
+
     // Needed for modImplementations to load
     fabricModImplementation("net.kyori:adventure-platform-fabric:6.5.0-SNAPSHOT")
     fabricInclude("net.kyori:adventure-platform-fabric:6.5.0-SNAPSHOT")

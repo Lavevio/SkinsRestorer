@@ -1,9 +1,12 @@
 {
   "required": true,
-  "package": "net.skinsrestorer.modded.mixins",
+  "package": "net.skinsrestorer.mod.mixin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "server": [
+  ],
+  "client": [
+    "PlayerTabOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1
