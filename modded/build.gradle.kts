@@ -24,14 +24,12 @@ unimined.minecraft {
                 namespace("intermediary")
             }
         }
+        runs.off = true
+    } else {
         runs {
-            off = true
-        }
-    }
-
-    runs {
-        config("server") {
-            standardInput = System.`in`
+            config("server") {
+                standardInput = System.`in`
+            }
         }
     }
 
@@ -55,6 +53,7 @@ unimined.minecraft(neoforge) {
         loader("11-beta")
     }
 
+    @Suppress("UnstableApiUsage")
     minecraftRemapper.config {
         // neoforge adds 1 conflict, where 2 interfaces have a method with the same name on yarn/mojmap,
         // but the method has different names in the intermediary mappings.
@@ -85,22 +84,29 @@ dependencies {
 
     compileOnly("org.spongepowered:mixin:0.8.7")
 
+    // Shared mods
     modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.4.0")
     modImplementation("dev.architectury:architectury:17.0.6")
 
+    // Needed for modImplementations to load
     fabricModImplementation("net.kyori:adventure-platform-fabric:6.4.0")
     fabricInclude("net.kyori:adventure-platform-fabric:6.4.0")
     fabricModImplementation("dev.architectury:architectury-fabric:17.0.6")
     fabricInclude("dev.architectury:architectury-fabric:17.0.6")
+
+    // Fabric source set
     fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
     fabricInclude("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
     fabricModImplementation("me.lucko:fabric-permissions-api:0.4.0")
     fabricInclude("me.lucko:fabric-permissions-api:0.4.0")
 
+    // Needed for modImplementations to load
     neoforgeModImplementation("net.kyori:adventure-platform-neoforge:6.4.0")
     neoforgeInclude("net.kyori:adventure-platform-neoforge:6.4.0")
     neoforgeModImplementation("dev.architectury:architectury-neoforge:17.0.6")
     neoforgeInclude("dev.architectury:architectury-neoforge:17.0.6")
+
+    // NeoForge source set
     neoforgeModImplementation("org.incendo:cloud-neoforge:2.0.0-SNAPSHOT")
     neoforgeInclude("org.incendo:cloud-neoforge:2.0.0-SNAPSHOT")
 }
