@@ -91,7 +91,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
 
         return new MenuProvider() {
             @Override
-            public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+            public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player player) {
                 ChestMenu menu = new ChestMenu(switch (srInventory.rows()) {
                     case 1 -> MenuType.GENERIC_9x1;
                     case 2 -> MenuType.GENERIC_9x2;
@@ -102,7 +102,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
                     default -> throw new IllegalArgumentException("Invalid rows: " + srInventory.rows());
                 }, id, inventory, new SimpleContainer(9 * srInventory.rows()), srInventory.rows()) {
                     @Override
-                    public void clicked(int slotId, int button, ClickType clickType, Player player) {
+                    public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player player) {
                         Map<ClickEventType, SRInventory.ClickEventAction> slotHandlers = handlers.get(slotId);
                         if (slotHandlers != null) {
                             SRInventory.ClickEventAction action = slotHandlers.get(switch (clickType) {

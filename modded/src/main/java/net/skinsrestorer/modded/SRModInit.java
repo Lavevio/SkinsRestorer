@@ -115,7 +115,7 @@ public class SRModInit implements SRServerPlatformInit {
 
     @Override
     public void initGUIListener() {
-        // TODO: Implement GUI
+        // Not needed, MC handles the GUI events inside the menu class
     }
 
     @Override
