@@ -116,7 +116,8 @@ jobs:
         modMcVersion=$(grep '^modMcVersion=' gradle.properties | cut -d'=' -f2-)
         echo "modMcVersion=$modMcVersion" >> "$GITHUB_OUTPUT"
 
-    - uses: Kir-Antipov/mc-publish@v3.3
+    - name: Release to GitHub
+      uses: Kir-Antipov/mc-publish@v3.3
       with:
         github-tag: ${{ inputs.version }}
         github-generate-changelog: false
@@ -142,7 +143,8 @@ jobs:
         retry-delay: 10000
         fail-mode: fail
 
-    - uses: Kir-Antipov/mc-publish@v3.3
+    - name: Release plugin to Modrinth
+      uses: Kir-Antipov/mc-publish@v3.3
       with:
         modrinth-id: skinsrestorer
         modrinth-featured: true
@@ -179,7 +181,8 @@ jobs:
         retry-delay: 10000
         fail-mode: fail
 
-    - uses: Kir-Antipov/mc-publish@v3.3
+    - name: Release Fabric mod to Modrinth
+      uses: Kir-Antipov/mc-publish@v3.3
       with:
         modrinth-id: skinsrestorer
         modrinth-featured: true
@@ -206,7 +209,8 @@ jobs:
         retry-delay: 10000
         fail-mode: fail
 
-    - uses: Kir-Antipov/mc-publish@v3.3
+    - name: Release NeoForge mod to Modrinth
+      uses: Kir-Antipov/mc-publish@v3.3
       with:
         modrinth-id: skinsrestorer
         modrinth-featured: true
