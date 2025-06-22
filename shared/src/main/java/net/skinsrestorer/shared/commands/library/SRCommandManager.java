@@ -21,7 +21,7 @@ import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinVariant;
-import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.PlayerSelectorArgumentParser;
 import net.skinsrestorer.shared.config.ProxyConfig;

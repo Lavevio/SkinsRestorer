@@ -4,12 +4,13 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerShared)
+    implementation(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
     implementation(projects.multiver.bukkit.spigot)
     implementation(projects.multiver.bukkit.paper)
     implementation(projects.multiver.bukkit.v17)
     implementation(projects.multiver.bukkit.folia)
+    implementation(projects.multiver.miniplaceholders)
 
     rootProject.subprojects.forEach {
         if (!it.name.startsWith("mc-")) return@forEach
@@ -17,7 +18,7 @@ dependencies {
         compileOnly(project(":mappings:${it.name}"))
         runtimeOnly(project(":mappings:${it.name}", "remapped"))
     }
-    testImplementation(testFixtures(projects.skinsrestorerShared))
+    testImplementation(testFixtures(projects.test))
 
     compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT") {
         isTransitive = false

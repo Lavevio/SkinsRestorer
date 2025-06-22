@@ -23,7 +23,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.hooks.SRMiniPlaceholdersAPIExpansion;
+import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;

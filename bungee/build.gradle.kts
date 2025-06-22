@@ -4,11 +4,11 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerShared)
+    implementation(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bungee.shared)
     implementation(projects.multiver.bungee.propertyold)
     implementation(projects.multiver.bungee.propertynew)
-    testImplementation(testFixtures(projects.skinsrestorerShared))
+    testImplementation(testFixtures(projects.test))
 
     compileOnly("net.md-5:bungeecord-api:1.21-R0.3") {
         isTransitive = false

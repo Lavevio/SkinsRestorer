@@ -35,7 +35,7 @@ setOf("shared", "v1-7", "spigot", "paper", "folia").forEach {
     include("multiver:bukkit:$it")
 }
 
-include("multiver:kyori")
+include("test")
 
 rootProject.projectDir.resolve("mappings").list().toList().forEach { include(":mappings:$it") }
 
@@ -44,6 +44,7 @@ setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("scissors")
 setupSRSubproject("shared")
+include("multiver:miniplaceholders")
 
 setupSRSubproject("bukkit")
 setupSRSubproject("bungee")

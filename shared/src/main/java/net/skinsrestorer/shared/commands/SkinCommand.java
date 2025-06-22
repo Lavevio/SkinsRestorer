@@ -25,7 +25,7 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
-import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;

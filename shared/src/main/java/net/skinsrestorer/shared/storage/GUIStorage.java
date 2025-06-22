@@ -21,7 +21,7 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinIdentifier;
-import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.gui.GUIUtils;
