@@ -18,15 +18,6 @@ unimined.minecraft {
         devFallbackNamespace("official")
     }
 
-    mods.modImplementation {
-        mixinRemap {
-            @Suppress("UnstableApiUsage")
-            reset()
-            enableBaseMixin()
-            enableMixinExtra()
-        }
-    }
-
     if (sourceSet == main) {
         mods {
             modImplementation {
@@ -50,6 +41,15 @@ unimined.minecraft(fabric) {
     fabric {
         loader("0.16.14")
     }
+
+    mods.modImplementation {
+        mixinRemap {
+            @Suppress("UnstableApiUsage")
+            reset()
+            enableBaseMixin()
+            enableMixinExtra()
+        }
+    }
 }
 
 unimined.minecraft(neoforge) {
@@ -66,6 +66,15 @@ unimined.minecraft(neoforge) {
         // this is a conflict because they have a class that extends both interfaces.
         // this shouldn't be a problem as long as named mappings don't make the name of those 2 methods different.
         ignoreConflicts(true)
+    }
+
+    mods.modImplementation {
+        mixinRemap {
+            @Suppress("UnstableApiUsage")
+            reset()
+            enableBaseMixin()
+            enableMixinExtra()
+        }
     }
 }
 
