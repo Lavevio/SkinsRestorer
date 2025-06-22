@@ -41,6 +41,15 @@ unimined.minecraft(fabric) {
     fabric {
         loader("0.16.14")
     }
+
+    mods.modImplementation {
+        mixinRemap {
+            @Suppress("UnstableApiUsage")
+            reset()
+            enableBaseMixin()
+            enableMixinExtra()
+        }
+    }
 }
 
 unimined.minecraft(neoforge) {
