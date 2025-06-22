@@ -40,3 +40,6 @@ type = "required"
 versionRange = "[1.0,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[mixins]]
+config = "skinsrestorer.mixins.json"
