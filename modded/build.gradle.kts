@@ -95,8 +95,6 @@ dependencies {
     fabricInclude(projects.skinsrestorerShared)
     neoforgeInclude(projects.skinsrestorerShared)
 
-    compileOnly("org.spongepowered:mixin:0.8.7")
-
     // Shared mods
     modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.4.0")
     modImplementation("dev.architectury:architectury:17.0.6")
