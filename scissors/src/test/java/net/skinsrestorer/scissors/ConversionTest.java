@@ -19,6 +19,7 @@ package net.skinsrestorer.scissors;
 
 import lombok.SneakyThrows;
 import net.skinsrestorer.scissors.skin.SkinDefinition;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -28,6 +29,11 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConversionTest {
+    @BeforeAll
+    public static void setupHeadless() {
+        System.setProperty("java.awt.headless", "true");
+    }
+
     public boolean imagesAreEqual(BufferedImage img1, BufferedImage img2) {
         if (img1.getWidth() != img2.getWidth() || img1.getHeight() != img2.getHeight()) {
             return false;
