@@ -39,7 +39,6 @@ include("test")
 
 rootProject.projectDir.resolve("mappings").list().toList().forEach { include(":mappings:$it") }
 
-include("modded")
 setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("scissors")
@@ -49,6 +48,7 @@ include("multiver:miniplaceholders")
 setupSRSubproject("bukkit")
 setupSRSubproject("bungee")
 setupSRSubproject("velocity")
+setupSRSubproject("mod")
 
 setupSubproject("skinsrestorer") {
     projectDir = file("universal")

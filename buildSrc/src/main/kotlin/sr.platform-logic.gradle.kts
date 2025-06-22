@@ -20,11 +20,7 @@ val downgradePlatformShadow = tasks.register<ShadeJar>("downgradePlatformShadow"
 
     inputFile = downgradePlatformBase.get().archiveFile
     downgradeTo = JavaVersion.VERSION_1_8
-    archiveFileName.set(
-        "SkinsRestorer-${
-            project.name.substringAfter("skinsrestorer-").replaceFirstChar(Char::titlecase)
-        }-${project.version}-downgraded.jar"
-    )
+    archiveFileName.set("${base.archivesName.get()}-${project.version}-downgraded.jar")
 
     destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
     shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }

@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.runwaterfall)
 }
 
+base {
+    archivesName = "SkinsRestorer-Bungee"
+}
+
 dependencies {
     implementation(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bungee.shared)

@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.runvelocity)
 }
 
+base {
+    archivesName = "SkinsRestorer-Velocity"
+}
+
 dependencies {
     implementation(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.miniplaceholders)

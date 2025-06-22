@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.modded.neoforge;
 
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
 import net.skinsrestorer.modded.SRMod;
 

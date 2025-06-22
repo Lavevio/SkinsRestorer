@@ -4,7 +4,7 @@ plugins {
 }
 
 base {
-    archivesName = "SkinsRestorer"
+    archivesName = "SkinsRestorer-Mod"
 }
 
 val main: SourceSet by sourceSets.getting

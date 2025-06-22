@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.runpaper)
 }
 
+base {
+    archivesName = "SkinsRestorer-Bukkit"
+}
+
 dependencies {
     implementation(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
