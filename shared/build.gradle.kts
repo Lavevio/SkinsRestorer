@@ -14,7 +14,9 @@ dependencies {
     }
 
     api("com.github.SkinsRestorer:ConfigMe:beefdbdf7e")
-    api("ch.jalu:injector:1.0")
+    api("ch.jalu:injector:1.0") {
+        exclude("javax.annotation")
+    }
 
     api("org.incendo:cloud-annotations:2.0.0")
     annotationProcessor("org.incendo:cloud-annotations:2.0.0")

@@ -37,6 +37,7 @@ import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -95,7 +96,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
 
     @Override
     public InputStream getResource(String resource) {
-        return getClass().getClassLoader().getResourceAsStream(resource);
+        return SRPlatformAdapter.class.getClassLoader().getResourceAsStream(resource);
     }
 
     @Override

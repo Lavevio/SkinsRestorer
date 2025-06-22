@@ -18,6 +18,14 @@
 package net.skinsrestorer.shared.utils;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.injector.Injector;
+import ch.jalu.injector.InjectorBuilder;
+import ch.jalu.injector.handlers.dependency.CyclicDependenciesDetector;
+import ch.jalu.injector.handlers.dependency.FactoryDependencyHandler;
+import ch.jalu.injector.handlers.dependency.SavedAnnotationsHandler;
+import ch.jalu.injector.handlers.dependency.SingletonStoreDependencyHandler;
+import ch.jalu.injector.handlers.instantiation.DefaultInjectionProvider;
+import ch.jalu.injector.handlers.instantiation.ProviderHandler;
 import net.skinsrestorer.api.Base64Utils;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -303,5 +311,24 @@ public class SRHelpers {
 
     public static void mustSupply(Supplier<Runnable> supplier) {
         supplier.get().run();
+    }
+
+    public static Injector createInjector() {
+        return new InjectorBuilder()
+                .addHandlers(
+                        // (Annotation, Object) handler
+                        new SavedAnnotationsHandler(),
+                        // Provider / Factory / SingletonStore
+                        new ProviderHandler(),
+                        new FactoryDependencyHandler(),
+                        new SingletonStoreDependencyHandler(),
+                        // Instantiation provider
+                        new CyclicDependenciesDetector(),
+                        new DefaultInjectionProvider("net.skinsrestorer")
+                        // Unused and collides with mc classpath
+                        // PostConstruct
+                        // new PostConstructMethodInvoker()
+                )
+                .create();
     }
 }

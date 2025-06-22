@@ -18,11 +18,11 @@
 package net.skinsrestorer.shared.plugin;
 
 import ch.jalu.injector.Injector;
-import ch.jalu.injector.InjectorBuilder;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.log.SRPlatformLogger;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -39,7 +39,7 @@ public class SRBootstrapper {
             Class<? extends SRPlatformInit> initClass) {
         SRPlugin srPlugin = null;
         try {
-            Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
+            Injector injector = SRHelpers.createInjector();
 
             platformRegister.forEach(pc -> pc.accept(injector));
 

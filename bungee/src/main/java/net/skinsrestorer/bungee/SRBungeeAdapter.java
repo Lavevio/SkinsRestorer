@@ -28,6 +28,7 @@ import net.skinsrestorer.bungee.listeners.ForceAliveListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -62,7 +63,7 @@ public class SRBungeeAdapter implements SRProxyAdapter {
 
     @Override
     public InputStream getResource(String resource) {
-        return getClass().getClassLoader().getResourceAsStream(resource);
+        return SRPlatformAdapter.class.getClassLoader().getResourceAsStream(resource);
     }
 
     @Override

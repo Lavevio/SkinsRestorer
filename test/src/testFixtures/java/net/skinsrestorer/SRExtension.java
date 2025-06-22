@@ -18,10 +18,10 @@
 package net.skinsrestorer;
 
 import ch.jalu.injector.Injector;
-import ch.jalu.injector.InjectorBuilder;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.log.SRPlatformLogger;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.junit.jupiter.api.extension.*;
 
 public class SRExtension implements BeforeAllCallback, ParameterResolver {
@@ -38,7 +38,7 @@ public class SRExtension implements BeforeAllCallback, ParameterResolver {
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
+        Injector injector = SRHelpers.createInjector();
 
         SRLogger logger = new SRLogger(new SRPlatformLogger() {
             @Override

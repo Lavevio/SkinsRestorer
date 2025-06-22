@@ -25,6 +25,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -60,7 +61,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
 
     @Override
     public InputStream getResource(String resource) {
-        return getClass().getClassLoader().getResourceAsStream(resource);
+        return SRPlatformAdapter.class.getClassLoader().getResourceAsStream(resource);
     }
 
     @Override
