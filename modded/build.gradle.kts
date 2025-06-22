@@ -18,6 +18,15 @@ unimined.minecraft {
         devFallbackNamespace("official")
     }
 
+    mods.modImplementation {
+        mixinRemap {
+            @Suppress("UnstableApiUsage")
+            reset()
+            enableBaseMixin()
+            enableMixinExtra()
+        }
+    }
+
     if (sourceSet == main) {
         mods {
             modImplementation {
@@ -40,15 +49,6 @@ unimined.minecraft(fabric) {
 
     fabric {
         loader("0.16.14")
-    }
-
-    mods.modImplementation {
-        mixinRemap {
-            @Suppress("UnstableApiUsage")
-            reset()
-            enableBaseMixin()
-            enableMixinExtra()
-        }
     }
 }
 
