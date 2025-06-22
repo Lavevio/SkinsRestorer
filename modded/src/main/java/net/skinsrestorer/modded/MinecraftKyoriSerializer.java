@@ -20,12 +20,12 @@ package net.skinsrestorer.modded;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public class MinecraftKyoriSerializer {
     @SneakyThrows
-    public static MutableComponent toNative(ComponentString componentString) {
+    public static Component toNative(ComponentString componentString) {
         return NonWrappingComponentSerializer.INSTANCE.serialize(GsonComponentSerializer.gson().deserialize(componentString.jsonString()));
     }
 }

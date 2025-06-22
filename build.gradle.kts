@@ -37,6 +37,10 @@ allprojects {
         maven("https://libraries.minecraft.net/") {
             name = "Minecraft Repository"
         }
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatype-oss-snapshots1"
+            mavenContent { snapshotsOnly() }
+        }
         maven("https://oss.sonatype.org/content/repositories/snapshots/") {
             name = "Sonatype Repository"
         }

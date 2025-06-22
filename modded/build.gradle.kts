@@ -96,12 +96,12 @@ dependencies {
     neoforgeInclude(projects.skinsrestorerShared)
 
     // Shared mods
-    modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.4.0")
+    modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.5.0-SNAPSHOT")
     modImplementation("dev.architectury:architectury:17.0.6")
 
     // Needed for modImplementations to load
-    fabricModImplementation("net.kyori:adventure-platform-fabric:6.4.0")
-    fabricInclude("net.kyori:adventure-platform-fabric:6.4.0")
+    fabricModImplementation("net.kyori:adventure-platform-fabric:6.5.0-SNAPSHOT")
+    fabricInclude("net.kyori:adventure-platform-fabric:6.5.0-SNAPSHOT")
     fabricModImplementation("dev.architectury:architectury-fabric:17.0.6")
     fabricInclude("dev.architectury:architectury-fabric:17.0.6")
 
@@ -112,8 +112,8 @@ dependencies {
     fabricInclude("me.lucko:fabric-permissions-api:0.4.0")
 
     // Needed for modImplementations to load
-    neoforgeModImplementation("net.kyori:adventure-platform-neoforge:6.4.0")
-    neoforgeInclude("net.kyori:adventure-platform-neoforge:6.4.0")
+    neoforgeModImplementation("net.kyori:adventure-platform-neoforge:6.5.0-SNAPSHOT")
+    neoforgeInclude("net.kyori:adventure-platform-neoforge:6.5.0-SNAPSHOT")
     neoforgeModImplementation("dev.architectury:architectury-neoforge:17.0.6")
     neoforgeInclude("dev.architectury:architectury-neoforge:17.0.6")
 
