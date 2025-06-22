@@ -91,9 +91,18 @@ val neoforgeImplementation: Configuration by configurations.getting {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerShared)
-    fabricInclude(projects.skinsrestorerShared)
-    neoforgeInclude(projects.skinsrestorerShared)
+    implementation(projects.skinsrestorerShared) {
+        exclude("com.google.code.gson")
+        exclude("com.google.errorprone")
+    }
+    fabricInclude(projects.skinsrestorerShared) {
+        exclude("com.google.code.gson")
+        exclude("com.google.errorprone")
+    }
+    neoforgeInclude(projects.skinsrestorerShared) {
+        exclude("com.google.code.gson")
+        exclude("com.google.errorprone")
+    }
 
     // Shared mods
     modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.5.0-SNAPSHOT")
