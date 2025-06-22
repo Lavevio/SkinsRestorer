@@ -27,6 +27,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Location;
+import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
@@ -172,7 +173,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                         } catch (ReflectiveOperationException ignored5) {
                             Object dimensionKey = ReflectionUtil.invokeObjectMethod(worldObject, "getDimensionKey");
                             boolean debug = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isDebugWorld");
-                            boolean flat = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isFlatWorld");
+                            boolean flat = isFlatWorld(player);
                             List<Object> gameModeList = ReflectionUtil.getFieldByTypeList(playerIntManager, "EnumGamemode");
 
                             Enum<?> enumGamemodePrevious = (Enum<?>) getFromListExcluded(gameModeList, enumGamemode);
@@ -215,17 +216,12 @@ public final class SpigotSkinRefresher implements SkinRefresher {
 
             resendInfoPackets(player, player);
 
-            boolean sendRespawnPacketDirectly = viaProvider.test(() -> {
-                Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
-                boolean flat = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isFlatWorld");
-
-                return new ViaPacketData(
-                        player,
-                        SRHelpers.hashSha256ToLong(String.valueOf(player.getWorld().getSeed())),
-                        ((Integer) gamemodeId).shortValue(),
-                        flat
-                );
-            });
+            boolean sendRespawnPacketDirectly = viaProvider.test(() -> new ViaPacketData(
+                    player,
+                    SRHelpers.hashSha256ToLong(String.valueOf(player.getWorld().getSeed())),
+                    ((Integer) gamemodeId).shortValue(),
+                    isFlatWorld(player)
+            ));
 
             if (sendRespawnPacketDirectly) {
                 sendPacket(player, respawn);
@@ -248,6 +244,11 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             logger.severe("Failed to refresh skin for player %s because of %s (more info in debug)".formatted(player.getName(), e.getClass().getSimpleName()));
             logger.debug(e);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static boolean isFlatWorld(Player player) {
+        return player.getWorld().getWorldType() == WorldType.FLAT;
     }
 
     @Override
