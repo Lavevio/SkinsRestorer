@@ -4,8 +4,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(projects.skinsrestorerBuildData)
-    implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared) {
         exclude("net.kyori")
     }

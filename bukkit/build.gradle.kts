@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
     implementation(projects.multiver.bukkit.shared)
     implementation(projects.multiver.bukkit.spigot)
@@ -46,7 +45,6 @@ dependencies {
 
     compileOnly("com.mojang:authlib:2.0.27")
 
-    testImplementation(projects.skinsrestorerBuildData)
     testImplementation("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {
         isTransitive = false
     }

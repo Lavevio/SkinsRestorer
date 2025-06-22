@@ -14,9 +14,9 @@
   },
   "license": "GPL-3.0",
   "icon": "assets/skinsrestorer/icon.png",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
-    "server": [
+    "main": [
       "net.skinsrestorer.modded.fabric.SRFabricMod"
     ]
   },

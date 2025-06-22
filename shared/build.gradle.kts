@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerBuildData)
-    implementation(projects.skinsrestorerApi)
+    api(projects.skinsrestorerBuildData)
+    api(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerScissors)
     api(project(":multiver:kyori", "shadow")) {
         exclude("org.google.code.gson", "gson")

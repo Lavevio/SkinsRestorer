@@ -17,27 +17,15 @@
  */
 package net.skinsrestorer.modded;
 
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
-import net.lenni0451.mcstructs.nbt.NbtTag;
-import net.lenni0451.mcstructs.nbt.io.NbtIO;
-import net.lenni0451.mcstructs.text.TextComponent;
-import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
+import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.minecraft.network.chat.MutableComponent;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public class MinecraftKyoriSerializer {
     @SneakyThrows
-    public static Component toNative(ComponentString componentString) {
-        TextComponent textComponent = TextComponentCodec.V1_21_4.deserializeJson(componentString.jsonString());
-        NbtTag compoundTag = TextComponentCodec.V1_21_4.serializeNbtTree(textComponent);
-        RegistryFriendlyByteBuf registryFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);
-        NbtIO.V1_12.writeUnnamed(new ByteBufOutputStream(registryFriendlyByteBuf), compoundTag);
-
-        return ComponentSerialization.TRUSTED_STREAM_CODEC.decode(registryFriendlyByteBuf);
+    public static MutableComponent toNative(ComponentString componentString) {
+        return NonWrappingComponentSerializer.INSTANCE.serialize(GsonComponentSerializer.gson().deserialize(componentString.jsonString()));
     }
 }

@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
     implementation(projects.multiver.bungee.shared)
     implementation(projects.multiver.bungee.propertyold)

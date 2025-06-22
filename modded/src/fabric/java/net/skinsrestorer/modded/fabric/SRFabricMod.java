@@ -17,12 +17,12 @@
  */
 package net.skinsrestorer.modded.fabric;
 
-import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.api.ModInitializer;
 import net.skinsrestorer.modded.SRMod;
 
-public class SRFabricMod implements DedicatedServerModInitializer {
+public class SRFabricMod implements ModInitializer {
     @Override
-    public void onInitializeServer() {
+    public void onInitialize() {
         SRMod.init();
     }
 }
