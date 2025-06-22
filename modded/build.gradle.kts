@@ -25,6 +25,7 @@ unimined.minecraft {
             }
         }
         runs.off = true
+        defaultRemapJar = false
     } else {
         runs {
             config("server") {
@@ -32,8 +33,6 @@ unimined.minecraft {
             }
         }
     }
-
-    defaultRemapJar = false
 }
 
 unimined.minecraft(fabric) {
@@ -42,8 +41,6 @@ unimined.minecraft(fabric) {
     fabric {
         loader("0.16.14")
     }
-
-    defaultRemapJar = true
 }
 
 unimined.minecraft(neoforge) {
@@ -61,8 +58,6 @@ unimined.minecraft(neoforge) {
         // this shouldn't be a problem as long as named mappings don't make the name of those 2 methods different.
         ignoreConflicts(true)
     }
-
-    defaultRemapJar = true
 }
 
 val modImplementation: Configuration by configurations.getting
