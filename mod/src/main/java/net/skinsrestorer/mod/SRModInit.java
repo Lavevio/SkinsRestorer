@@ -30,6 +30,7 @@ import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.mod.listener.AdminInfoListener;
 import net.skinsrestorer.mod.listener.PlayerJoinListener;
 import net.skinsrestorer.mod.listener.ServerMessageListener;
+import net.skinsrestorer.mod.wrapper.ModComponentHelper;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.log.SRChatColor;
@@ -100,13 +101,13 @@ public class SRModInit implements SRServerPlatformInit {
     @Override
     public void initPermissions() {
         for (PermissionRegistry permission : PermissionRegistry.values()) {
-            Component description = MinecraftKyoriSerializer.toNative(locale.getMessageRequired(locale.getDefaultForeign(), permission.getDescription()));
+            Component description = ModComponentHelper.deserialize(locale.getMessageRequired(locale.getDefaultForeign(), permission.getDescription()));
 
             SRModPlatform.INSTANCE.registerPermission(permission.getPermission(), description);
         }
 
         for (PermissionGroup group : PermissionGroup.values()) {
-            Component description = MinecraftKyoriSerializer.toNative(locale.getMessageRequired(locale.getDefaultForeign(), group.getDescription()));
+            Component description = ModComponentHelper.deserialize(locale.getMessageRequired(locale.getDefaultForeign(), group.getDescription()));
 
             SRModPlatform.INSTANCE.registerPermission(group.getBasePermission(), description);
             SRModPlatform.INSTANCE.registerPermission(group.getWildcard(), description);

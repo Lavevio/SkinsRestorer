@@ -39,7 +39,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.mod.MinecraftKyoriSerializer;
+import net.skinsrestorer.mod.wrapper.ModComponentHelper;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
 import net.skinsrestorer.shared.gui.ActionDataCallback;
 import net.skinsrestorer.shared.gui.ClickEventType;
@@ -75,8 +75,8 @@ public class ModGUI implements GUIManager<MenuProvider> {
 
             dataComponentMap.set(DataComponents.PROFILE, new ResolvableProfile(Optional.empty(), Optional.empty(), propertyMap));
         });
-        dataComponentMap.set(DataComponents.ITEM_NAME, MinecraftKyoriSerializer.toNative(entry.displayName()));
-        dataComponentMap.set(DataComponents.LORE, new ItemLore(entry.lore().stream().map(MinecraftKyoriSerializer::toNative).toList()));
+        dataComponentMap.set(DataComponents.ITEM_NAME, ModComponentHelper.deserialize(entry.displayName()));
+        dataComponentMap.set(DataComponents.LORE, new ItemLore(entry.lore().stream().map(ModComponentHelper::deserialize).toList()));
         if (entry.enchantmentGlow()) {
             dataComponentMap.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         }
@@ -141,7 +141,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
 
             @Override
             public @NotNull Component getDisplayName() {
-                return MinecraftKyoriSerializer.toNative(srInventory.title());
+                return ModComponentHelper.deserialize(srInventory.title());
             }
         };
     }

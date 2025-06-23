@@ -20,7 +20,6 @@ package net.skinsrestorer.mod.wrapper;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.minecraft.commands.CommandSourceStack;
-import net.skinsrestorer.mod.MinecraftKyoriSerializer;
 import net.skinsrestorer.mod.SRModAdapter;
 import net.skinsrestorer.mod.SRModPlatform;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
@@ -39,7 +38,7 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public void sendMessage(ComponentString messageJson) {
-        sender.sendSystemMessage(MinecraftKyoriSerializer.toNative(messageJson));
+        sender.sendSystemMessage(ModComponentHelper.deserialize(messageJson));
     }
 
     @Override

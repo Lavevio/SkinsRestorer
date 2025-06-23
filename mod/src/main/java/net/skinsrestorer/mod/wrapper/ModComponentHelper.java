@@ -15,17 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.mod;
+package net.skinsrestorer.mod.wrapper;
 
-import lombok.SneakyThrows;
 import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.network.chat.Component;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
-public class MinecraftKyoriSerializer {
-    @SneakyThrows
-    public static Component toNative(ComponentString componentString) {
-        return NonWrappingComponentSerializer.INSTANCE.serialize(GsonComponentSerializer.gson().deserialize(componentString.jsonString()));
+public class ModComponentHelper {
+    public static Component deserialize(ComponentString messageJson) {
+        return NonWrappingComponentSerializer.INSTANCE.serialize(GsonComponentSerializer.gson().deserialize(messageJson.jsonString()));
     }
 }
