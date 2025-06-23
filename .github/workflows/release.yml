@@ -150,6 +150,43 @@ jobs:
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
+          build/libs/SkinsRestorer.jar
+
+        name: SkinsRestorer ${{ inputs.version }}
+        version: ${{ inputs.version }}
+        version-type: release
+        changelog: ${{ steps.github_release.outputs.changelog }}
+
+        loaders: |
+          bukkit
+          bungeecord
+          folia
+          paper
+          purpur
+          spigot
+          velocity
+          waterfall
+        game-versions: |
+          >=1.8.0
+        game-version-filter: releases
+        java: |
+          8
+          11
+          17
+          21
+
+        retry-attempts: 2
+        retry-delay: 10000
+        fail-mode: fail
+
+    - uses: Kir-Antipov/mc-publish@v3.3
+      with:
+        modrinth-id: skinsrestorer
+        modrinth-featured: true
+        modrinth-unfeature-mode: subset
+        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+        files: |
           mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
 
         name: SkinsRestorer ${{ inputs.version }} Fabric
@@ -190,43 +227,6 @@ jobs:
           ${{ steps.modMcVersion.outputs.modMcVersion }}
         game-version-filter: releases
         java: |
-          21
-
-        retry-attempts: 2
-        retry-delay: 10000
-        fail-mode: fail
-
-    - uses: Kir-Antipov/mc-publish@v3.3
-      with:
-        modrinth-id: skinsrestorer
-        modrinth-featured: true
-        modrinth-unfeature-mode: subset
-        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-        files: |
-          build/libs/SkinsRestorer.jar
-
-        name: SkinsRestorer ${{ inputs.version }}
-        version: ${{ inputs.version }}
-        version-type: release
-        changelog: ${{ steps.github_release.outputs.changelog }}
-
-        loaders: |
-          bukkit
-          bungeecord
-          folia
-          paper
-          purpur
-          spigot
-          velocity
-          waterfall
-        game-versions: |
-          >=1.8.0
-        game-version-filter: releases
-        java: |
-          8
-          11
-          17
           21
 
         retry-attempts: 2
