@@ -101,17 +101,19 @@ val neoforgeImplementation: Configuration by configurations.getting {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerShared) {
-        exclude("com.google.code.gson")
-        exclude("com.google.errorprone")
-    }
-    fabricInclude(projects.skinsrestorerShared) {
-        exclude("com.google.code.gson")
-        exclude("com.google.errorprone")
-    }
-    neoforgeInclude(projects.skinsrestorerShared) {
-        exclude("com.google.code.gson")
-        exclude("com.google.errorprone")
+    setOf(projects.skinsrestorerShared, projects.multiver.miniplaceholders).forEach {
+        implementation(it) {
+            exclude("com.google.code.gson")
+            exclude("com.google.errorprone")
+        }
+        fabricInclude(it) {
+            exclude("com.google.code.gson")
+            exclude("com.google.errorprone")
+        }
+        neoforgeInclude(it) {
+            exclude("com.google.code.gson")
+            exclude("com.google.errorprone")
+        }
     }
 
     // Shared mods

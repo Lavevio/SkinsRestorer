@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.api.semver.SemanticVersion;
+import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
 import net.skinsrestorer.mod.listener.AdminInfoListener;
 import net.skinsrestorer.mod.listener.PlayerJoinListener;
 import net.skinsrestorer.mod.listener.ServerMessageListener;
@@ -73,6 +74,18 @@ public class SRModInit implements SRServerPlatformInit {
     @Override
     public void initAdminInfoListener() {
         PlayerEvent.PLAYER_JOIN.register(injector.getSingleton(AdminInfoListener.class));
+    }
+
+    @Override
+    public void placeholderSetupHook() {
+        if (adapter.getPluginInfo("miniplaceholders").isPresent()) {
+            new SRMiniPlaceholdersAPIExpansion<ServerPlayer>(
+                    adapter,
+                    audience -> audience instanceof ServerPlayer,
+                    wrapper::player
+            ).register();
+            logger.info("MiniPlaceholders expansion registered!");
+        }
     }
 
     @Override

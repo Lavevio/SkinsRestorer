@@ -37,7 +37,7 @@ import java.util.List;
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer",
         version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL,
         authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"},
-        dependencies = {@Dependency(id = "floodgate", optional = true)})
+        dependencies = {@Dependency(id = "floodgate", optional = true), @Dependency(id = "miniplaceholders", optional = true)})
 public class SRVelocityBootstrap {
     @Inject
     private ProxyServer proxy;
