@@ -94,8 +94,8 @@ public class SRModInit implements SRServerPlatformInit {
     }
 
     private void checkViaVersion() {
-        Optional<PluginInfo> viaVersion = adapter.getPluginInfo("ViaVersion");
-        Optional<PluginInfo> viaBackwards = adapter.getPluginInfo("ViaBackwards");
+        Optional<PluginInfo> viaVersion = adapter.getPluginInfo("viaversion");
+        Optional<PluginInfo> viaBackwards = adapter.getPluginInfo("viabackwards");
         if (viaVersion.isEmpty() || viaBackwards.isEmpty()) {
             return;
         }
