@@ -194,7 +194,12 @@ public class SRModAdapter implements SRServerAdapter {
                         plugin.getName(),
                         plugin.getVersion(),
                         "N/A",
-                        plugin.getAuthors().toArray(new String[0])
+                        Map.of(
+                                "homepage", plugin.getHomepage().orElse("N/A"),
+                                "sources", plugin.getSources().orElse("N/A"),
+                                "issueTracker", plugin.getIssueTracker().orElse("N/A")
+                        ),
+                        List.copyOf(plugin.getAuthors())
                 )).collect(Collectors.toList());
     }
 

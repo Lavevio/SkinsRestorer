@@ -232,7 +232,10 @@ public class SRBukkitAdapter implements SRServerAdapter {
                         plugin.getName(),
                         plugin.getDescription().getVersion(),
                         plugin.getDescription().getMain(),
-                        plugin.getDescription().getAuthors().toArray(new String[0])
+                        Map.of(
+                                "website", Objects.requireNonNullElse(plugin.getDescription().getWebsite(), "N/A")
+                        ),
+                        List.copyOf(plugin.getDescription().getAuthors())
                 )).collect(Collectors.toList());
     }
 

@@ -40,10 +40,7 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 
 import javax.inject.Inject;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -133,7 +130,8 @@ public class SRBungeeAdapter implements SRProxyAdapter {
                         p.getDescription().getName(),
                         p.getDescription().getVersion(),
                         p.getDescription().getMain(),
-                        new String[]{p.getDescription().getAuthor()}
+                        Map.of(),
+                        List.of(p.getDescription().getAuthor())
                 )).collect(Collectors.toList());
     }
 

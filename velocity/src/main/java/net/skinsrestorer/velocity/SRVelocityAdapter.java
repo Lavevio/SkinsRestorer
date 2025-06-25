@@ -39,10 +39,7 @@ import org.incendo.cloud.velocity.SRVelocityCommandManager;
 
 import javax.inject.Inject;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -131,7 +128,10 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
                 p.getDescription().getName().orElseGet(() -> p.getDescription().getId()),
                 p.getDescription().getVersion().orElse("Unknown"),
                 p.getInstance().map(i -> i.getClass().getCanonicalName()).orElse("N/A"),
-                p.getDescription().getAuthors().toArray(new String[0])
+                Map.of(
+                        "url", p.getDescription().getUrl().orElse("N/A")
+                ),
+                List.copyOf(p.getDescription().getAuthors())
         )).collect(Collectors.toList());
     }
 

@@ -19,7 +19,11 @@ package net.skinsrestorer.shared.info;
 
 import net.skinsrestorer.api.semver.SemanticVersion;
 
-public record PluginInfo(boolean enabled, String id, String name, String version, String entryPoint, String[] authors) {
+import java.util.List;
+import java.util.Map;
+
+public record PluginInfo(boolean enabled, String id, String name, String version, String entryPoint,
+                         Map<String, String> links, List<String> authors) {
     public SemanticVersion parsedVersion() {
         return SemanticVersion.fromString(version);
     }
