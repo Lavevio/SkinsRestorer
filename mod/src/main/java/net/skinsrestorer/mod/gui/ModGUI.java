@@ -97,55 +97,19 @@ public class ModGUI implements GUIManager<MenuProvider> {
                                 Map.Entry::getKey,
                                 entry -> entry.getValue().clickHandlers()
                         ));
-                ActionDataCallback dataCallback = injector.getSingleton(ActionDataCallback.class);
-                WrapperMod wrapper = injector.getSingleton(WrapperMod.class);
 
                 Container container = new SimpleContainer(9 * srInventory.rows());
                 srInventory.items().forEach((key, value) -> container.setItem(key, createItem(value)));
 
-                return new ChestMenu(switch (srInventory.rows()) {
-                    case 1 -> MenuType.GENERIC_9x1;
-                    case 2 -> MenuType.GENERIC_9x2;
-                    case 3 -> MenuType.GENERIC_9x3;
-                    case 4 -> MenuType.GENERIC_9x4;
-                    case 5 -> MenuType.GENERIC_9x5;
-                    case 6 -> MenuType.GENERIC_9x6;
-                    default -> throw new IllegalArgumentException("Invalid rows: " + srInventory.rows());
-                }, id, inventory, container, srInventory.rows()) {
-                    @Override
-                    public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player clickingPlayer) {
-                        Map<ClickEventType, SRInventory.ClickEventAction> slotHandlers = handlers.get(slotId);
-                        if (slotHandlers == null) {
-                            return;
-                        }
-
-                        SRInventory.ClickEventAction action = slotHandlers.get(switch (clickType) {
-                            case PICKUP -> {
-                                if (button == 0) {
-                                    yield ClickEventType.LEFT;
-                                } else if (button == 1) {
-                                    yield ClickEventType.RIGHT;
-                                } else {
-                                    yield ClickEventType.OTHER;
-                                }
-                            }
-                            case QUICK_MOVE -> {
-                                if (button == 0) {
-                                    yield ClickEventType.SHIFT_LEFT;
-                                } else {
-                                    yield ClickEventType.OTHER;
-                                }
-                            }
-                            default -> ClickEventType.OTHER;
-                        });
-
-                        if (action == null) {
-                            return;
-                        }
-
-                        dataCallback.handle(wrapper.player((ServerPlayer) clickingPlayer), action);
-                    }
-                };
+                return new SRGUIMenu(
+                        srInventory,
+                        id,
+                        inventory,
+                        container,
+                        handlers,
+                        injector.getSingleton(ActionDataCallback.class),
+                        injector.getSingleton(WrapperMod.class)
+                );
             }
 
             @Override
@@ -153,5 +117,62 @@ public class ModGUI implements GUIManager<MenuProvider> {
                 return ModComponentHelper.deserialize(srInventory.title());
             }
         };
+    }
+
+    public static class SRGUIMenu extends ChestMenu {
+        private final Map<Integer, Map<ClickEventType, SRInventory.ClickEventAction>> handlers;
+        private final ActionDataCallback dataCallback;
+        private final WrapperMod wrapper;
+
+        public SRGUIMenu(SRInventory srInventory, int id, Inventory inventory, Container container,
+                         Map<Integer, Map<ClickEventType, SRInventory.ClickEventAction>> handlers,
+                         ActionDataCallback dataCallback, WrapperMod wrapper) {
+            super(switch (srInventory.rows()) {
+                case 1 -> MenuType.GENERIC_9x1;
+                case 2 -> MenuType.GENERIC_9x2;
+                case 3 -> MenuType.GENERIC_9x3;
+                case 4 -> MenuType.GENERIC_9x4;
+                case 5 -> MenuType.GENERIC_9x5;
+                case 6 -> MenuType.GENERIC_9x6;
+                default -> throw new IllegalArgumentException("Invalid rows: " + srInventory.rows());
+            }, id, inventory, container, srInventory.rows());
+            this.handlers = handlers;
+            this.dataCallback = dataCallback;
+            this.wrapper = wrapper;
+        }
+
+        @Override
+        public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player clickingPlayer) {
+            Map<ClickEventType, SRInventory.ClickEventAction> slotHandlers = handlers.get(slotId);
+            if (slotHandlers == null) {
+                return;
+            }
+
+            SRInventory.ClickEventAction action = slotHandlers.get(switch (clickType) {
+                case PICKUP -> {
+                    if (button == 0) {
+                        yield ClickEventType.LEFT;
+                    } else if (button == 1) {
+                        yield ClickEventType.RIGHT;
+                    } else {
+                        yield ClickEventType.OTHER;
+                    }
+                }
+                case QUICK_MOVE -> {
+                    if (button == 0) {
+                        yield ClickEventType.SHIFT_LEFT;
+                    } else {
+                        yield ClickEventType.OTHER;
+                    }
+                }
+                default -> ClickEventType.OTHER;
+            });
+
+            if (action == null) {
+                return;
+            }
+
+            dataCallback.handle(wrapper.player((ServerPlayer) clickingPlayer), action);
+        }
     }
 }

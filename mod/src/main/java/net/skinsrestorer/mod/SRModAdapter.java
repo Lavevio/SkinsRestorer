@@ -20,13 +20,14 @@ package net.skinsrestorer.mod;
 import ch.jalu.injector.Injector;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
@@ -124,7 +125,21 @@ public class SRModAdapter implements SRServerAdapter {
     public void openGUI(SRPlayer player, SRInventory srInventory) {
         MenuProvider inventory = injector.getSingleton(ModGUI.class).createGUI(srInventory);
 
-        runSyncToPlayer(player, () -> MenuRegistry.openMenu(player.getAs(ServerPlayer.class), inventory));
+        runSyncToPlayer(player, () -> openMenuCustom(player.getAs(ServerPlayer.class), inventory));
+    }
+
+    // Custom open menu method that does not close the current menu
+    // This presents the cursor from resetting when opening a new menu
+    private void openMenuCustom(ServerPlayer player, MenuProvider menuProvider) {
+        player.nextContainerCounter();
+        AbstractContainerMenu abstractContainerMenu = menuProvider.createMenu(player.containerCounter, player.getInventory(), player);
+        if (abstractContainerMenu == null) {
+            return;
+        }
+
+        player.connection.send(new ClientboundOpenScreenPacket(abstractContainerMenu.containerId, abstractContainerMenu.getType(), menuProvider.getDisplayName()));
+        player.initMenu(abstractContainerMenu);
+        player.containerMenu = abstractContainerMenu;
     }
 
     @Override
