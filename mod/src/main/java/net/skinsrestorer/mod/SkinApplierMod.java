@@ -26,7 +26,6 @@ import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -90,15 +89,8 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         refresh(player);
     }
 
-    @SuppressWarnings("resource")
     private List<ServerPlayer> getSeenByPlayers(ServerPlayer player) {
-        ChunkMap tracker = player.level().getChunkSource().chunkMap;
-        ChunkMap.TrackedEntity entry = tracker.entityMap.get(player.getId());
-
-        return entry.seenBy
-                .stream()
-                .map(ServerPlayerConnection::getPlayer)
-                .toList();
+        return Objects.requireNonNull(player.getServer()).getPlayerList().getPlayers();
     }
 
     @SuppressWarnings("resource")
