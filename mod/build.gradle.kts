@@ -22,6 +22,10 @@ unimined.minecraft {
         devFallbackNamespace("official")
     }
 
+    accessWidener {
+        accessWidener("mod/src/main/resources/skinsrestorer.accesswidener")
+    }
+
     if (sourceSet == main) {
         mods {
             modImplementation {
@@ -44,6 +48,7 @@ unimined.minecraft(fabric) {
 
     fabric {
         loader("0.16.14")
+        accessWidener("mod/src/main/resources/skinsrestorer.accesswidener")
     }
 
     mods.modImplementation {
@@ -61,6 +66,7 @@ unimined.minecraft(neoforge) {
 
     neoForge {
         loader("11-beta")
+        accessTransformer(aw2at("mod/src/main/resources/skinsrestorer.accesswidener"))
     }
 
     @Suppress("UnstableApiUsage")

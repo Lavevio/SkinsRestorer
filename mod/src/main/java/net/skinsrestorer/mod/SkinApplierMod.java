@@ -23,8 +23,10 @@ import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -79,19 +81,53 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
         setGameProfileTextures(player, property);
 
-        for (ServerPlayer otherPlayer : Objects.requireNonNull(player.getServer()).getPlayerList().getPlayers()) {
-            // Do not hide the player from itself or do anything if the other player cannot see the player
-            if (otherPlayer.getGameProfile().getId().equals(player.getGameProfile().getId())) {
-                continue;
-            }
-
-            // Force player to be re-added to the player-list of every player on the server
-            sendPacket(player, new ClientboundPlayerInfoRemovePacket(List.of(otherPlayer.getGameProfile().getId())));
-            sendPacket(player, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(otherPlayer)));
+        for (ServerPlayer otherPlayer : getSeenByPlayers(player)) {
+            untrackAndHideEntity(otherPlayer, player);
+            trackAndShowEntity(otherPlayer, player);
         }
 
         // Refresh the players own skin
         refresh(player);
+    }
+
+    @SuppressWarnings("resource")
+    private List<ServerPlayer> getSeenByPlayers(ServerPlayer player) {
+        ChunkMap tracker = player.level().getChunkSource().chunkMap;
+        ChunkMap.TrackedEntity entry = tracker.entityMap.get(player.getId());
+
+        return entry.seenBy
+                .stream()
+                .map(ServerPlayerConnection::getPlayer)
+                .toList();
+    }
+
+    @SuppressWarnings("resource")
+    private void untrackAndHideEntity(ServerPlayer currentEntity, Entity entityToHide) {
+        ChunkMap tracker = currentEntity.level().getChunkSource().chunkMap;
+        ChunkMap.TrackedEntity entry = tracker.entityMap.get(entityToHide.getId());
+        if (entry != null) {
+            entry.removePlayer(currentEntity);
+        }
+
+        if (entityToHide instanceof ServerPlayer otherPlayer) {
+            // TODO: Maybe readd this? Bukkit-only code that was used to hide players
+            // if (otherPlayer.sentListPacket) {}
+
+            currentEntity.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(otherPlayer.getUUID())));
+        }
+    }
+
+    @SuppressWarnings("resource")
+    private void trackAndShowEntity(ServerPlayer currentEntity, Entity entityToShow) {
+        ChunkMap tracker = currentEntity.level().getChunkSource().chunkMap;
+        if (entityToShow instanceof ServerPlayer otherPlayer) {
+            currentEntity.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(otherPlayer)));
+        }
+
+        ChunkMap.TrackedEntity entry = tracker.entityMap.get(entityToShow.getId());
+        if (entry != null && !entry.seenBy.contains(currentEntity.connection)) {
+            entry.updatePlayer(currentEntity);
+        }
     }
 
     private void ejectPassengers(ServerPlayer player) {
