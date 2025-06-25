@@ -282,9 +282,8 @@ public class SRHelpers {
         return result.toString().trim();
     }
 
-    @SuppressWarnings("HttpUrlsUsage")
     public static String encodeHashToTexturesValue(String textureHash) {
-        return Base64Utils.encode("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/%s\"}}}".formatted(textureHash));
+        return Base64Utils.encode("{\"textures\":{\"SKIN\":{\"url\":\"https://textures.minecraft.net/texture/%s\"}}}".formatted(textureHash));
     }
 
     public static void createDirectoriesSafe(Path path) {

@@ -30,7 +30,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
-import net.skinsrestorer.api.Base64Utils;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.mod.gui.ModGUI;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
@@ -42,6 +41,7 @@ import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
@@ -122,13 +122,12 @@ public class SRModAdapter implements SRServerAdapter {
         runSyncToPlayer(player, () -> MenuRegistry.openMenu(player.getAs(ServerPlayer.class), inventory));
     }
 
-    @SuppressWarnings("HttpUrlsUsage")
     @Override
     public void giveSkullItem(SRPlayer player, SRServerPluginMessage.GiveSkullChannelPayload giveSkullPayload) {
         PropertyMap properties = new PropertyMap();
         properties.put(SkinProperty.TEXTURES_NAME, new Property(
                 SkinProperty.TEXTURES_NAME,
-                Base64Utils.encode("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/" + giveSkullPayload.textureHash() + "\"}}}"),
+                SRHelpers.encodeHashToTexturesValue(giveSkullPayload.textureHash()),
                 null
         ));
 
