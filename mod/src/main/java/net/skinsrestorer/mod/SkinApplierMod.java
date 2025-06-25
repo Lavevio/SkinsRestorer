@@ -111,11 +111,11 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
     @SuppressWarnings("resource")
     private void trackAndShowEntity(ServerPlayer currentEntity, Entity entityToShow) {
-        ChunkMap tracker = currentEntity.level().getChunkSource().chunkMap;
         if (entityToShow instanceof ServerPlayer otherPlayer) {
             currentEntity.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(otherPlayer)));
         }
 
+        ChunkMap tracker = currentEntity.level().getChunkSource().chunkMap;
         ChunkMap.TrackedEntity entry = tracker.entityMap.get(entityToShow.getId());
         if (entry != null && !entry.seenBy.contains(currentEntity.connection)) {
             entry.updatePlayer(currentEntity);
