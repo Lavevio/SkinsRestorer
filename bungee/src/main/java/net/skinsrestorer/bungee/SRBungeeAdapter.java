@@ -130,6 +130,7 @@ public class SRBungeeAdapter implements SRProxyAdapter {
                 .map(p -> new PluginInfo(
                         true,
                         p.getDescription().getName(),
+                        p.getDescription().getName(),
                         p.getDescription().getVersion(),
                         p.getDescription().getMain(),
                         new String[]{p.getDescription().getAuthor()}

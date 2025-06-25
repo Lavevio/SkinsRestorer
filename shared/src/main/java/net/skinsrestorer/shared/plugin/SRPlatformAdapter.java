@@ -72,9 +72,9 @@ public interface SRPlatformAdapter {
 
     List<PluginInfo> getPlugins();
 
-    default Optional<PluginInfo> getPluginInfo(String name) {
+    default Optional<PluginInfo> getPluginInfo(String id) {
         return getPlugins().stream()
-                .filter(pluginInfo -> pluginInfo.name().equalsIgnoreCase(name))
+                .filter(pluginInfo -> pluginInfo.id().equalsIgnoreCase(id))
                 .findFirst();
     }
 

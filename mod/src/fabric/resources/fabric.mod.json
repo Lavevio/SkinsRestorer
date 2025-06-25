@@ -10,6 +10,7 @@
   ],
   "contact": {
     "homepage": "https://skinsrestorer.net",
+    "issues": "https://github.com/SkinsRestorer/SkinsRestorer/issues",
     "sources": "https://github.com/SkinsRestorer/SkinsRestorer"
   },
   "license": "GPL-3.0",
@@ -23,6 +24,13 @@
   "mixins": [
     "skinsrestorer.mixins.json"
   ],
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://skinsrestorer.net/discord"
+      }
+    }
+  },
   "depends": {
     "fabricloader": ">=0.16.0",
     "minecraft": "~1.21",

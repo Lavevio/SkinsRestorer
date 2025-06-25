@@ -229,6 +229,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
                 .map(plugin -> new PluginInfo(
                         plugin.isEnabled(),
                         plugin.getName(),
+                        plugin.getName(),
                         plugin.getDescription().getVersion(),
                         plugin.getDescription().getMain(),
                         plugin.getDescription().getAuthors().toArray(new String[0])

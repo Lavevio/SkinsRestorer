@@ -127,6 +127,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     public List<PluginInfo> getPlugins() {
         return proxy.getPluginManager().getPlugins().stream().map(p -> new PluginInfo(
                 p.getInstance().isPresent(),
+                p.getDescription().getId(),
                 p.getDescription().getName().orElseGet(() -> p.getDescription().getId()),
                 p.getDescription().getVersion().orElse("Unknown"),
                 p.getInstance().map(i -> i.getClass().getCanonicalName()).orElse("N/A"),

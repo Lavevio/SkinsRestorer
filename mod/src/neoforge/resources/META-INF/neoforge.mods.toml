@@ -7,11 +7,13 @@ license = "GPL-3.0"
 modId = "skinsrestorer"
 version = "${version}"
 displayName = "SkinsRestorer"
+displayURL = "https://skinsrestorer.net"
 authors = "AlexProgrammerDE, xknat"
 description = '''
 Ability to restore/change skins on servers!
 '''
 logoFile = "skinsrestorer.png"
+modUrl = "https://modrinth.com/plugin/skinsrestorer"
 
 [[dependencies.skinsrestorer]]
 modId = "neoforge"
@@ -39,6 +41,20 @@ modId = "cloud"
 type = "required"
 versionRange = "[1.0,)"
 ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.skinsrestorer]]
+modId = "neoforwarding"
+type = "optional"
+versionRange = ""
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.skinsrestorer]]
+modId = "neovelocity"
+type = "optional"
+versionRange = "*"
+ordering = "AFTER"
 side = "BOTH"
 
 [[mixins]]

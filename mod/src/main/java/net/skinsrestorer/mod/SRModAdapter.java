@@ -112,7 +112,12 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public boolean determineProxy() {
-        return false;
+        return Set.of(
+                "fabricproxy",
+                "fabricproxy-lite",
+                "neoforwarding",
+                "neovelocity"
+        ).stream().anyMatch(mod -> getPluginInfo(mod).isPresent());
     }
 
     @Override
@@ -185,6 +190,7 @@ public class SRModAdapter implements SRServerAdapter {
         return dev.architectury.platform.Platform.getMods().stream()
                 .map(plugin -> new PluginInfo(
                         true,
+                        plugin.getModId(),
                         plugin.getName(),
                         plugin.getVersion(),
                         "N/A",
