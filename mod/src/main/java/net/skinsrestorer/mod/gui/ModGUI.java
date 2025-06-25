@@ -25,6 +25,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -49,9 +50,9 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ModGUI implements GUIManager<MenuProvider> {
@@ -85,14 +86,24 @@ public class ModGUI implements GUIManager<MenuProvider> {
     }
 
     public MenuProvider createGUI(SRInventory srInventory) {
-        Map<Integer, Map<ClickEventType, SRInventory.ClickEventAction>> handlers = new HashMap<>();
-        ActionDataCallback dataCallback = injector.getSingleton(ActionDataCallback.class);
-        WrapperMod wrapper = injector.getSingleton(WrapperMod.class);
-
         return new MenuProvider() {
             @Override
-            public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player player) {
-                ChestMenu menu = new ChestMenu(switch (srInventory.rows()) {
+            public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player inventoryOwner) {
+                Map<Integer, Map<ClickEventType, SRInventory.ClickEventAction>> handlers = srInventory
+                        .items()
+                        .entrySet()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> entry.getValue().clickHandlers()
+                        ));
+                ActionDataCallback dataCallback = injector.getSingleton(ActionDataCallback.class);
+                WrapperMod wrapper = injector.getSingleton(WrapperMod.class);
+
+                Container container = new SimpleContainer(9 * srInventory.rows());
+                srInventory.items().forEach((key, value) -> container.setItem(key, createItem(value)));
+
+                return new ChestMenu(switch (srInventory.rows()) {
                     case 1 -> MenuType.GENERIC_9x1;
                     case 2 -> MenuType.GENERIC_9x2;
                     case 3 -> MenuType.GENERIC_9x3;
@@ -100,43 +111,41 @@ public class ModGUI implements GUIManager<MenuProvider> {
                     case 5 -> MenuType.GENERIC_9x5;
                     case 6 -> MenuType.GENERIC_9x6;
                     default -> throw new IllegalArgumentException("Invalid rows: " + srInventory.rows());
-                }, id, inventory, new SimpleContainer(9 * srInventory.rows()), srInventory.rows()) {
+                }, id, inventory, container, srInventory.rows()) {
                     @Override
-                    public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player player) {
+                    public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player clickingPlayer) {
                         Map<ClickEventType, SRInventory.ClickEventAction> slotHandlers = handlers.get(slotId);
-                        if (slotHandlers != null) {
-                            SRInventory.ClickEventAction action = slotHandlers.get(switch (clickType) {
-                                case PICKUP -> {
-                                    if (button == 0) {
-                                        yield ClickEventType.LEFT;
-                                    } else if (button == 1) {
-                                        yield ClickEventType.RIGHT;
-                                    } else {
-                                        yield ClickEventType.OTHER;
-                                    }
-                                }
-                                case QUICK_MOVE -> {
-                                    if (button == 0) {
-                                        yield ClickEventType.SHIFT_LEFT;
-                                    } else {
-                                        yield ClickEventType.OTHER;
-                                    }
-                                }
-                                default -> ClickEventType.OTHER;
-                            });
-                            if (action != null) {
-                                dataCallback.handle(wrapper.player((ServerPlayer) player), action);
-                            }
+                        if (slotHandlers == null) {
+                            return;
                         }
+
+                        SRInventory.ClickEventAction action = slotHandlers.get(switch (clickType) {
+                            case PICKUP -> {
+                                if (button == 0) {
+                                    yield ClickEventType.LEFT;
+                                } else if (button == 1) {
+                                    yield ClickEventType.RIGHT;
+                                } else {
+                                    yield ClickEventType.OTHER;
+                                }
+                            }
+                            case QUICK_MOVE -> {
+                                if (button == 0) {
+                                    yield ClickEventType.SHIFT_LEFT;
+                                } else {
+                                    yield ClickEventType.OTHER;
+                                }
+                            }
+                            default -> ClickEventType.OTHER;
+                        });
+
+                        if (action == null) {
+                            return;
+                        }
+
+                        dataCallback.handle(wrapper.player((ServerPlayer) clickingPlayer), action);
                     }
                 };
-
-                for (Map.Entry<Integer, SRInventory.Item> entry : srInventory.items().entrySet()) {
-                    menu.setItem(entry.getKey(), 0, createItem(entry.getValue()));
-                    handlers.put(entry.getKey(), entry.getValue().clickHandlers());
-                }
-
-                return menu;
             }
 
             @Override
