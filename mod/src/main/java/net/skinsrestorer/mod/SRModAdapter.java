@@ -88,7 +88,7 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public void runAsync(Runnable runnable) {
-        asyncScheduler.execute(runnable);
+        asyncScheduler.schedule(runnable, 0, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class SRModAdapter implements SRServerAdapter {
     }
 
     public void runSync(MinecraftServer server, Runnable runnable) {
-        server.execute(runnable);
+        server.schedule(server.wrapRunnable(runnable));
     }
 
     @Override
