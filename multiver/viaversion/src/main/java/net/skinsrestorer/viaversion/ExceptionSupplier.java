@@ -15,13 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.refresher;
+package net.skinsrestorer.viaversion;
 
-import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
-import net.skinsrestorer.viaversion.ViaPacketData;
-
-import java.util.function.Predicate;
-
-public interface ViaRefreshProvider extends Predicate<ExceptionSupplier<ViaPacketData>> {
-    ViaRefreshProvider NO_OP = packetData -> true;
+public interface ExceptionSupplier<T> {
+    T get() throws Exception;
 }

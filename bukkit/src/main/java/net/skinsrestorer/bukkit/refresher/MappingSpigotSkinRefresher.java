@@ -19,13 +19,14 @@ package net.skinsrestorer.bukkit.refresher;
 
 import ch.jalu.injector.Injector;
 import net.skinsrestorer.bukkit.mappings.IMapping;
-import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.utils.SRHelpers;
+import net.skinsrestorer.viaversion.ExceptionSupplier;
 import net.skinsrestorer.viaversion.ViaPacketData;
+import net.skinsrestorer.viaversion.ViaRefreshProvider;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 

@@ -23,8 +23,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
+import net.skinsrestorer.viaversion.ExceptionSupplier;
 import net.skinsrestorer.viaversion.ViaPacketData;
 import org.bukkit.entity.Player;
 

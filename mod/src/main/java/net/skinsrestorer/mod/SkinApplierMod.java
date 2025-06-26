@@ -21,6 +21,7 @@ import ch.jalu.configme.SettingsManager;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ChunkMap;
@@ -34,6 +35,10 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.ServerConfig;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.viaversion.ViaPacketData;
+import net.skinsrestorer.viaversion.ViaRefreshProvider;
+import net.skinsrestorer.viaversion.ViaWorkaround;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -44,6 +49,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
     private final SRModAdapter adapter;
     private final EventBusImpl eventBus;
     private final SettingsManager settings;
+    private final SRLogger logger;
 
     public static void setGameProfileTextures(ServerPlayer player, SkinProperty property) {
         PropertyMap properties = player.getGameProfile().getProperties();
@@ -147,6 +153,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         player.connection.send(packet);
     }
 
+    @SuppressWarnings("resource")
     public void refresh(ServerPlayer player) {
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
@@ -161,8 +168,30 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         sendPacket(player, new ClientboundPlayerInfoRemovePacket(List.of(player.getGameProfile().getId())));
         sendPacket(player, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(player)));
 
-        // TODO: Add via edge-case support
-        sendPacket(player, respawn);
+        ViaRefreshProvider refreshProvider;
+        if (adapter.getPluginInfo("viabackwards").isPresent() && ViaWorkaround.shouldApplyWorkaround()) {
+            logger.debug("Activating ViaBackwards workaround.");
+            refreshProvider = d -> {
+                try {
+                    return ViaWorkaround.sendCustomPacketVia(d.get());
+                } catch (Exception e) {
+                    logger.severe("Error while refreshing skin via ViaBackwards", e);
+                    return false;
+                }
+            };
+        } else {
+            refreshProvider = ViaRefreshProvider.NO_OP;
+        }
+
+        if (refreshProvider.test(() -> new ViaPacketData(
+                player.getUUID(),
+                player.level().registryAccess().lookupOrThrow(Registries.DIMENSION_TYPE).getId(player.level().dimensionType()),
+                spawnInfo.seed(),
+                spawnInfo.gameType().getId(),
+                spawnInfo.isFlat()
+        ))) {
+            sendPacket(player, respawn);
+        }
 
         player.onUpdateAbilities();
 

@@ -26,6 +26,7 @@ import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
+import net.skinsrestorer.viaversion.ViaRefreshProvider;
 import org.bukkit.Location;
 import org.bukkit.WorldType;
 import org.bukkit.entity.Player;

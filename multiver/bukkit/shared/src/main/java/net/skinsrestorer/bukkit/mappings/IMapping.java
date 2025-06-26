@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.bukkit.mappings;
 
-import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
+import net.skinsrestorer.viaversion.ExceptionSupplier;
 import net.skinsrestorer.viaversion.ViaPacketData;
 import org.bukkit.entity.Player;
 
