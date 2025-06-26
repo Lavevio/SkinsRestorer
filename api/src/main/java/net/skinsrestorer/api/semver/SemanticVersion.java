@@ -46,26 +46,23 @@ public class SemanticVersion {
     }
 
     public static SemanticVersion fromString(String version) {
-        int firstDigit = 0;
-        for (int i = 0; i < version.length(); i++) {
-            if (Character.isDigit(version.charAt(i))) {
-                firstDigit = i;
-                break;
-            }
-        }
+        String[] split = stripStringForSemver(version).split("\\.");
 
-        int lastDigit = version.length();
-        for (int i = version.length() - 1; i >= 0; i--) {
-            if (Character.isDigit(version.charAt(i))) {
-                lastDigit = i;
-                break;
-            }
-        }
-
-        version = version.substring(firstDigit, lastDigit + 1);
-
-        String[] split = version.split("\\.");
         return new SemanticVersion(Arrays.stream(split).mapToInt(Integer::parseInt).toArray());
+    }
+
+    private static String stripStringForSemver(String str) {
+        // Keep all chars until the first non-digit and non-dot character
+        StringBuilder result = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            if (Character.isDigit(c) || c == '.') {
+                result.append(c);
+            } else {
+                break;
+            }
+        }
+
+        return result.toString();
     }
 
     public boolean isNewerThan(SemanticVersion otherVersion) {
