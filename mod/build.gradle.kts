@@ -101,7 +101,11 @@ val neoforgeImplementation: Configuration by configurations.getting {
 }
 
 dependencies {
-    setOf(projects.skinsrestorerShared, projects.multiver.miniplaceholders).forEach {
+    setOf(
+        projects.skinsrestorerShared,
+        projects.multiver.miniplaceholders,
+        projects.multiver.viaversion
+    ).forEach {
         implementation(it) {
             exclude("com.google.code.gson")
             exclude("com.google.errorprone")

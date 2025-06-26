@@ -41,13 +41,6 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("com.viaversion:viabackwards-common:5.4.0") {
-        isTransitive = false
-    }
-    compileOnly("com.viaversion:viaversion:5.0.0") {
-        isTransitive = false
-    }
-
     compileOnly("com.mojang:authlib:2.0.27")
 
     testImplementation("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {

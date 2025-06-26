@@ -44,6 +44,7 @@ setupSRSubproject("api")
 setupSRSubproject("scissors")
 setupSRSubproject("shared")
 include("multiver:miniplaceholders")
+include("multiver:viaversion")
 
 setupSRSubproject("bukkit")
 setupSRSubproject("bungee")

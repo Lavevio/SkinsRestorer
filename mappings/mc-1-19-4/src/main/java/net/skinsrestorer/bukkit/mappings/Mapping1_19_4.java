@@ -30,6 +30,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
+import net.skinsrestorer.viaversion.ViaPacketData;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class Mapping1_19_4 implements IMapping {
 
         resendInfoPackets(player, player);
 
-        if (viaFunction.test(() -> new ViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
+        if (viaFunction.test(() -> IMapping.newViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
             sendPacket(entityPlayer, respawn);
         }
 

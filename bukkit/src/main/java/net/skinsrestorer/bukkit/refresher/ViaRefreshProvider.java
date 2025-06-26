@@ -17,8 +17,8 @@
  */
 package net.skinsrestorer.bukkit.refresher;
 
-import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
+import net.skinsrestorer.viaversion.ViaPacketData;
 
 import java.util.function.Predicate;
 

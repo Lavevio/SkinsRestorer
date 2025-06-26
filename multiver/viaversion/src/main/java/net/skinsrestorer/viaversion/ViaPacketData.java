@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.mappings;
+package net.skinsrestorer.viaversion;
 
-import org.bukkit.entity.Player;
+import java.util.UUID;
 
-public record ViaPacketData(Player player, long seed, int gamemodeId, boolean isFlat) {
+public record ViaPacketData(UUID playerId, int dimensionId, long seed, int gamemodeId, boolean isFlat) {
 }

@@ -19,7 +19,7 @@ package net.skinsrestorer.bukkit.refresher;
 
 import lombok.SneakyThrows;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.mappings.ViaPacketData;
+import net.skinsrestorer.bukkit.mappings.IMapping;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
@@ -216,7 +216,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
 
             resendInfoPackets(player, player);
 
-            boolean sendRespawnPacketDirectly = viaProvider.test(() -> new ViaPacketData(
+            boolean sendRespawnPacketDirectly = viaProvider.test(() -> IMapping.newViaPacketData(
                     player,
                     SRHelpers.hashSha256ToLong(String.valueOf(player.getWorld().getSeed())),
                     ((Integer) gamemodeId).shortValue(),

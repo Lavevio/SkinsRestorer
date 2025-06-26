@@ -18,6 +18,7 @@
 package net.skinsrestorer.bukkit.mappings;
 
 import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
+import net.skinsrestorer.viaversion.ViaPacketData;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
@@ -41,4 +42,9 @@ public interface IMapping {
      * @return The supported spigot mapping versions of the mapping
      */
     Set<String> getSpigotMappingVersions();
+
+    @SuppressWarnings("deprecation")
+    static ViaPacketData newViaPacketData(Player player, long seed, int gamemodeId, boolean isFlat) {
+        return new ViaPacketData(player.getUniqueId(), player.getWorld().getEnvironment().getId(), seed, gamemodeId, isFlat);
+    }
 }
