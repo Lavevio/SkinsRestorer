@@ -30,6 +30,7 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.update.model.GitHubAssetInfo;
 import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class UpdateCheckerGitHub {
     private final Injector injector;
     private final HttpClient httpClient;
     private boolean updateDownloaded;
+    private boolean hasPrintedUpdateAvailableBanner;
 
     private static String getCheckerPluginVersion() {
         // Allow overriding the version for unit tests
@@ -121,16 +123,21 @@ public class UpdateCheckerGitHub {
     }
 
     public void printUpdateAvailable(UpdateCause cause, String newVersion, boolean updateDownloader) {
-        printHeader(cause);
-        logger.info("§b    Version: §c%s".formatted(BuildData.VERSION));
-        logger.info("§b    Commit: §c%s".formatted(BuildData.COMMIT_SHORT));
-        if (updateDownloader) {
-            logger.info("§b    A new version (§a%s§b) is available! Downloading update...".formatted(newVersion));
+        if (hasPrintedUpdateAvailableBanner) {
+            logger.info("§bA new version of SkinsRestorer (§a%s§b) is available: §a%s/version/%s".formatted(newVersion, SRHelpers.DOWNLOAD_URL, newVersion));
         } else {
-            logger.info("§b    A new version (§a%s§b) is available!".formatted(newVersion));
-            logger.info("§e    https://modrinth.com/plugin/skinsrestorer/version/%s".formatted(newVersion));
+            hasPrintedUpdateAvailableBanner = true;
+            printHeader(cause);
+            logger.info("§b    Version: §c%s".formatted(BuildData.VERSION));
+            logger.info("§b    Commit: §c%s".formatted(BuildData.COMMIT_SHORT));
+            if (updateDownloader) {
+                logger.info("§b    A new version (§a%s§b) is available! Downloading update...".formatted(newVersion));
+            } else {
+                logger.info("§b    A new version (§a%s§b) is available!".formatted(newVersion));
+                logger.info("§e    %s/version/%s".formatted(SRHelpers.DOWNLOAD_URL, newVersion));
+            }
+            printFooter();
         }
-        printFooter();
     }
 
     private void printHeader(UpdateCause cause) {
