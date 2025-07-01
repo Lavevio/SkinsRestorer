@@ -127,7 +127,8 @@ dependencies {
     compileOnly("org.spongepowered:mixin:0.8.7")
 
     // Bump fabric api
-    fabricModImplementation(platform("net.fabricmc.fabric-api:fabric-api-bom:0.128.1+1.21.7"))
+    fabricModImplementation(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:0.128.1+1.21.7"))
+    fabricInclude(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:0.128.1+1.21.7"))
 
     // Needed for modImplementations to load
     fabricModImplementation("net.kyori:adventure-platform-fabric:6.5.0-SNAPSHOT")
