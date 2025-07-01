@@ -7,10 +7,18 @@ runpaperversion = "1.21.7"
 runwaterfallversion = "1.19"
 runvelocityversion = "3.4.0-SNAPSHOT"
 adventure-platform = "4.4.0"
+adventure = "4.23.0"
 
 [libraries]
-adventure-bukkit = { module = "com.github.KyoriPowered.adventure-platform:adventure-platform-bukkit", version = "7724203684" }
+
+adventure-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
 adventure-bungeecord = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
+adventure-text-serializer-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
+adventure-text-serializer-ansi = { module = "net.kyori:adventure-text-serializer-ansi", version.ref = "adventure" }
+adventure-text-serializer-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure" }
+adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
 
 [plugins]
 
@@ -20,4 +28,13 @@ runwaterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "runtask" }
 blossom = { id = "net.kyori.blossom", version = "2.1.0" }
 
 [bundles]
+
+adventure-shared = [
+    "adventure-api",
+    "adventure-text-serializer-gson",
+    "adventure-text-serializer-legacy",
+    "adventure-text-serializer-ansi",
+    "adventure-text-serializer-plain",
+    "adventure-text-minimessage"
+]
 

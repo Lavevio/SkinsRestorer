@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.exception;
 
+import com.google.errorprone.annotations.RestrictedApi;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.subjects.SRForeign;
@@ -30,6 +31,10 @@ public class MineSkinExceptionShared extends MineSkinException implements Transl
     private final Message message;
     private final TagResolver[] args;
 
+    @RestrictedApi(
+            explanation = "The method signature changes after relocation, so it shall only be used within this package",
+            allowedOnPath = ".*net/skinsrestorer/shared/.*"
+    )
     public MineSkinExceptionShared(Message message, TagResolver... resolvers) {
         // Not important since we use #getMessage(SRForeign, SkinsRestorerLocale) to get the message
         super(message.toString());

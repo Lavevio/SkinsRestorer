@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import com.google.errorprone.annotations.RestrictedApi;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -28,6 +29,14 @@ public interface SRCommandSender extends SRForeign {
 
     void sendMessage(ComponentString messageJson);
 
+    default void sendMessage(Message key) {
+        sendMessage(key, TagResolver.empty());
+    }
+
+    @RestrictedApi(
+            explanation = "The method signature changes after relocation, so it shall only be used within this package",
+            allowedOnPath = ".*net/skinsrestorer/shared/.*"
+    )
     void sendMessage(Message key, TagResolver... resolvers);
 
     boolean hasPermission(Permission permission);

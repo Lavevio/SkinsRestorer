@@ -3,7 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":skinsrestorer-shared", "shadow"))
+    compileOnly(projects.skinsrestorerShared)
+    runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
 
     compileOnly("net.kyori:adventure-api:4.23.0")

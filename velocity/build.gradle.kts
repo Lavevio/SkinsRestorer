@@ -8,7 +8,8 @@ base {
 }
 
 dependencies {
-    implementation(project(":skinsrestorer-shared", "shadow"))
+    compileOnly(projects.skinsrestorerShared)
+    runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.miniplaceholders)
 
     testImplementation(testFixtures(projects.test))

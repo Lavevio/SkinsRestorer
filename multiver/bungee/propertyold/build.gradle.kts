@@ -3,7 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":skinsrestorer-shared", "shadow"))
+    compileOnly(projects.skinsrestorerShared)
+    runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bungee.shared)
 
     // Keep import's on older version for SkinApplierBungeeOld

@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.subjects.messages;
 
+import com.google.errorprone.annotations.RestrictedApi;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -39,6 +40,10 @@ public class ComponentHelper {
     private static final MiniMessage MINI_MESSAGE_COMPONENT_SERIALIZER = MiniMessage.miniMessage();
     private static final PlainTextComponentSerializer PLAIN_COMPONENT_SERIALIZER = PlainTextComponentSerializer.plainText();
 
+    @RestrictedApi(
+            explanation = "The method signature changes after relocation, so it shall only be used within this package",
+            allowedOnPath = ".*net/skinsrestorer/shared/.*"
+    )
     public static ComponentString parseMiniMessageToJsonString(String miniMessage, TagResolver... resolvers) {
         return new ComponentString(GSON_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE_COMPONENT_SERIALIZER.deserialize(miniMessage, TagResolver.resolver(resolvers))));
     }

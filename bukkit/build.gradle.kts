@@ -8,7 +8,8 @@ base {
 }
 
 dependencies {
-    implementation(project(":skinsrestorer-shared", "shadow"))
+    compileOnly(projects.skinsrestorerShared)
+    runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
     implementation(projects.multiver.bukkit.spigot)
     implementation(projects.multiver.bukkit.paper)
@@ -43,6 +44,8 @@ dependencies {
 
     compileOnly("com.mojang:authlib:2.0.27")
 
+    implementation(libs.adventure.bukkit)
+
     testImplementation("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {
         isTransitive = false
     }
@@ -52,5 +55,11 @@ dependencies {
 tasks {
     runServer {
         minecraftVersion(libs.versions.runpaperversion.get())
+    }
+}
+
+tasks {
+    shadowJar {
+        relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
     }
 }

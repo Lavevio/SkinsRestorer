@@ -5,11 +5,14 @@ plugins {
     id("sr.formatting-logic")
     id("net.kyori.indra.git")
     id("io.freefair.lombok")
+    id("net.ltgt.errorprone")
 }
 
 dependencies {
     api("org.jetbrains:annotations:26.0.2")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.3")
+
+    errorprone("com.google.errorprone:error_prone_core:2.39.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testFixturesApi("org.junit.jupiter:junit-jupiter:5.13.2")

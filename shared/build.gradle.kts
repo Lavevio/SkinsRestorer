@@ -33,15 +33,7 @@ dependencies {
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 
-    api("net.kyori:adventure-api:4.23.0")
-    api("net.kyori:adventure-text-serializer-gson:4.23.0")
-    api("net.kyori:adventure-text-serializer-legacy:4.23.0")
-    api("net.kyori:adventure-text-serializer-ansi:4.23.0")
-    api("net.kyori:adventure-text-serializer-plain:4.23.0")
-    api("net.kyori:adventure-text-minimessage:4.23.0")
-
-    api(libs.adventure.bukkit)
-    api(libs.adventure.bungeecord)
+    api(libs.bundles.adventure.shared)
 }
 
 tasks {

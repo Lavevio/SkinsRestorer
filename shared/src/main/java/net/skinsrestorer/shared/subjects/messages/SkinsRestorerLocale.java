@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.subjects.messages;
 
 import ch.jalu.configme.SettingsManager;
+import com.google.errorprone.annotations.RestrictedApi;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -41,11 +42,27 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
+    public ComponentString getMessageRequired(SRForeign foreign, Message key) {
+        return getMessageRequired(foreign, key, TagResolver.empty());
+    }
+
+    @RestrictedApi(
+            explanation = "The method signature changes after relocation, so it shall only be used within this package",
+            allowedOnPath = ".*net/skinsrestorer/shared/.*"
+    )
     public ComponentString getMessageRequired(SRForeign foreign, Message key, TagResolver... tagResolver) {
         return ComponentHelper.convertComponentToJson(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
                 .orElseGet(Component::empty));
     }
 
+    public Optional<ComponentString> getMessageOptional(SRForeign foreign, Message key) {
+        return getMessageOptional(foreign, key, TagResolver.empty());
+    }
+
+    @RestrictedApi(
+            explanation = "The method signature changes after relocation, so it shall only be used within this package",
+            allowedOnPath = ".*net/skinsrestorer/shared/.*"
+    )
     public Optional<ComponentString> getMessageOptional(SRForeign foreign, Message key, TagResolver... tagResolver) {
         return getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
                 .map(ComponentHelper::convertComponentToJson);

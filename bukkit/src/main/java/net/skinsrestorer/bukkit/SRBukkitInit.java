@@ -64,6 +64,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -167,7 +168,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     private boolean hasPaperMethods() {
         try {
-            BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
+            Objects.requireNonNull(BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer"));
             return true;
         } catch (ReflectiveOperationException e) {
             return false;

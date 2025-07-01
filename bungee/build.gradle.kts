@@ -8,7 +8,8 @@ base {
 }
 
 dependencies {
-    implementation(project(":skinsrestorer-shared", "shadow"))
+    compileOnly(projects.skinsrestorerShared)
+    runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bungee.shared)
     implementation(projects.multiver.bungee.propertyold)
     implementation(projects.multiver.bungee.propertynew)
@@ -21,10 +22,18 @@ dependencies {
 
     implementation("org.bstats:bstats-bungeecord:3.1.0")
     implementation("org.incendo:cloud-bungee:2.0.0-SNAPSHOT")
+
+    implementation(libs.adventure.bungeecord)
 }
 
 tasks {
     runWaterfall {
         version(libs.versions.runwaterfallversion.get())
+    }
+}
+
+tasks {
+    shadowJar {
+        relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
     }
 }
