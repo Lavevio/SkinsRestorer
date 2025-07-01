@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.adapter;
 
-import lombok.SneakyThrows;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.storage.HardcodedSkins;
@@ -39,7 +38,6 @@ public class AdapterHelper {
     private static final String DEFAULT_NAME = "Pistonmaster";
     private static final UUID DEFAULT_UUID = UUID.nameUUIDFromBytes(DEFAULT_NAME.getBytes(StandardCharsets.UTF_8));
 
-    @SneakyThrows
     public static void testAdapter(StorageAdapter adapter) {
         UUID playerId = UUID.randomUUID();
         PlayerData playerData = PlayerData.of(playerId, null, List.of(
@@ -71,6 +69,10 @@ public class AdapterHelper {
         // Check if offset works as well, we actually have one skins in the storage for GUI
         Assert.assertEquals(0, adapter.getPlayerGUISkins(1, Integer.MAX_VALUE).size());
 
-        Assert.assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
+        try {
+            Assert.assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
+        } catch (StorageAdapter.StorageException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
