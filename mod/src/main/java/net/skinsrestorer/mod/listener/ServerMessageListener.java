@@ -52,7 +52,7 @@ public class ServerMessageListener implements NetworkManager.NetworkReceiver<SRM
 
             @Override
             public String getChannel() {
-                return SRModInit.SR_MESSAGE_CHANNEL.toString();
+                return SRModInit.SR_MESSAGE_CHANNEL.id().toString();
             }
         };
     }
