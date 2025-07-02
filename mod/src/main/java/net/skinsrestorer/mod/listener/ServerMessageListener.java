@@ -19,7 +19,6 @@ package net.skinsrestorer.mod.listener;
 
 import dev.architectury.networking.NetworkManager;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.mod.SRModInit;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
@@ -30,19 +29,16 @@ import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ServerMessageListener implements NetworkManager.NetworkReceiver<RegistryFriendlyByteBuf> {
+public class ServerMessageListener implements NetworkManager.NetworkReceiver<SRModInit.RawBytePayload> {
     private final SRServerMessageAdapter adapter;
     private final WrapperMod wrapper;
 
     @Override
-    public void receive(RegistryFriendlyByteBuf value, NetworkManager.PacketContext context) {
+    public void receive(SRModInit.RawBytePayload value, NetworkManager.PacketContext context) {
         adapter.handlePluginMessage(wrap(value, context));
     }
 
-    private SRServerMessageEvent wrap(RegistryFriendlyByteBuf value, NetworkManager.PacketContext context) {
-        byte[] message = new byte[value.readableBytes()];
-        value.readBytes(message);
-
+    private SRServerMessageEvent wrap(SRModInit.RawBytePayload value, NetworkManager.PacketContext context) {
         return new SRServerMessageEvent() {
             @Override
             public SRServerPlayer getPlayer() {
@@ -51,7 +47,7 @@ public class ServerMessageListener implements NetworkManager.NetworkReceiver<Reg
 
             @Override
             public byte[] getData() {
-                return message;
+                return value.data();
             }
 
             @Override

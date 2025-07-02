@@ -17,13 +17,9 @@
  */
 package net.skinsrestorer.mod.wrapper;
 
-import dev.architectury.impl.NetworkAggregator;
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.networking.transformers.PacketSink;
-import io.netty.buffer.Unpooled;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.mod.SRModInit;
 import net.skinsrestorer.shared.config.MessageConfig;
@@ -83,8 +79,6 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
 
     @Override
     public void sendToMessageChannel(byte[] data) {
-        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), player.registryAccess());
-        buf.writeBytes(data);
-        NetworkAggregator.collectPackets(PacketSink.ofPlayer(player), NetworkManager.serverToClient(), SRModInit.SR_MESSAGE_CHANNEL, buf);
+        NetworkManager.sendToPlayer(player, new SRModInit.RawBytePayload(data));
     }
 }

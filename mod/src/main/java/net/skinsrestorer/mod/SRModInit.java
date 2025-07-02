@@ -19,12 +19,13 @@ package net.skinsrestorer.mod;
 
 import ch.jalu.injector.Injector;
 import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.impl.NetworkAggregator;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
@@ -42,15 +43,15 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.SRHelpers;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRModInit implements SRServerPlatformInit {
-    public static final ResourceLocation SR_MESSAGE_CHANNEL = ResourceLocation.parse(SRHelpers.MESSAGE_CHANNEL);
+    public static final CustomPacketPayload.Type<RawBytePayload> SR_MESSAGE_CHANNEL = CustomPacketPayload.createType(SRHelpers.MESSAGE_CHANNEL);
     private final SRPlugin plugin;
     private final SRModAdapter adapter;
     private final Injector injector;
@@ -134,6 +135,26 @@ public class SRModInit implements SRServerPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        NetworkAggregator.registerReceiver(NetworkManager.Side.C2S, SR_MESSAGE_CHANNEL, List.of(), injector.getSingleton(ServerMessageListener.class));
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, SR_MESSAGE_CHANNEL, RawBytePayload.STREAM_CODEC, injector.getSingleton(ServerMessageListener.class));
+        NetworkManager.registerS2CPayloadType(
+                SR_MESSAGE_CHANNEL,
+                RawBytePayload.STREAM_CODEC
+        );
+    }
+
+    public record RawBytePayload(byte[] data) implements CustomPacketPayload {
+        public static final StreamCodec<RegistryFriendlyByteBuf, RawBytePayload> STREAM_CODEC = StreamCodec.of(
+                (buf, payload) -> buf.writeBytes(payload.data),
+                buf -> {
+                    var bytes = new byte[buf.readableBytes()];
+                    buf.readBytes(bytes);
+                    return new RawBytePayload(bytes);
+                }
+        );
+
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type() {
+            return SR_MESSAGE_CHANNEL;
+        }
     }
 }
