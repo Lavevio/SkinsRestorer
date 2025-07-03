@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":skinsrestorer-bukkit", "downgraded"))
     implementation(project(":skinsrestorer-bungee", "downgraded"))
     implementation(project(":skinsrestorer-velocity", "downgraded"))
+    implementation(projects.multiver.miniplaceholders)
 }
 
 tasks {

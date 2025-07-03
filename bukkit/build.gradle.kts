@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.multiver.bukkit.paper)
     implementation(projects.multiver.bukkit.v17)
     implementation(projects.multiver.bukkit.folia)
-    implementation(projects.multiver.miniplaceholders)
+    compileOnly(projects.multiver.miniplaceholders)
 
     rootProject.subprojects.forEach {
         if (!it.name.startsWith("mc-")) return@forEach
