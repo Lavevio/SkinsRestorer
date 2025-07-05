@@ -81,11 +81,14 @@ import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.nio.charset.StandardCharsets.*;
 
 @Command("sr|skinsrestorer")
 @RootDescription(Message.HELP_SR)
@@ -252,19 +255,15 @@ public final class SRCommand {
     @CommandPermission(PermissionRegistry.SR_DROP)
     @CommandDescription(Message.HELP_SR_DROP)
     private void onDropPlayer(SRCommandSender sender, String target) {
+        // remove online player profile
         try {
-            Optional<UUID> targetId = cacheStorage.getUUID(target, false);
-
-            if (targetId.isEmpty()) {
-                sender.sendMessage(Message.ADMINCOMMAND_DROP_PLAYER_NOT_FOUND, Placeholder.unparsed("player", target));
-                return;
-            }
-
-            playerStorage.removeSkinIdOfPlayer(targetId.get());
-        } catch (DataRequestException e) {
-            sender.sendMessage(Message.ADMINCOMMAND_DROP_UUID_ERROR);
-            return;
+            cacheStorage.getUUID(target, false)
+                    .ifPresent(playerStorage::removeSkinIdOfPlayer);
+        } catch (DataRequestException ignored) {
         }
+
+        // remove offline player profile
+        playerStorage.removeSkinIdOfPlayer(UUID.nameUUIDFromBytes(("OfflinePlayer:" + target).getBytes(UTF_8)));
 
         sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", "player"), Placeholder.unparsed("target", target));
     }
