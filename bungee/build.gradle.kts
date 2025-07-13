@@ -10,9 +10,6 @@ base {
 dependencies {
     compileOnly(projects.skinsrestorerShared)
     runtimeOnly(project(":skinsrestorer-shared", "shadow"))
-    implementation(projects.multiver.bungee.shared)
-    implementation(projects.multiver.bungee.propertyold)
-    implementation(projects.multiver.bungee.propertynew)
     testImplementation(testFixtures(projects.test))
 
     compileOnly(libs.bungeecord.api) {
