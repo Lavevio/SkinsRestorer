@@ -23,7 +23,6 @@ testcontainers = "1.21.2"
 slf4j = "2.0.17"
 gson = "2.13.1"
 spigot-api = "1.19.3-R0.1-SNAPSHOT"
-spigot-api-test = "1.19-R0.1-SNAPSHOT"
 bstats-bukkit = "3.1.0"
 xseries = "13.3.2"
 multilib = "1.2.4"
@@ -31,7 +30,8 @@ cloud-paper = "2.0.0-SNAPSHOT"
 placeholderapi = "2.11.6"
 authlib = "2.0.27"
 bungeecord-api = "1.21-R0.3"
-bungeecord-proxy = "1.18-R0.1-SNAPSHOT"
+bungeecord-proxy-new = "1.19-R0.1-SNAPSHOT"
+bungeecord-proxy-old = "1.18-R0.1-SNAPSHOT"
 bstats-bungeecord = "3.1.0"
 cloud-bungee = "2.0.0-SNAPSHOT"
 velocity-api = "3.1.1"
@@ -84,7 +84,6 @@ testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", ve
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
-spigot-api-test = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api-test" }
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats-bukkit" }
 xseries = { module = "com.github.cryptomorin:XSeries", version.ref = "xseries" }
 multilib = { module = "com.github.puregero:multilib", version.ref = "multilib" }
@@ -92,7 +91,8 @@ cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud-paper" 
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
 authlib = { module = "com.mojang:authlib", version.ref = "authlib" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord-api" }
-bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord-proxy" }
+bungeecord-proxy-new = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord-proxy-new" }
+bungeecord-proxy-old = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord-proxy-old" }
 bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats-bungeecord" }
 cloud-bungee = { module = "org.incendo:cloud-bungee", version.ref = "cloud-bungee" }
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }

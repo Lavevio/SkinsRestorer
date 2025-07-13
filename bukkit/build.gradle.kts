@@ -45,7 +45,7 @@ dependencies {
 
     implementation(libs.adventure.bukkit)
 
-    testImplementation(libs.spigot.api.test) {
+    testImplementation(libs.spigot.api) {
         isTransitive = false
     }
     testRuntimeOnly(libs.authlib)

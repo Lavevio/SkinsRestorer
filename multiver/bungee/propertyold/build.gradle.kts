@@ -11,5 +11,5 @@ dependencies {
     compileOnly(libs.bungeecord.api) {
         isTransitive = false
     }
-    compileOnly(libs.bungeecord.proxy)
+    compileOnly(libs.bungeecord.proxy.old)
 }
