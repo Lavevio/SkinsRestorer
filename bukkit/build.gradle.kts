@@ -11,10 +11,8 @@ dependencies {
     compileOnly(projects.skinsrestorerShared)
     runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
-    implementation(projects.multiver.bukkit.spigot)
     implementation(projects.multiver.bukkit.paper)
     implementation(projects.multiver.bukkit.v17)
-    implementation(projects.multiver.bukkit.folia)
     compileOnly(projects.multiver.miniplaceholders)
 
     rootProject.subprojects.forEach {

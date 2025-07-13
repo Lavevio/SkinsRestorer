@@ -23,6 +23,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.Optional;
 
 public class SpigotConfigUtil {
+    @SuppressWarnings("removal")
     public static Optional<YamlConfiguration> getSpigotConfig(Server server) {
         try {
             return Optional.of(server.spigot().getConfig());

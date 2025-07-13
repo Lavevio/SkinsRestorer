@@ -30,8 +30,7 @@ cloud-paper = "2.0.0-SNAPSHOT"
 placeholderapi = "2.11.6"
 authlib = "2.0.27"
 bungeecord-api = "1.21-R0.3"
-bungeecord-proxy-new = "1.19-R0.1-SNAPSHOT"
-bungeecord-proxy-old = "1.18-R0.1-SNAPSHOT"
+bungeecord-proxy = "1.19-R0.1-SNAPSHOT"
 bstats-bungeecord = "3.1.0"
 cloud-bungee = "2.0.0-SNAPSHOT"
 velocity-api = "3.1.1"
@@ -53,7 +52,6 @@ viabackwards = "5.4.1"
 miniplaceholders = "2.3.0"
 paper-api = "1.21.5-R0.1-SNAPSHOT"
 craftbukkit = "1.7.10-R0.1-SNAPSHOT"
-folia-api = "1.19.4-R0.1-SNAPSHOT"
 bungeecord-protocol = "1.21-R0.3"
 
 [libraries]
@@ -91,8 +89,7 @@ cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud-paper" 
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
 authlib = { module = "com.mojang:authlib", version.ref = "authlib" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord-api" }
-bungeecord-proxy-new = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord-proxy-new" }
-bungeecord-proxy-old = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord-proxy-old" }
+bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord-proxy" }
 bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats-bungeecord" }
 cloud-bungee = { module = "org.incendo:cloud-bungee", version.ref = "cloud-bungee" }
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
@@ -114,7 +111,6 @@ viabackwards = { module = "com.viaversion:viabackwards-common", version.ref = "v
 miniplaceholders-api = { module = "io.github.miniplaceholders:miniplaceholders-api", version.ref = "miniplaceholders" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
 craftbukkit = { module = "org.bukkit:craftbukkit", version.ref = "craftbukkit" }
-folia-api = { module = "dev.folia:folia-api", version.ref = "folia-api" }
 bungeecord-protocol = { module = "net.md-5:bungeecord-protocol", version.ref = "bungeecord-protocol" }
 
 [plugins]
