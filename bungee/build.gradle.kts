@@ -15,13 +15,13 @@ dependencies {
     implementation(projects.multiver.bungee.propertynew)
     testImplementation(testFixtures(projects.test))
 
-    compileOnly("net.md-5:bungeecord-api:1.21-R0.3") {
+    compileOnly(libs.bungeecord.api) {
         isTransitive = false
     }
-    compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")
+    compileOnly(libs.bungeecord.proxy)
 
-    implementation("org.bstats:bstats-bungeecord:3.1.0")
-    implementation("org.incendo:cloud-bungee:2.0.0-SNAPSHOT")
+    implementation(libs.bstats.bungeecord)
+    implementation(libs.cloud.bungee)
 
     implementation(libs.adventure.bungeecord)
 }

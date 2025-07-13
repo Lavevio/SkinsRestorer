@@ -113,7 +113,7 @@ public class LoadTest {
                         new SRBootstrapper.PlatformClass<>(PluginJarProvider.class, () -> pluginFile),
                         new SRBootstrapper.PlatformClass<>(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class)
                 ),
-                new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
+                new JavaLoggerImpl(new BukkitConsoleImpl(sender), logger),
                 true,
                 SRBukkitAdapter.class,
                 SRServerPlugin.class,

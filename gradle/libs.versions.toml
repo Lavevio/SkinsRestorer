@@ -8,6 +8,35 @@ runwaterfallversion = "1.19"
 runvelocityversion = "3.4.0-SNAPSHOT"
 adventure-platform = "4.4.0"
 adventure = "4.23.0"
+architectury = "17.0.6"
+mixin = "0.8.7"
+fabric-api-bom = "0.128.1+1.21.7"
+adventure-platform-fabric = "6.5.0-SNAPSHOT"
+adventure-platform-mod-shared-fabric-repack = "6.5.0-SNAPSHOT"
+cloud-fabric = "2.0.0-SNAPSHOT"
+adventure-platform-neoforge = "6.5.0-SNAPSHOT"
+architectury-neoforge = "17.0.6"
+cloud-neoforge = "2.0.0-SNAPSHOT"
+fabric-permissions-api = "0.4.1"
+bstats = "3.1.0"
+testcontainers = "1.21.2"
+slf4j = "2.0.17"
+gson = "2.13.1"
+spigot-api = "1.19.3-R0.1-SNAPSHOT"
+spigot-api-test = "1.19-R0.1-SNAPSHOT"
+bstats-bukkit = "3.1.0"
+xseries = "13.3.2"
+multilib = "1.2.4"
+cloud-paper = "2.0.0-SNAPSHOT"
+placeholderapi = "2.11.6"
+authlib = "2.0.27"
+bungeecord-api = "1.21-R0.3"
+bungeecord-proxy = "1.18-R0.1-SNAPSHOT"
+bstats-bungeecord = "3.1.0"
+cloud-bungee = "2.0.0-SNAPSHOT"
+velocity-api = "3.1.1"
+bstats-velocity = "3.1.0"
+cloud-velocity = "2.0.0-SNAPSHOT"
 
 [libraries]
 
@@ -19,6 +48,38 @@ adventure-text-serializer-legacy = { module = "net.kyori:adventure-text-serializ
 adventure-text-serializer-ansi = { module = "net.kyori:adventure-text-serializer-ansi", version.ref = "adventure" }
 adventure-text-serializer-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure" }
 adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
+architectury = { module = "dev.architectury:architectury", version.ref = "architectury" }
+architectury-fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
+mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
+fabric-api-bom = { module = "net.fabricmc.fabric-api:fabric-api-bom", version.ref = "fabric-api-bom" }
+adventure-platform-fabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventure-platform-fabric" }
+adventure-platform-mod-shared-fabric-repack = { module = "net.kyori:adventure-platform-mod-shared-fabric-repack", version.ref = "adventure-platform-mod-shared-fabric-repack" }
+cloud-fabric = { module = "org.incendo:cloud-fabric", version.ref = "cloud-fabric" }
+adventure-platform-neoforge = { module = "net.kyori:adventure-platform-neoforge", version.ref = "adventure-platform-neoforge" }
+architectury-neoforge = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury-neoforge" }
+cloud-neoforge = { module = "org.incendo:cloud-neoforge", version.ref = "cloud-neoforge" }
+fabric-permissions-api = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions-api" }
+bstats-base = { module = "org.bstats:bstats-base", version.ref = "bstats" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-mariadb = { module = "org.testcontainers:mariadb", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
+spigot-api-test = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api-test" }
+bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats-bukkit" }
+xseries = { module = "com.github.cryptomorin:XSeries", version.ref = "xseries" }
+multilib = { module = "com.github.puregero:multilib", version.ref = "multilib" }
+cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud-paper" }
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
+authlib = { module = "com.mojang:authlib", version.ref = "authlib" }
+bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord-api" }
+bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord-proxy" }
+bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats-bungeecord" }
+cloud-bungee = { module = "org.incendo:cloud-bungee", version.ref = "cloud-bungee" }
+velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
+bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "bstats-velocity" }
+cloud-velocity = { module = "org.incendo:cloud-velocity", version.ref = "cloud-velocity" }
 
 [plugins]
 
@@ -37,4 +98,3 @@ adventure-shared = [
     "adventure-text-serializer-plain",
     "adventure-text-minimessage"
 ]
-
