@@ -7,7 +7,7 @@ dependencies {
     runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
 
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT") {
+    compileOnly(libs.spigot.api) {
         isTransitive = false
     }
 }

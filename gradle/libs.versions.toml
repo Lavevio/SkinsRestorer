@@ -37,6 +37,24 @@ cloud-bungee = "2.0.0-SNAPSHOT"
 velocity-api = "3.1.1"
 bstats-velocity = "3.1.0"
 cloud-velocity = "2.0.0-SNAPSHOT"
+mariadb-java-client = "3.5.4"
+configme = "beefdbdf7e"
+injector = "1.0"
+cloud-annotations = "2.0.0"
+cloud-processors-requirements = "1.0.0-SNAPSHOT"
+cloud-processors-cooldown = "1.0.0-SNAPSHOT"
+cloud-brigadier = "2.0.0-SNAPSHOT"
+cloud-translations-core = "1.0.0-SNAPSHOT"
+cloud-minecraft-extras = "2.0.0-SNAPSHOT"
+cloud-translations-minecraft-extras = "1.0.0-SNAPSHOT"
+floodgate = "2.2.2-SNAPSHOT"
+viaversion = "5.0.0"
+viabackwards = "5.4.1"
+miniplaceholders = "2.3.0"
+paper-api = "1.21.5-R0.1-SNAPSHOT"
+craftbukkit = "1.7.10-R0.1-SNAPSHOT"
+folia-api = "1.19.4-R0.1-SNAPSHOT"
+bungeecord-protocol = "1.21-R0.3"
 
 [libraries]
 
@@ -80,6 +98,24 @@ cloud-bungee = { module = "org.incendo:cloud-bungee", version.ref = "cloud-bunge
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
 bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "bstats-velocity" }
 cloud-velocity = { module = "org.incendo:cloud-velocity", version.ref = "cloud-velocity" }
+mariadb-java-client = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariadb-java-client" }
+configme = { module = "com.github.SkinsRestorer:ConfigMe", version.ref = "configme" }
+injector = { module = "ch.jalu:injector", version.ref = "injector" }
+cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloud-annotations" }
+cloud-processors-requirements = { module = "org.incendo:cloud-processors-requirements", version.ref = "cloud-processors-requirements" }
+cloud-processors-cooldown = { module = "org.incendo:cloud-processors-cooldown", version.ref = "cloud-processors-cooldown" }
+cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloud-brigadier" }
+cloud-translations-core = { module = "org.incendo:cloud-translations-core", version.ref = "cloud-translations-core" }
+cloud-minecraft-extras = { module = "org.incendo:cloud-minecraft-extras", version.ref = "cloud-minecraft-extras" }
+cloud-translations-minecraft-extras = { module = "org.incendo:cloud-translations-minecraft-extras", version.ref = "cloud-translations-minecraft-extras" }
+floodgate-api = { module = "org.geysermc.floodgate:api", version.ref = "floodgate" }
+viaversion = { module = "com.viaversion:viaversion", version.ref = "viaversion" }
+viabackwards = { module = "com.viaversion:viabackwards-common", version.ref = "viabackwards" }
+miniplaceholders-api = { module = "io.github.miniplaceholders:miniplaceholders-api", version.ref = "miniplaceholders" }
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+craftbukkit = { module = "org.bukkit:craftbukkit", version.ref = "craftbukkit" }
+folia-api = { module = "dev.folia:folia-api", version.ref = "folia-api" }
+bungeecord-protocol = { module = "net.md-5:bungeecord-protocol", version.ref = "bungeecord-protocol" }
 
 [plugins]
 
