@@ -1,6 +1,6 @@
 plugins {
     id("sr.base-logic")
-    id("xyz.wagyourtail.unimined") version "1.3.15"
+    id("xyz.wagyourtail.unimined") version "1.4.2-SNAPSHOT"
 }
 
 base {
