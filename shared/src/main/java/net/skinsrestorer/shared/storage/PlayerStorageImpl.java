@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.storage;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -27,6 +28,7 @@ import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
+import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
@@ -49,6 +51,7 @@ public class PlayerStorageImpl implements PlayerStorage {
     private final SkinStorageImpl skinStorage;
     private final SRLogger logger;
     private final AdapterReference adapterReference;
+    private final RecommendationsState recommendationsState;
 
     @Override
     public Optional<SkinIdentifier> getSkinIdOfPlayer(UUID uuid) {
@@ -321,8 +324,24 @@ public class PlayerStorageImpl implements PlayerStorage {
         }
 
         String selectedSkin = skins.size() == 1 ? skins.getFirst() : SRHelpers.getRandomEntry(skins);
+        if ("<random>".equalsIgnoreCase(selectedSkin)) {
+            var randomRecommendation = recommendationsState.getRandomRecommendation();
+            if (randomRecommendation.isPresent()) {
+                selectedSkin = SkinStorageImpl.RECOMMENDATION_PREFIX + randomRecommendation.get().getSkinId();
+            } else {
+                logger.warning("No recommendations available for default skin, please ensure SkinsRestorer can reach the internet.");
+                return Optional.empty();
+            }
+        }
 
-        return skinStorage.findSkinData(selectedSkin).map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
+        // If the selected skin is a recommendation, we need to use the findOrCreate method
+        try {
+            return skinStorage.findOrCreateSkinData(selectedSkin)
+                    .map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
+        } catch (DataRequestException | MineSkinException e) {
+            logger.warning("Failed to get default skin data for %s".formatted(selectedSkin), e);
+            return Optional.empty();
+        }
     }
 
     private record SkinForResult(SkinIdentifier identifier, SkinProperty property) {
