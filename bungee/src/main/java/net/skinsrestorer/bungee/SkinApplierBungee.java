@@ -18,6 +18,7 @@
 package net.skinsrestorer.bungee;
 
 import lombok.RequiredArgsConstructor;
+import net.lenni0451.reflect.exceptions.ConstructorNotFoundException;
 import net.lenni0451.reflect.stream.RStream;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -68,10 +69,21 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
                 .newInstance(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
         if (loginProfile == null) {
-            loginProfileFieldWrapper.set(RStream.of(loginProfileClass)
-                    .constructors()
-                    .by(String.class, String.class, propertyArrayClass)
-                    .newInstance(null, null, propertyArray));
+            try {
+                // New BungeeCord
+                // new LoginResult(String, String, Property[])
+                loginProfileFieldWrapper.set(RStream.of(loginProfileClass)
+                        .constructors()
+                        .by(String.class, String.class, propertyArrayClass)
+                        .newInstance(null, null, propertyArray));
+            } catch (ConstructorNotFoundException ignored) {
+                // Old BungeeCord
+                // new LoginResult(String, Property[])
+                loginProfileFieldWrapper.set(RStream.of(loginProfileClass)
+                        .constructors()
+                        .by(String.class, propertyArrayClass)
+                        .newInstance(null, propertyArray));
+            }
         } else {
             propertyArrayFieldWrapper.set(loginProfile, propertyArray);
         }
