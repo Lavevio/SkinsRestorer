@@ -50,7 +50,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         var loginProfileFieldWrapper = RStream.of(handler)
                 .fields()
                 .by("loginProfile");
-        // LogiNResult.class
+        // LoginResult.class
         var loginProfileClass = loginProfileFieldWrapper.type();
         // LoginProfile instance
         var loginProfile = loginProfileFieldWrapper.get();
