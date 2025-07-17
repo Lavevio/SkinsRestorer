@@ -12,9 +12,7 @@ dependencies {
     runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     testImplementation(testFixtures(projects.test))
 
-    compileOnly(libs.bungeecord.api) {
-        isTransitive = false
-    }
+    compileOnly(libs.bungeecord.api)
 
     implementation(libs.bstats.bungeecord)
     implementation(libs.cloud.bungee)

@@ -27,7 +27,6 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.utils.AuthLibHelper;
 import net.skinsrestorer.shared.utils.ProxyAckTracker;
@@ -42,7 +41,6 @@ import java.util.Optional;
 public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     private final WrapperBungee wrapper;
     private final EventBusImpl eventBus;
-    private final SRLogger logger;
     private final ProxyAckTracker proxyAckTracker;
 
     public static void applyToHandler(PendingConnection handler, SkinProperty property) {
