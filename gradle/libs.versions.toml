@@ -116,7 +116,6 @@ reflect = { module = "net.lenni0451:Reflect", version.ref = "reflect" }
 runvelocity = { id = "xyz.jpenilla.run-velocity", version.ref = "runtask" }
 runpaper = { id = "xyz.jpenilla.run-paper", version.ref = "runtask" }
 runwaterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "runtask" }
-blossom = { id = "net.kyori.blossom", version = "2.1.0" }
 
 [bundles]
 
