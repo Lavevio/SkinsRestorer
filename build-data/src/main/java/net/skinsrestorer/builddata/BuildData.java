@@ -38,7 +38,7 @@ public class BuildData {
 
     static {
         Properties properties = new Properties();
-        try (var inputStream = BuildData.class.getClassLoader().getResourceAsStream("sr-build-data.properties")) {
+        try (var inputStream = BuildData.class.getClassLoader().getResourceAsStream("skinsrestorer-build-data.properties")) {
             if (inputStream == null) {
                 throw new IllegalStateException("Build data properties file not found");
             }

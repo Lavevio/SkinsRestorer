@@ -29,7 +29,14 @@ tasks {
     }
     // Variable replacements
     processResources {
-        filesMatching(listOf("plugin.yml", "bungee.yml", "velocity-plugin.json", "sr-build-data.properties")) {
+        filesMatching(
+            listOf(
+                "plugin.yml",
+                "bungee.yml",
+                "velocity-plugin.json",
+                "skinsrestorer-build-data.properties"
+            )
+        ) {
             val sharedResources = rootDir.resolve("shared").resolve("src").resolve("main").resolve("resources")
             expand(
                 "version" to project.version,
