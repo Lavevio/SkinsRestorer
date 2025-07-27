@@ -37,12 +37,9 @@ allprojects {
         maven("https://libraries.minecraft.net/") {
             name = "Minecraft Repository"
         }
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-            name = "sonatype-oss-snapshots1"
+        maven("https://central.sonatype.com/repository/maven-snapshots/") {
+            name = "Sonatype Snapshot Repository"
             mavenContent { snapshotsOnly() }
-        }
-        maven("https://oss.sonatype.org/content/repositories/snapshots/") {
-            name = "Sonatype Repository"
         }
         maven("https://repo.clojars.org/") {
             name = "Clojars Repository"
