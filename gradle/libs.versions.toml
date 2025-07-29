@@ -10,11 +10,8 @@ adventure-platform = "4.4.0"
 adventure = "4.23.0"
 architectury = "17.0.6"
 mixin = "0.8.7"
-fabric-api-bom = "0.129.0+1.21.7"
-adventure-platform-fabric = "6.5.0-SNAPSHOT"
-adventure-platform-mod-shared-fabric-repack = "6.5.0-SNAPSHOT"
+fabric-api-bom = "0.130.0+1.21.8"
 cloud-fabric = "2.0.0-SNAPSHOT"
-adventure-platform-neoforge = "6.5.0-SNAPSHOT"
 architectury-neoforge = "17.0.6"
 cloud-neoforge = "2.0.0-SNAPSHOT"
 fabric-permissions-api = "0.4.1"
@@ -67,10 +64,7 @@ architectury = { module = "dev.architectury:architectury", version.ref = "archit
 architectury-fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
 fabric-api-bom = { module = "net.fabricmc.fabric-api:fabric-api-bom", version.ref = "fabric-api-bom" }
-adventure-platform-fabric = { module = "net.kyori:adventure-platform-fabric", version.ref = "adventure-platform-fabric" }
-adventure-platform-mod-shared-fabric-repack = { module = "net.kyori:adventure-platform-mod-shared-fabric-repack", version.ref = "adventure-platform-mod-shared-fabric-repack" }
 cloud-fabric = { module = "org.incendo:cloud-fabric", version.ref = "cloud-fabric" }
-adventure-platform-neoforge = { module = "net.kyori:adventure-platform-neoforge", version.ref = "adventure-platform-neoforge" }
 architectury-neoforge = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury-neoforge" }
 cloud-neoforge = { module = "org.incendo:cloud-neoforge", version.ref = "cloud-neoforge" }
 fabric-permissions-api = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions-api" }

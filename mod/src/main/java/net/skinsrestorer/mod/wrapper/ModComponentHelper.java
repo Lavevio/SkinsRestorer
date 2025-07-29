@@ -17,13 +17,20 @@
  */
 package net.skinsrestorer.mod.wrapper;
 
-import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerializer;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public class ModComponentHelper {
+    private static final Gson GSON = new Gson();
+
     public static Component deserialize(ComponentString messageJson) {
-        return NonWrappingComponentSerializer.INSTANCE.serialize(GsonComponentSerializer.gson().deserialize(messageJson.jsonString()));
+        return ComponentSerialization.CODEC
+                .decode(JsonOps.INSTANCE, GSON.fromJson(messageJson.jsonString(), JsonElement.class))
+                .getOrThrow()
+                .getFirst();
     }
 }

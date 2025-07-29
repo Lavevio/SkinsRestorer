@@ -17,9 +17,7 @@ unimined.minecraft {
     mappings {
         intermediary()
         mojmap()
-        parchment("1.21.6", "2025.06.29")
-
-        devFallbackNamespace("official")
+        parchment("1.21.8", "2025.07.20")
     }
 
     accessWidener {
@@ -120,7 +118,6 @@ dependencies {
         }
     }
     // Shared mods
-    modImplementation(libs.adventure.platform.mod.shared.fabric.repack)
     modImplementation(libs.architectury)
 
     // Mixins
@@ -131,8 +128,6 @@ dependencies {
     fabricInclude(enforcedPlatform(libs.fabric.api.bom))
 
     // Needed for modImplementations to load
-    fabricModImplementation(libs.adventure.platform.fabric)
-    fabricInclude(libs.adventure.platform.fabric)
     fabricModImplementation(libs.architectury.fabric)
     fabricInclude(libs.architectury.fabric)
 
@@ -143,8 +138,6 @@ dependencies {
     fabricInclude(libs.fabric.permissions.api)
 
     // Needed for modImplementations to load
-    neoforgeModImplementation(libs.adventure.platform.neoforge)
-    neoforgeInclude(libs.adventure.platform.neoforge)
     neoforgeModImplementation(libs.architectury.neoforge)
     neoforgeInclude(libs.architectury.neoforge)
 
