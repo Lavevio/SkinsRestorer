@@ -21,7 +21,7 @@ public enum UpdateCause {
     STARTUP,
     ERROR,
     SCHEDULED,
-    NO_NETWORK;
+    NETWORK_DISABLED;
 
     public boolean isError() {
         return this == ERROR;

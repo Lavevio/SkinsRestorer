@@ -35,6 +35,7 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -114,8 +115,10 @@ public class UpdateCheckerGitHub {
         printHeader(cause);
         logger.info("§b    Version: §a%s".formatted(BuildData.VERSION));
         logger.info("§b    Commit: §a%s".formatted(BuildData.COMMIT_SHORT));
-        if (cause == UpdateCause.NO_NETWORK) {
-            logger.info("§c    No network connection available!");
+        if (cause == UpdateCause.NETWORK_DISABLED) {
+            logger.info("§c    Network connections are disabled in the SkinsRestorer config (advanced.noConnections), we will not check for updates.");
+        } else if (Files.exists(plugin.getDataFolder().resolve("noupdate.txt"))) {
+            logger.info("§e    The updater is disabled using noupdate.txt");
         } else {
             logger.info("§a    This is the latest version!");
         }

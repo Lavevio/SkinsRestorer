@@ -31,7 +31,7 @@ public class UpdateCheckExecutor {
 
     public void checkUpdate(UpdateCause cause, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader, boolean isSync) {
         if (settings.getProperty(AdvancedConfig.NO_CONNECTIONS)) {
-            updateChecker.printUpToDate(UpdateCause.NO_NETWORK);
+            updateChecker.printUpToDate(UpdateCause.NETWORK_DISABLED);
             return;
         }
 
