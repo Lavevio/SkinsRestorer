@@ -57,7 +57,7 @@ public class MetricsCounter {
     }
 
     private AtomicInteger getOrCreate(Service service) {
-        return map.computeIfAbsent(service, (k) -> new AtomicInteger());
+        return map.computeIfAbsent(service, k -> new AtomicInteger());
     }
 
     public enum Service {

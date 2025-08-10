@@ -268,8 +268,12 @@ public final class SkinCommand {
             try {
                 Optional<SkinIdentifier> currentSkin = targetPlayer.isPresent() ? playerStorage.getSkinIdForPlayer(target, targetPlayer.get().getName())
                         : playerStorage.getSkinIdOfPlayer(target);
-                if (currentSkin.isPresent() && currentSkin.get().getSkinType() == SkinType.PLAYER) {
-                    if (skinStorage.updatePlayerSkinData(currentSkin.get().getPlayerUniqueId()).isEmpty()) {
+
+                if (currentSkin.isPresent()) {
+                    var skin = currentSkin.get();
+                    if (skin.getSkinType() == SkinType.PLAYER
+                            && skinStorage.updatePlayerSkinData(skin.getPlayerUniqueId()).isEmpty()) {
+
                         sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                         return;
                     }

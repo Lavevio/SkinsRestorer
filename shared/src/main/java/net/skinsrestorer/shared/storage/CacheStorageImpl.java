@@ -73,7 +73,6 @@ public class CacheStorageImpl implements CacheStorage {
                 return uuid;
             } catch (DataRequestException e) {
                 logger.debug("Failed to get UUID from Mojang for %s".formatted(playerName), e);
-
                 throw new DataRequestExceptionShared(e);
             }
         } catch (StorageAdapter.StorageException e) {

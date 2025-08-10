@@ -71,9 +71,9 @@ public class SRVelocityCommandManager<C> extends CommandManager<C> implements Se
                         .putCaption(VelocityCaptionKeys.ARGUMENT_PARSE_FAILURE_SERVER, ARGUMENT_PARSE_FAILURE_SERVER)
                         .build());
 
-        proxyServer.getEventManager().register(plugin, ServerPreConnectEvent.class, ev -> {
-            this.lockRegistration();
-        });
+        proxyServer.getEventManager().register(
+                plugin, ServerPreConnectEvent.class, ev -> this.lockRegistration());
+
         this.parameterInjectorRegistry().registerInjector(
                 CommandSource.class,
                 (context, annotations) -> this.senderMapper.reverse(context.sender())

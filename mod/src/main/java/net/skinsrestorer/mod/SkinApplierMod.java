@@ -137,9 +137,8 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
             if (settings.getProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE)) {
                 // This is delayed to next tick to allow the accepter to propagate if necessary
-                adapter.runSync(Objects.requireNonNull(player.getServer()), () -> {
-                    player.startRiding(vehicle, false);
-                });
+                adapter.runSync(Objects.requireNonNull(player.getServer()), () ->
+                    player.startRiding(vehicle, false));
             }
         }
 

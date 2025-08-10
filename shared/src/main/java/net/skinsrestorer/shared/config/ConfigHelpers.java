@@ -35,7 +35,7 @@ public class ConfigHelpers {
 
     public static class CappedIntegerProperty extends TypeBasedProperty<Integer> {
         public CappedIntegerProperty(@NotNull String path, @NotNull Integer defaultValue, Integer min, Integer max) {
-            super(path, defaultValue, new PrimitivePropertyType<>((object) -> object instanceof Number num ? Math.min(Math.max(num.intValue(), min), max) : null));
+            super(path, defaultValue, new PrimitivePropertyType<>(object -> object instanceof Number num ? Math.min(Math.max(num.intValue(), min), max) : null));
         }
     }
 }

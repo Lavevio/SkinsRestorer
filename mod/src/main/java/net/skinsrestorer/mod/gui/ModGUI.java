@@ -149,22 +149,14 @@ public class ModGUI implements GUIManager<MenuProvider> {
             }
 
             SRInventory.ClickEventAction action = slotHandlers.get(switch (clickType) {
-                case PICKUP -> {
-                    if (button == 0) {
-                        yield ClickEventType.LEFT;
-                    } else if (button == 1) {
-                        yield ClickEventType.RIGHT;
-                    } else {
-                        yield ClickEventType.OTHER;
-                    }
-                }
-                case QUICK_MOVE -> {
-                    if (button == 0) {
-                        yield ClickEventType.SHIFT_LEFT;
-                    } else {
-                        yield ClickEventType.OTHER;
-                    }
-                }
+                case PICKUP -> switch (button) {
+                    case 0 -> ClickEventType.LEFT;
+                    case 1 -> ClickEventType.RIGHT;
+                    default -> ClickEventType.OTHER;
+                };
+                case QUICK_MOVE -> (button == 0)
+                        ? ClickEventType.SHIFT_LEFT
+                        : ClickEventType.OTHER;
                 default -> ClickEventType.OTHER;
             });
 

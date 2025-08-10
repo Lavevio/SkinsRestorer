@@ -59,7 +59,7 @@ public class BuiltInCodecs {
             STRING_CODEC,
             SkinIdentifier::getIdentifier,
             SKIN_VARIANT_CODEC.optional(),
-            (skinIdentifier) -> Optional.ofNullable(skinIdentifier.getSkinVariant()),
+            skinIdentifier -> Optional.ofNullable(skinIdentifier.getSkinVariant()),
             SKIN_TYPE_CODEC,
             SkinIdentifier::getSkinType,
             (identifier, variant, type) -> SkinIdentifier.of(identifier, variant.orElse(null), type)

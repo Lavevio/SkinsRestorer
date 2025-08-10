@@ -50,7 +50,7 @@ public class StorageConfig implements SettingsHolder {
             "<!! Warning !!>",
             "Enable this will require players to run \"/skin update\" to update their skin."
     })
-    public static final Property<Boolean> DISALLOW_AUTO_UPDATE_SKIN = newProperty("storage.disallowAutoUpdateSkin", false); // TODO: Should this not be in AdvancedConfig?
+    public static final Property<Boolean> DISALLOW_AUTO_UPDATE_SKIN = newProperty("storage.disallowAutoUpdateSkin", false);
     @Comment({
             "Time that skins are stored in the database before we request again (in minutes).",
             "[?] A value of 0 will always trigger a request to the Mojang API.",
