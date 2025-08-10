@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public final class SRMod {
-    private static final Logger LOGGER = LoggerFactory.getLogger("SkinsRestorer");
-    public static final String MOD_ID = "skinsrestorer";
+    public static final String MOD_ID_NAME = "skinsrestorer";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID_NAME);
 
     public static void init() {
         SRBootstrapper.startPlugin(
@@ -43,7 +43,7 @@ public final class SRMod {
                 true,
                 SRModAdapter.class,
                 SRServerPlugin.class,
-                Platform.getConfigFolder().resolve("skinsrestorer"),
+                Platform.getConfigFolder().resolve(MOD_ID_NAME),
                 SRModInit.class
         );
     }

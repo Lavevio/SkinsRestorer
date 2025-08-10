@@ -20,7 +20,7 @@ package net.skinsrestorer.mod.neoforge;
 import net.neoforged.fml.common.Mod;
 import net.skinsrestorer.mod.SRMod;
 
-@Mod(value = SRMod.MOD_ID)
+@Mod(value = SRMod.MOD_ID_NAME)
 public final class SRNeoForgeMod {
     public SRNeoForgeMod() {
         SRMod.init();
