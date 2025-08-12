@@ -20,6 +20,7 @@ allprojects {
             name = "SpigotMC Repository"
             content {
                 includeGroup("org.spigotmc")
+                includeGroup("net.md-5")
             }
             mavenContent { snapshotsOnly() }
         }
@@ -27,12 +28,11 @@ allprojects {
             name = "PaperMC Repository"
             content {
                 includeGroup("io.papermc.paper")
+                includeGroup("com.velocitypowered")
+                includeModule("net.md-5", "bungeecord-chat")
                 // TODO: Remove, for some reason not in sonatype
                 includeGroup("org.incendo")
             }
-        }
-        maven("https://repo.codemc.org/repository/maven-public/") {
-            name = "CodeMC Repository"
         }
         maven("https://repo.codemc.org/repository/nms/") {
             name = "CodeMC NMS Repository"
@@ -63,6 +63,8 @@ allprojects {
             name = "JitPack Repository"
             content {
                 includeGroupByRegex("com\\.github\\..*")
+                excludeGroup("com.github.cryptomorin")
+                excludeGroup("com.github.puregero")
             }
         }
         maven("https://libraries.minecraft.net/") {
