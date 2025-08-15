@@ -551,7 +551,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public int getTotalCustomSkins() {
-        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getCustomSkinQuery(0, Integer.MAX_VALUE) + ") AS subquery")) {
+        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getCustomSkinQuery(0, -1) + ") AS subquery")) {
             if (crs.next()) {
                 return crs.getInt(1);
             }
@@ -562,6 +562,9 @@ public class MySQLAdapter implements StorageAdapter {
         return 0;
     }
 
+    /**
+     * @param limit -1 for no limit
+     */
     @Override
     public List<GUIUtils.GUIRawSkinEntry> getCustomGUISkins(int offset, int limit) {
         List<GUIUtils.GUIRawSkinEntry> skins = new ArrayList<>();
@@ -604,14 +607,17 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         query.append(" ORDER BY `name` ASC");
-        query.append(" LIMIT ").append(offset).append(", ").append(limit);
+
+        if (limit > 0) {
+            query.append(" LIMIT ").append(offset).append(", ").append(limit);
+        }
 
         return query.toString();
     }
 
     @Override
     public int getTotalPlayerSkins() {
-        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getPlayerSkinQuery(0, Integer.MAX_VALUE) + ") AS subquery")) {
+        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getPlayerSkinQuery(0, -1) + ") AS subquery")) {
             if (crs.next()) {
                 return crs.getInt(1);
             }
@@ -622,6 +628,9 @@ public class MySQLAdapter implements StorageAdapter {
         return 0;
     }
 
+    /**
+     * @param limit -1 for no limit
+     */
     @Override
     public List<GUIUtils.GUIRawSkinEntry> getPlayerGUISkins(int offset, int limit) {
         List<GUIUtils.GUIRawSkinEntry> skins = new ArrayList<>();
@@ -663,7 +672,10 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         query.append(" ORDER BY `uuid` ASC");
-        query.append(" LIMIT ").append(offset).append(", ").append(limit);
+
+        if (limit > 0) {
+            query.append(" LIMIT ").append(offset).append(", ").append(limit);
+        }
 
         return query.toString();
     }
