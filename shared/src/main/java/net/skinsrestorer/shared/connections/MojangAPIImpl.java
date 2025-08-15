@@ -181,10 +181,6 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     private HttpResponse readURL(URI uri, MetricsCounter.Service service) throws DataRequestException {
-        return readURL(uri, service, 5_000);
-    }
-
-    private HttpResponse readURL(URI uri, MetricsCounter.Service service, int timeout) throws DataRequestException {
         metricsCounter.increment(service);
 
         try {
@@ -195,7 +191,7 @@ public class MojangAPIImpl implements MojangAPI {
                     plugin.getUserAgent(),
                     HttpClient.HttpMethod.GET,
                     Collections.emptyMap(),
-                    timeout
+                    5000
             );
         } catch (IOException e) {
             logger.debug("Error while reading URL: %s".formatted(uri), e);
