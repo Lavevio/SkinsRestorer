@@ -57,17 +57,19 @@ public class MojangAPIImpl implements MojangAPI {
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String nameOrUniqueId) throws DataRequestException {
+        // If it is not a valid Minecraft username or UUID, return empty
         Optional<UUID> uuidParseResult = UUIDUtils.tryParseUniqueId(nameOrUniqueId);
         if (ValidationUtil.invalidMinecraftUsername(nameOrUniqueId) && uuidParseResult.isEmpty()) {
             return Optional.empty();
         }
 
-        Optional<UUID> uuidResult = uuidParseResult.isEmpty()
-                ? getUUID(nameOrUniqueId) : uuidParseResult;
+        // If it is a valid UUID, we can just use it directly, otherwise we need to get the UUID from the name
+        Optional<UUID> uuidResult = uuidParseResult.isEmpty() ? getUUID(nameOrUniqueId) : uuidParseResult;
         if (uuidResult.isEmpty()) {
             return Optional.empty();
         }
 
+        // Get the profile data for the UUID
         return getProfile(uuidResult.get()).flatMap(propertyResponse ->
                 Optional.of(MojangSkinDataResult.of(uuidResult.get(), propertyResponse)));
     }
@@ -99,16 +101,6 @@ public class MojangAPIImpl implements MojangAPI {
         throw new DataRequestExceptionShared("Failed to get UUID for player: %s".formatted(playerName));
     }
 
-    public Optional<UUID> getUUIDEclipse(String playerName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(UUID_ECLIPSE.replace("%playerName%", playerName)), MetricsCounter.Service.ECLIPSE_UUID);
-        if (httpResponse.statusCode() != 200) {
-            throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
-        }
-
-        EclipseUUIDResponse response = httpResponse.getBodyAs(EclipseUUIDResponse.class);
-        return Optional.ofNullable(response.uuid());
-    }
-
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(UUID_MOJANG.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
 
@@ -132,6 +124,16 @@ public class MojangAPIImpl implements MojangAPI {
                 .map(UUIDUtils::convertToDashed);
     }
 
+    public Optional<UUID> getUUIDEclipse(String playerName) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(UUID_ECLIPSE.replace("%playerName%", playerName)), MetricsCounter.Service.ECLIPSE_UUID);
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
+        }
+
+        EclipseUUIDResponse response = httpResponse.getBodyAs(EclipseUUIDResponse.class);
+        return Optional.ofNullable(response.uuid());
+    }
+
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
         try {
             return getProfileMojang(uuid);
@@ -149,20 +151,6 @@ public class MojangAPIImpl implements MojangAPI {
         throw new DataRequestExceptionShared("Failed to get profile for player: %s".formatted(uuid));
     }
 
-    public Optional<SkinProperty> getProfileEclipse(UUID uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(PROFILE_ECLIPSE.replace("%uuid%", uuid.toString())), MetricsCounter.Service.ECLIPSE_PROFILE);
-        if (httpResponse.statusCode() != 200) {
-            throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
-        }
-
-        EclipseProfileResponse response = httpResponse.getBodyAs(EclipseProfileResponse.class);
-        if (response.skinProperty() == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(SkinProperty.of(response.skinProperty().value(), response.skinProperty().signature()));
-    }
-
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(PROFILE_MOJANG.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG);
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
@@ -176,6 +164,20 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
+    }
+
+    public Optional<SkinProperty> getProfileEclipse(UUID uuid) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(PROFILE_ECLIPSE.replace("%uuid%", uuid.toString())), MetricsCounter.Service.ECLIPSE_PROFILE);
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
+        }
+
+        EclipseProfileResponse response = httpResponse.getBodyAs(EclipseProfileResponse.class);
+        if (response.skinProperty() == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SkinProperty.of(response.skinProperty().value(), response.skinProperty().signature()));
     }
 
     private HttpResponse readURL(URI uri, MetricsCounter.Service service) throws DataRequestException {
