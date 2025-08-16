@@ -55,10 +55,9 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         }
 
         adapter.runAsync(() -> {
+            // run the skin apply event
             SkinApplyEventImpl applyEvent = new SkinApplyEventImpl(player, property);
-
             eventBus.callEvent(applyEvent);
-
             if (applyEvent.isCancelled()) {
                 return;
             }
@@ -73,16 +72,18 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             return;
         }
 
+        // We do things with passengers to avoid desync issues with riding entities
         if (SpigotPassengerUtil.isAvailable()) {
             passengerUtil.ejectPassengers(player);
         }
 
+        // If the Paper API is available, we use it to apply the skin
         if (ReflectionUtil.classExists("com.destroystokyo.paper.profile.PlayerProfile")
                 && PaperSkinApplier.hasProfileMethod()) {
             PaperSkinApplier.applySkin(player, property);
             return;
         }
-
+        // Otherwise we use the SkinsRestorer adapter to apply the skin
         applyAdapter.applyProperty(player, property);
 
         if (settingsManager.getProperty(AdvancedConfig.TELEPORT_REFRESH)) {
