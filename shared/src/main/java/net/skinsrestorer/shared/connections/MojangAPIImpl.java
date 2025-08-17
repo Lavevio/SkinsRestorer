@@ -47,6 +47,7 @@ import java.util.UUID;
 public class MojangAPIImpl implements MojangAPI {
     private static final String UUID_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%";
     private static final String UUID_MOJANG = "https://api.minecraftservices.com/minecraft/profile/lookup/name/%playerName%";
+    private static final String UUID_MOJANG_BACKUP = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
     private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
 
@@ -86,7 +87,14 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            return getUUIDMojang(playerName);
+            return getUUIDMojang(playerName, UUID_MOJANG);
+        } catch (DataRequestException e) {
+            logger.debug(e);
+        }
+
+        // Fallback to Mojang old API
+        try {
+            return getUUIDMojang(playerName, UUID_MOJANG_BACKUP);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
@@ -102,7 +110,11 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(UUID_MOJANG.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
+        return getUUIDMojang(playerName, UUID_MOJANG);
+    }
+
+    public Optional<UUID> getUUIDMojang(String playerName, String endpoint) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(endpoint.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
 
         // Not found
         if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404 || httpResponse.body().isEmpty()) {
