@@ -30,8 +30,12 @@ public class PaperSkinApplier {
         profile.getProperties().add(new ProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
         player.setPlayerProfile(profile);
-        // Update the player health and food
-        player.sendHealthUpdate();
+
+        // Update the player health and food, does not work on older versions
+        try {
+            player.sendHealthUpdate();
+        } catch (NoSuchMethodError ignored) {
+        }
     }
 
     public static boolean hasProfileMethod() {
