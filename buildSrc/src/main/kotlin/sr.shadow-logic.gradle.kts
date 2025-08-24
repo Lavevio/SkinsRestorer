@@ -90,7 +90,12 @@ class ShadowResourceTransformer : Transformer {
 
 tasks {
     processResources {
-        expand("version" to version, "description" to description)
+        expand(
+            mapOf(
+                "version" to version,
+                "description" to description
+            )
+        )
     }
 
     jar {
