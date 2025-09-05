@@ -1,104 +1,8 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowCopyAction
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.github.jengelman.gradle.plugins.shadow.transformers.ResourceTransformer
-import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import org.apache.tools.zip.ZipEntry
-import org.apache.tools.zip.ZipOutputStream
 
 plugins {
     id("sr.base-logic")
     id("com.gradleup.shadow")
-}
-
-val packages = mapOf(
-    "org.mariadb.jdbc" to "net.skinsrestorer.shadow.mariadb"
-)
-
-fun replaceSlash(text: String): String {
-    return text.replace(".", "/")
-}
-
-fun replacePackageDot(text: String): String {
-    var returnedText = text
-
-    for (entry in packages.entries) {
-        returnedText = returnedText.replace(entry.key, entry.value)
-    }
-
-    return returnedText
-}
-
-fun replacePackagSlash(text: String): String {
-    var returnedText = text
-
-    for (entry in packages.entries) {
-        returnedText = returnedText.replace(replaceSlash(entry.key), replaceSlash(entry.value))
-    }
-
-    return returnedText
-}
-
-fun replaceRelocation(text: String): String {
-    var returnedText = text
-
-    returnedText = replacePackageDot(returnedText)
-    returnedText = replacePackagSlash(returnedText)
-
-    return returnedText
-}
-
-class ShadowResourceTransformer : ResourceTransformer {
-    @Internal
-    var replacedMap: MutableMap<String, String> = HashMap()
-
-    override fun getName(): String {
-        return "ShadowResourceTransformer"
-    }
-
-    override fun canTransformResource(element: FileTreeElement): Boolean {
-        val pathString: String = element.relativePath.pathString
-
-        return pathString.contains("META-INF/services")
-    }
-
-    override fun transform(context: TransformerContext) {
-        val content = String(context.inputStream.readAllBytes())
-
-        val replaced = replaceRelocation(content)
-
-        if (content.length < replaced.length) {
-            replacedMap[context.path] = replaced
-        }
-    }
-
-    override fun hasTransformedResource(): Boolean {
-        return replacedMap.isNotEmpty()
-    }
-
-    internal inline fun zipEntry(
-        name: String,
-        preserveLastModified: Boolean = true,
-        lastModified: Long = -1,
-        block: ZipEntry.() -> Unit = {},
-    ): ZipEntry = ZipEntry(name).apply {
-        if (preserveLastModified) {
-            if (lastModified >= 0) {
-                time = lastModified
-            }
-        } else {
-            time = ShadowCopyAction.CONSTANT_TIME_FOR_ZIP_ENTRIES
-        }
-        block()
-    }
-
-    override fun modifyOutputStream(os: ZipOutputStream, preserveFileTimestamps: Boolean) {
-        replacedMap.forEach { (path, value) ->
-            val entry = zipEntry(replacePackageDot(path), preserveFileTimestamps)
-            os.putNextEntry(entry)
-            os.write(value.toByteArray())
-            os.closeEntry()
-        }
-    }
 }
 
 tasks {
@@ -117,8 +21,8 @@ tasks {
     }
 
     shadowJar {
+        mergeServiceFiles()
         configureRelocations()
-        transform(ShadowResourceTransformer())
         failOnDuplicateEntries = true
     }
 
