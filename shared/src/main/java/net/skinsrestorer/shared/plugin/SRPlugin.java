@@ -73,7 +73,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class SRPlugin {
     @Getter
@@ -98,6 +100,10 @@ public class SRPlugin {
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);
         this.logger = injector.getSingleton(SRLogger.class);
         this.dataFolder = dataFolder;
+    }
+
+    public SRPlatformAdapter getAdapter() {
+        return adapter;
     }
 
     public void initCommands() {

@@ -27,7 +27,7 @@ import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MojangBatchUUIDEntry;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
@@ -35,30 +35,36 @@ import net.skinsrestorer.shared.utils.ValidationUtil;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MojangBatchAPI {
+    private static final int DEFAULT_BATCH_SIZE = 10;
+    private static final int HTTP_TIMEOUT_MS = 5000;
+
     private final MetricsCounter metricsCounter;
     private final SRLogger logger;
-    private final SRPlugin plugin;
+    private final SRPlatformAdapter adapter;
     private final HttpClient httpClient;
     private final SettingsManager settings;
     private final String batchEndpoint;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final String userAgent;
     private final ConcurrentHashMap<String, CompletableFuture<Optional<UUID>>> pendingRequests = new ConcurrentHashMap<>();
     private final List<String> batchQueue = Collections.synchronizedList(new ArrayList<>());
     private final AtomicLong lastBatchTime = new AtomicLong(System.currentTimeMillis());
     private final AtomicBoolean batchInProgress = new AtomicBoolean(false);
 
-    public MojangBatchAPI(MetricsCounter metricsCounter, SRLogger logger, SRPlugin plugin, HttpClient httpClient, SettingsManager settings, String batchEndpoint) {
+    public MojangBatchAPI(MetricsCounter metricsCounter, SRLogger logger, SRPlatformAdapter adapter, HttpClient httpClient, SettingsManager settings, String batchEndpoint, String userAgent) {
         this.metricsCounter = metricsCounter;
         this.logger = logger;
-        this.plugin = plugin;
+        this.adapter = adapter;
         this.httpClient = httpClient;
         this.settings = settings;
         this.batchEndpoint = batchEndpoint;
+        this.userAgent = userAgent;
     }
 
     public CompletableFuture<Optional<UUID>> getUUID(String playerName) {
@@ -77,7 +83,7 @@ public class MojangBatchAPI {
 
         synchronized (batchQueue) {
             batchQueue.add(playerName);
-            if (batchQueue.size() >= 10) {
+            if (batchQueue.size() >= DEFAULT_BATCH_SIZE) {
                 // Trigger batch immediately if we have 10 requests
                 scheduleBatch(0);
             } else {
@@ -93,7 +99,7 @@ public class MojangBatchAPI {
     }
 
     private void scheduleBatch(long delayMillis) {
-        scheduler.schedule(this::processBatch, delayMillis, TimeUnit.MILLISECONDS);
+        adapter.runAsyncDelayed(this::processBatch, delayMillis, TimeUnit.MILLISECONDS);
     }
 
     private void processBatch() {
@@ -143,7 +149,7 @@ public class MojangBatchAPI {
         }
 
         // Limit to 10 names as per API
-        List<String> batchNames = names.size() > 10 ? names.subList(0, 10) : names;
+        List<String> batchNames = names.size() > DEFAULT_BATCH_SIZE ? names.subList(0, DEFAULT_BATCH_SIZE) : names;
 
         Gson gson = new Gson();
         HttpClient.RequestBody requestBody = new HttpClient.RequestBody(gson.toJson(batchNames), HttpClient.HttpType.JSON);
@@ -153,10 +159,10 @@ public class MojangBatchAPI {
                     URI.create(batchEndpoint),
                     requestBody,
                     HttpClient.HttpType.JSON,
-                    plugin.getUserAgent(),
+                    userAgent,
                     HttpClient.HttpMethod.POST,
                     Collections.emptyMap(),
-                    5000
+                    HTTP_TIMEOUT_MS
             );
 
             metricsCounter.increment(MetricsCounter.Service.MOJANG_UUID);
@@ -205,17 +211,5 @@ public class MojangBatchAPI {
         }
 
         return results;
-    }
-
-    public void shutdown() {
-        scheduler.shutdown();
-        try {
-            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-                scheduler.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            scheduler.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
     }
 }

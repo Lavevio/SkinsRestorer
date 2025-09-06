@@ -66,19 +66,21 @@ public class MojangAPIImpl implements MojangAPI {
         this.newBatchAPI = new MojangBatchAPI(
                 metricsCounter,
                 logger,
-                plugin,
+                plugin.getAdapter(),
                 httpClient,
                 settings,
-                BATCH_UUID_NEW_ENDPOINT
+                BATCH_UUID_NEW_ENDPOINT,
+                plugin.getUserAgent()
         );
 
         this.legacyBatchAPI = new MojangBatchAPI(
                 metricsCounter,
                 logger,
-                plugin,
+                plugin.getAdapter(),
                 httpClient,
                 settings,
-                BATCH_UUID_LEGACY_ENDPOINT
+                BATCH_UUID_LEGACY_ENDPOINT,
+                plugin.getUserAgent()
         );
     }
 
