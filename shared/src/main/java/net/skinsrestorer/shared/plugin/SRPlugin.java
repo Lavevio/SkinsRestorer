@@ -73,7 +73,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class SRPlugin {
     @Getter
@@ -268,7 +270,7 @@ public class SRPlugin {
 
     public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, SRSubjectWrapper<?, P, ?> platformWrapper) {
         SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, platformWrapper,
-                injector.getSingleton(PlayerStorageImpl.class), injector.getSingleton(SkinStorageImpl.class), injector);
+                injector.getSingleton(PlayerStorageImpl.class), injector.getSingleton(SkinStorageImpl.class), injector.getSingleton(adapter.getSoundProviderClass()));
         injector.register(SharedSkinApplier.class, sharedSkinApplier);
         injector.register(SkinApplier.class, sharedSkinApplier);
     }

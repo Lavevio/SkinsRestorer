@@ -23,6 +23,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -98,6 +99,11 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     @Override
     public boolean supportsDefaultPermissions() {
         return true;
+    }
+
+    @Override
+    public Class<? extends SoundProvider> getSoundProviderClass() {
+        return SoundProvider.NoopSoundProvider.class;
     }
 
     @Override

@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.plugin;
 
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
@@ -104,4 +105,6 @@ public interface SRPlatformAdapter {
     void openGUI(SRPlayer player, SRInventory srInventory);
 
     void giveSkullItem(SRPlayer player, SRServerPluginMessage.GiveSkullChannelPayload giveSkullPayload);
+
+    Class<? extends SoundProvider> getSoundProviderClass();
 }

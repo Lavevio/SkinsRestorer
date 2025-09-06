@@ -17,10 +17,15 @@
  */
 package net.skinsrestorer.shared.commands;
 
-import ch.jalu.injector.Injector;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
-import java.util.function.BiConsumer;
+public interface SoundProvider {
+    void playSound(SRPlayer player);
 
-public interface SoundProvider extends BiConsumer<Injector, SRPlayer> {
+    class NoopSoundProvider implements SoundProvider {
+        @Override
+        public void playSound(SRPlayer player) {
+            // No operation
+        }
+    }
 }

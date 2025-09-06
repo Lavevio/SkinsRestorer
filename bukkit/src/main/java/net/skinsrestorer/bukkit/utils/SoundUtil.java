@@ -20,6 +20,7 @@ package net.skinsrestorer.bukkit.utils;
 import ch.jalu.configme.SettingsManager;
 import com.cryptomorin.xseries.XSound;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.sound.SoundParser;
@@ -29,10 +30,11 @@ import org.bukkit.entity.Player;
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SoundUtil {
+public class SoundUtil implements SoundProvider {
     private final SettingsManager settings;
     private final SRLogger logger;
 
+    @Override
     public void playSound(SRPlayer player) {
         if (!settings.getProperty(ServerConfig.SOUND_ENABLED)) {
             return;

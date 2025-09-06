@@ -19,8 +19,6 @@ package net.skinsrestorer.mod;
 
 import dev.architectury.platform.Platform;
 import net.skinsrestorer.mod.logger.Slf4jLoggerImpl;
-import net.skinsrestorer.mod.utils.ModSoundProvider;
-import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import org.slf4j.Logger;
@@ -36,9 +34,7 @@ public final class SRMod {
         SRBootstrapper.startPlugin(
                 runnable -> {
                 },
-                List.of(
-                        new SRBootstrapper.PlatformClass<>(SoundProvider.class, new ModSoundProvider())
-                ),
+                List.of(),
                 new Slf4jLoggerImpl(LOGGER),
                 true,
                 SRModAdapter.class,
