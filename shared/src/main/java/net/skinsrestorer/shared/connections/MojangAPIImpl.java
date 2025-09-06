@@ -39,9 +39,7 @@ import net.skinsrestorer.shared.utils.ValidationUtil;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPIImpl implements MojangAPI {
@@ -86,10 +84,12 @@ public class MojangAPIImpl implements MojangAPI {
             return Optional.empty();
         }
 
+        List<Throwable> suppressedExceptions = new ArrayList<>();
         try {
             return getUUIDMojang(playerName, UUID_MOJANG);
         } catch (DataRequestException e) {
             logger.debug(e);
+            suppressedExceptions.add(e);
         }
 
         // Fallback to Mojang old API
@@ -97,6 +97,7 @@ public class MojangAPIImpl implements MojangAPI {
             return getUUIDMojang(playerName, UUID_MOJANG_BACKUP);
         } catch (DataRequestException e) {
             logger.debug(e);
+            suppressedExceptions.add(e);
         }
 
         // Fall back to Eclipse API
@@ -104,9 +105,15 @@ public class MojangAPIImpl implements MojangAPI {
             return getUUIDEclipse(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
+            suppressedExceptions.add(e);
         }
 
-        throw new DataRequestExceptionShared("Failed to get UUID for player: %s".formatted(playerName));
+        DataRequestExceptionShared error = new DataRequestExceptionShared("Failed to get UUID for player: %s".formatted(playerName));
+        for (Throwable t : suppressedExceptions) {
+            error.addSuppressed(t);
+        }
+
+        throw error;
     }
 
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
