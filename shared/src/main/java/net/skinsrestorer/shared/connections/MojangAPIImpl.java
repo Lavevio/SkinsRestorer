@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.shared.connections;
 
-import lombok.RequiredArgsConstructor;
+import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
@@ -28,7 +28,6 @@ import net.skinsrestorer.shared.connections.responses.profile.EclipseProfileResp
 import net.skinsrestorer.shared.connections.responses.profile.MojangProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.PropertyResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.EclipseUUIDResponse;
-import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
@@ -41,18 +40,47 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPIImpl implements MojangAPI {
     private static final String UUID_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%";
-    private static final String UUID_MOJANG = "https://api.minecraftservices.com/minecraft/profile/lookup/name/%playerName%";
-    private static final String UUID_MOJANG_BACKUP = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
     private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
+    private static final String BATCH_UUID_NEW_ENDPOINT = "https://api.minecraftservices.com/minecraft/profile/lookup/bulk/byname";
+    private static final String BATCH_UUID_LEGACY_ENDPOINT = "https://api.mojang.com/profiles/minecraft";
 
     private final MetricsCounter metricsCounter;
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final HttpClient httpClient;
+
+    private final MojangBatchAPI newBatchAPI;
+    private final MojangBatchAPI legacyBatchAPI;
+
+    @Inject
+    public MojangAPIImpl(MetricsCounter metricsCounter, SRLogger logger, SRPlugin plugin, HttpClient httpClient, SettingsManager settings) {
+        this.metricsCounter = metricsCounter;
+        this.logger = logger;
+        this.plugin = plugin;
+        this.httpClient = httpClient;
+
+        // Create batch API instances with different endpoints
+        this.newBatchAPI = new MojangBatchAPI(
+                metricsCounter,
+                logger,
+                plugin,
+                httpClient,
+                settings,
+                BATCH_UUID_NEW_ENDPOINT
+        );
+
+        this.legacyBatchAPI = new MojangBatchAPI(
+                metricsCounter,
+                logger,
+                plugin,
+                httpClient,
+                settings,
+                BATCH_UUID_LEGACY_ENDPOINT
+        );
+    }
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String nameOrUniqueId) throws DataRequestException {
@@ -86,7 +114,7 @@ public class MojangAPIImpl implements MojangAPI {
 
         List<Throwable> suppressedExceptions = new ArrayList<>();
         try {
-            return getUUIDMojang(playerName, UUID_MOJANG);
+            return getUUIDMojang(playerName, newBatchAPI);
         } catch (DataRequestException e) {
             logger.debug(e);
             suppressedExceptions.add(e);
@@ -94,7 +122,7 @@ public class MojangAPIImpl implements MojangAPI {
 
         // Fallback to Mojang old API
         try {
-            return getUUIDMojang(playerName, UUID_MOJANG_BACKUP);
+            return getUUIDMojang(playerName, legacyBatchAPI);
         } catch (DataRequestException e) {
             logger.debug(e);
             suppressedExceptions.add(e);
@@ -117,30 +145,11 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
-        return getUUIDMojang(playerName, UUID_MOJANG);
+        return getUUIDMojang(playerName, newBatchAPI);
     }
 
-    public Optional<UUID> getUUIDMojang(String playerName, String endpoint) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(endpoint.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG_UUID);
-
-        // Not found
-        if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404 || httpResponse.body().isEmpty()) {
-            return Optional.empty();
-        }
-
-        // Rate limited
-        if (httpResponse.statusCode() == 429) {
-            // TODO: Return http code to api and translate internally
-            throw new DataRequestExceptionShared("Please wait a minute before requesting that skin again. (Rate Limited)");
-        }
-
-        MojangUUIDResponse response = httpResponse.getBodyAs(MojangUUIDResponse.class);
-        if (response.getError() != null) {
-            throw new DataRequestExceptionShared("Mojang error: %s".formatted(response.getError()));
-        }
-
-        return Optional.ofNullable(response.getId())
-                .map(UUIDUtils::convertToDashed);
+    public Optional<UUID> getUUIDMojang(String playerName, MojangBatchAPI batchAPI) throws DataRequestException {
+        return batchAPI.getUUID(playerName).join();
     }
 
     public Optional<UUID> getUUIDEclipse(String playerName) throws DataRequestException {

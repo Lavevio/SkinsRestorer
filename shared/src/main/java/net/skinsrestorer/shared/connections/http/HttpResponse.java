@@ -22,6 +22,7 @@ import com.google.gson.JsonSyntaxException;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,14 @@ public record HttpResponse(int statusCode, String body, Map<String, List<String>
     public <T> T getBodyAs(Class<T> clazz) throws DataRequestException {
         try {
             return GSON.fromJson(body, clazz);
+        } catch (JsonSyntaxException e) {
+            throw new DataRequestExceptionShared(e);
+        }
+    }
+
+    public <T> T getBodyAs(Type type) throws DataRequestException {
+        try {
+            return GSON.fromJson(body, type);
         } catch (JsonSyntaxException e) {
             throw new DataRequestExceptionShared(e);
         }
