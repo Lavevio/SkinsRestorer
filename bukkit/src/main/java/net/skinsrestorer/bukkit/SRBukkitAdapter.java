@@ -26,13 +26,11 @@ import net.skinsrestorer.bukkit.gui.BukkitGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotConfigUtil;
-import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
-import net.skinsrestorer.bukkit.utils.SchedulerProvider;
-import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
-import net.skinsrestorer.bukkit.utils.SkullUtil;
+import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
@@ -152,6 +150,11 @@ public class SRBukkitAdapter implements SRServerAdapter {
         itemStack.setItemMeta(skullMeta);
 
         bukkitPlayer.getInventory().addItem(itemStack);
+    }
+
+    @Override
+    public Class<? extends SoundProvider> getSoundProviderClass() {
+        return SoundUtil.class;
     }
 
     public void runSyncToPlayer(Player player, Runnable runnable) {

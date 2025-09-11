@@ -23,6 +23,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.sound.SoundParser;
@@ -32,10 +33,11 @@ import javax.inject.Inject;
 import java.util.Objects;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SoundUtil {
+public class SoundUtil implements SoundProvider {
     private final SettingsManager settings;
     private final SRLogger logger;
 
+    @Override
     public void playSound(SRPlayer player) {
         if (!settings.getProperty(ServerConfig.SOUND_ENABLED)) {
             return;

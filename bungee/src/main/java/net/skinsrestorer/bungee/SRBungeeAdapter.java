@@ -26,6 +26,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.listeners.ForceAliveListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -99,6 +100,11 @@ public class SRBungeeAdapter implements SRProxyAdapter {
     @Override
     public boolean supportsDefaultPermissions() {
         return false;
+    }
+
+    @Override
+    public Class<? extends SoundProvider> getSoundProviderClass() {
+        return SoundProvider.NoopSoundProvider.class;
     }
 
     @Override

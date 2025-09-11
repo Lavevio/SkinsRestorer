@@ -33,8 +33,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.mod.gui.ModGUI;
+import net.skinsrestorer.mod.utils.SoundUtil;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
@@ -157,6 +159,11 @@ public class SRModAdapter implements SRServerAdapter {
                 .build());
 
         player.getAs(ServerPlayer.class).getInventory().add(stack);
+    }
+
+    @Override
+    public Class<? extends SoundProvider> getSoundProviderClass() {
+        return SoundUtil.class;
     }
 
     @Override
