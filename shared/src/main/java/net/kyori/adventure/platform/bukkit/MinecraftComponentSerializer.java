@@ -93,7 +93,6 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
     private static final MethodHandle COMPONENTSERIALIZATION_CODEC_ENCODE;
     private static final MethodHandle COMPONENTSERIALIZATION_CODEC_DECODE;
     private static final MethodHandle CREATE_SERIALIZATION_CONTEXT;
-    private static final boolean SUPPORTED = MC_TEXT_GSON != null || (TEXT_SERIALIZER_DESERIALIZE != null && TEXT_SERIALIZER_SERIALIZE != null) || (TEXT_SERIALIZER_DESERIALIZE_TREE != null && TEXT_SERIALIZER_SERIALIZE_TREE != null) || (COMPONENTSERIALIZATION_CODEC_ENCODE != null && COMPONENTSERIALIZATION_CODEC_DECODE != null && CREATE_SERIALIZATION_CONTEXT != null && JSON_OPS_INSTANCE != null);
 
     static {
         Object gson = null;
@@ -264,7 +263,7 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
      * @since 4.0.0
      */
     public static boolean isSupported() {
-        return SUPPORTED;
+        return MC_TEXT_GSON != null || (TEXT_SERIALIZER_DESERIALIZE != null && TEXT_SERIALIZER_SERIALIZE != null) || (TEXT_SERIALIZER_DESERIALIZE_TREE != null && TEXT_SERIALIZER_SERIALIZE_TREE != null) || (COMPONENTSERIALIZATION_CODEC_ENCODE != null && COMPONENTSERIALIZATION_CODEC_DECODE != null && CREATE_SERIALIZATION_CONTEXT != null && JSON_OPS_INSTANCE != null);
     }
 
     /**
@@ -279,7 +278,7 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
 
     @Override
     public @NotNull Component deserialize(final @NotNull Object input) {
-        if (!SUPPORTED) throw INITIALIZATION_ERROR.get();
+        if (!isSupported()) throw INITIALIZATION_ERROR.get();
 
         try {
             final Object element;
@@ -304,7 +303,7 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
 
     @Override
     public @NotNull Object serialize(final @NotNull Component component) {
-        if (!SUPPORTED) throw INITIALIZATION_ERROR.get();
+        if (!isSupported()) throw INITIALIZATION_ERROR.get();
 
         if (TEXT_SERIALIZER_DESERIALIZE_TREE != null || MC_TEXT_GSON != null) {
             final JsonElement json = gson().serializer().toJsonTree(component);
