@@ -26,10 +26,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class EventBusTest {
@@ -40,6 +44,17 @@ public class EventBusTest {
 
     @Test
     public void testServices(Injector injector) {
+        doAnswer((Answer<Void>) invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            long delay = invocation.getArgument(1);
+            TimeUnit unit = invocation.getArgument(2);
+
+            unit.sleep(delay);
+            runnable.run();
+
+            return null; // must return null because method returns void
+        }).when(srPlatformAdapter).runAsyncDelayed(any(), any(), any());
+
         injector.register(SRPlatformAdapter.class, srPlatformAdapter);
 
         EventBusImpl eventBus = injector.getSingleton(EventBusImpl.class);

@@ -30,8 +30,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class, SRExtension.class})
@@ -45,6 +50,17 @@ public class ServicesTest {
 
     @Test
     public void testServices(Injector injector) {
+        doAnswer((Answer<Void>) invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            long delay = invocation.getArgument(1);
+            TimeUnit unit = invocation.getArgument(2);
+
+            unit.sleep(delay);
+            runnable.run();
+
+            return null; // must return null because method returns void
+        }).when(srPlatformAdapter).runAsyncDelayed(any(), any(), any());
+
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
         injector.register(SRPlatformAdapter.class, srPlatformAdapter);
 
