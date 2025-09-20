@@ -44,4 +44,10 @@ public class APIConfig implements SettingsHolder {
             "Be aware that commands like /skin random will not work without this feature."
     })
     public static final Property<Boolean> FETCH_RECOMMENDED_SKINS = newProperty("api.fetchRecommendedSkins", true);
+    @Comment({
+            "Window size in seconds for batching Mojang API requests to avoid rate limits.",
+            "Requests are batched in windows of this duration or up to 10 requests, whichever comes first.",
+            "Default is 1 second."
+    })
+    public static final Property<Integer> MOJANG_BATCH_WINDOW_SECONDS = newProperty("api.mojangBatchWindowSeconds", 1);
 }

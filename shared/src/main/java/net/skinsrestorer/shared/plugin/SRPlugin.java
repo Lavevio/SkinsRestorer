@@ -102,6 +102,10 @@ public class SRPlugin {
         this.dataFolder = dataFolder;
     }
 
+    public SRPlatformAdapter getAdapter() {
+        return adapter;
+    }
+
     public void initCommands() {
         SRCommandManager manager = injector.getSingleton(SRCommandManager.class);
         manager.registerCommand(injector.newInstance(SRCommand.class));
