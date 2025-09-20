@@ -19,6 +19,7 @@ package net.skinsrestorer;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
+import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -47,6 +48,7 @@ public class ServicesTest {
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
         injector.register(SRPlatformAdapter.class, srPlatformAdapter);
 
+        when(settings.getProperty(APIConfig.MOJANG_BATCH_WINDOW_SECONDS)).thenReturn(1);
         when(settings.getProperty(AdvancedConfig.NO_CONNECTIONS)).thenReturn(false);
 
         injector.register(SettingsManager.class, settings);
