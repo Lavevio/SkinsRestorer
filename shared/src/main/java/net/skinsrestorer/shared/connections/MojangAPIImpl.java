@@ -39,6 +39,9 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class MojangAPIImpl implements MojangAPI {
     private static final String UUID_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%";
@@ -151,7 +154,11 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<UUID> getUUIDMojang(String playerName, MojangBatchAPI batchAPI) throws DataRequestException {
-        return batchAPI.getUUID(playerName).join();
+        try {
+            return batchAPI.getUUID(playerName).get(1, TimeUnit.MINUTES);
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            throw new DataRequestExceptionShared(e);
+        }
     }
 
     public Optional<UUID> getUUIDEclipse(String playerName) throws DataRequestException {
