@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +60,7 @@ public class ServicesTest {
             runnable.run();
 
             return null; // must return null because method returns void
-        }).when(srPlatformAdapter).runAsyncDelayed(any(), any(), any());
+        }).when(srPlatformAdapter).runAsyncDelayed(any(), anyLong(), any());
 
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
         injector.register(SRPlatformAdapter.class, srPlatformAdapter);
