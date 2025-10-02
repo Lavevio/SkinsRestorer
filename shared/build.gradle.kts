@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.PreserveFirstFoundResourceTransformer
+
 plugins {
     id("sr.base-logic")
     id("com.gradleup.shadow")
@@ -44,6 +46,7 @@ tasks {
         filesNotMatching("META-INF/services/**") {
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
+        transform<PreserveFirstFoundResourceTransformer>()
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
     }
 }
