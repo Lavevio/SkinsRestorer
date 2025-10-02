@@ -187,7 +187,8 @@ jobs:
       with:
         modrinth-id: skinsrestorer
         modrinth-featured: true
-        modrinth-unfeature-mode: subset
+        # Unfeature all previous releases for this loader
+        modrinth-unfeature-mode: loader-any
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
@@ -215,7 +216,8 @@ jobs:
       with:
         modrinth-id: skinsrestorer
         modrinth-featured: true
-        modrinth-unfeature-mode: subset
+        # Unfeature all previous releases for this loader
+        modrinth-unfeature-mode: loader-any
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
