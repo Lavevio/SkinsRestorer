@@ -28,6 +28,5 @@ tasks {
     shadowJar {
         mergeServiceFiles()
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
-        failOnDuplicateEntries = true
     }
 }

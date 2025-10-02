@@ -23,7 +23,6 @@ tasks {
     shadowJar {
         mergeServiceFiles()
         configureRelocations()
-        failOnDuplicateEntries = true
     }
 
     build {
