@@ -21,9 +21,12 @@ tasks {
     }
 
     shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+        filesNotMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
         configureRelocations()
-        failOnDuplicateEntries = true
     }
 
     build {

@@ -39,8 +39,11 @@ dependencies {
 
 tasks {
     shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+        filesNotMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
-        failOnDuplicateEntries = true
     }
 }
