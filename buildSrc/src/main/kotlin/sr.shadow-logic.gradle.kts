@@ -23,6 +23,7 @@ tasks {
     shadowJar {
         mergeServiceFiles()
         configureRelocations()
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
     build {

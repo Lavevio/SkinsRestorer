@@ -28,5 +28,6 @@ tasks {
     shadowJar {
         mergeServiceFiles()
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
