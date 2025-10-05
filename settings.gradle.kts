@@ -27,7 +27,7 @@ develocity {
     }
 }
 
-setOf("shared", "v1-7", "paper").forEach {
+setOf("shared", "paper").forEach {
     include("multiver:bukkit:$it")
 }
 
