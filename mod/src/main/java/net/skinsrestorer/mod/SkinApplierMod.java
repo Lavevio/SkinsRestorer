@@ -18,9 +18,11 @@
 package net.skinsrestorer.mod;
 
 import ch.jalu.configme.SettingsManager;
+import com.google.common.collect.ImmutableMultimap;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
+import net.lenni0451.reflect.stream.RStream;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -53,8 +55,21 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
     public static void setGameProfileTextures(ServerPlayer player, SkinProperty property) {
         PropertyMap properties = player.getGameProfile().properties();
-        properties.removeAll(SkinProperty.TEXTURES_NAME);
-        properties.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+        var newProperties = ImmutableMultimap.<String, Object>builder();
+        for (var entry : properties.entries()) {
+            if (SkinProperty.TEXTURES_NAME.equals(entry.getKey())) {
+                continue;
+            }
+
+            newProperties.put(entry);
+        }
+        newProperties.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+
+        RStream.of(properties)
+                .withSuper()
+                .fields()
+                .by("properties")
+                .set(newProperties.build());
     }
 
     @Override

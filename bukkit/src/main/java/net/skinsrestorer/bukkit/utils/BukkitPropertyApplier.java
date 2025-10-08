@@ -25,7 +25,6 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.AuthLibHelper;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
@@ -94,10 +93,10 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public void applyProperty(Player player, SkinProperty property) {
         try {
-            var properties = (Multimap<@NotNull String, @NotNull Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player));
+            var properties = (Multimap<String, Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player));
             var newProperties = ImmutableMultimap.<String, Object>builder();
             for (var entry : properties.entries()) {
-                if (entry.getKey().equals(SkinProperty.TEXTURES_NAME)) {
+                if (SkinProperty.TEXTURES_NAME.equals(entry.getKey())) {
                     continue;
                 }
 
