@@ -17,12 +17,15 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import lombok.RequiredArgsConstructor;
+import net.lenni0451.reflect.stream.RStream;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.AuthLibHelper;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
@@ -31,7 +34,6 @@ import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
-    private static final Class<?> GAME_PROFILE_CLASS;
     private static final Method GET_PROPERTIES_METHOD;
     private static final Constructor<?> PROPERTY_CLASS_CONSTRUCTOR;
 
@@ -51,18 +53,16 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
             }
         }
 
-        GAME_PROFILE_CLASS = gameProfileClass;
-
         Method getPropertiesMethod;
         try {
-            getPropertiesMethod = GAME_PROFILE_CLASS.getMethod("getProperties");
-        } catch (NoSuchMethodException e) {
+            getPropertiesMethod = gameProfileClass.getMethod("getProperties");
+        } catch (NoSuchMethodException e1) {
             try {
-                getPropertiesMethod = GAME_PROFILE_CLASS.getMethod("properties");
-            } catch (NoSuchMethodException ex) {
+                getPropertiesMethod = gameProfileClass.getMethod("properties");
+            } catch (NoSuchMethodException e2) {
                 var error = new ExceptionInInitializerError("Failed to find getProperties method");
-                error.addSuppressed(ex);
-                error.addSuppressed(e);
+                error.addSuppressed(e1);
+                error.addSuppressed(e2);
 
                 throw error;
             }
@@ -94,9 +94,22 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public void applyProperty(Player player, SkinProperty property) {
         try {
-            Multimap<String, Object> properties = (Multimap<String, Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player, GAME_PROFILE_CLASS));
-            properties.removeAll(SkinProperty.TEXTURES_NAME);
-            properties.put(SkinProperty.TEXTURES_NAME, PROPERTY_CLASS_CONSTRUCTOR.newInstance(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+            var properties = (Multimap<@NotNull String, @NotNull Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player));
+            var newProperties = ImmutableMultimap.<String, Object>builder();
+            for (var entry : properties.entries()) {
+                if (entry.getKey().equals(SkinProperty.TEXTURES_NAME)) {
+                    continue;
+                }
+
+                newProperties.put(entry);
+            }
+            newProperties.put(SkinProperty.TEXTURES_NAME, PROPERTY_CLASS_CONSTRUCTOR.newInstance(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+
+            RStream.of(properties)
+                    .withSuper()
+                    .fields()
+                    .by("properties")
+                    .set(newProperties.build());
         } catch (ReflectiveOperationException e) {
             logger.severe("Failed to apply skin property to player %s".formatted(player.getName()), e);
         }
@@ -106,7 +119,7 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public Optional<SkinProperty> getSkinProperty(Player player) {
         try {
-            return ((Multimap<String, Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player, GAME_PROFILE_CLASS))).values()
+            return ((Multimap<String, Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player))).values()
                     .stream()
                     .map(property -> SkinProperty.tryParse(
                             AuthLibHelper.getPropertyName(property),
