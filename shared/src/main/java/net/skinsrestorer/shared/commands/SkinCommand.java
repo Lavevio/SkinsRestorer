@@ -216,7 +216,6 @@ public final class SkinCommand {
                 sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_SKIN_CLEAR : Message.SUCCESS_SKIN_CLEAR_OTHER,
                         Placeholder.unparsed("name", targetName),
                         Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
-                                .name(targetName)
                                 .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, newSkin.getValue(), newSkin.getSignature()))
                                 .build())));
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
@@ -325,7 +324,6 @@ public final class SkinCommand {
                 sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_UPDATING_SKIN : Message.SUCCESS_UPDATING_SKIN_OTHER,
                         Placeholder.unparsed("name", targetName),
                         Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
-                                .name(targetName)
                                 .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, newSkin.getValue(), newSkin.getSignature()))
                                 .build())));
 
@@ -372,7 +370,6 @@ public final class SkinCommand {
                     Placeholder.unparsed("name", targetName),
                     Placeholder.unparsed("skin", skinName),
                     Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
-                            .name(targetName)
                             .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, appliedSkin.get().getValue(), appliedSkin.get().getSignature()))
                             .build())));
         }
@@ -441,7 +438,6 @@ public final class SkinCommand {
                     Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.get().getSkinIdentifier()))),
                     Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, historyData.get().getTimestamp(), sender.getLocale())),
                     Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
-                            .name(targetName)
                             .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, appliedSkin.get().getValue(), appliedSkin.get().getSignature()))
                             .build())));
         }
@@ -470,10 +466,14 @@ public final class SkinCommand {
 
             sender.sendMessage(Message.DIVIDER);
             for (HistoryData historyData : historyDataList) {
+                var resolvedSkin = skinStorage.getSkinDataByIdentifier(historyData.getSkinIdentifier()).orElse(HardcodedSkins.STEVE.getProperty());
                 sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
                         Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, historyData.getTimestamp(), sender.getLocale())),
                         Placeholder.parsed("skin_id", historyData.getSkinIdentifier().getIdentifier()),
-                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.getSkinIdentifier()))));
+                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.getSkinIdentifier()))),
+                        Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                                .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, resolvedSkin.getValue(), resolvedSkin.getSignature()))
+                                .build())));
             }
             sender.sendMessage(Message.DIVIDER);
         }
@@ -503,18 +503,25 @@ public final class SkinCommand {
                 return;
             }
 
+            var resolvedSkin = skinStorage.getSkinDataByIdentifier(currentSkin.get()).orElse(HardcodedSkins.STEVE.getProperty());
             Optional<FavouriteData> favouriteData = playerStorage.getFavouriteData(target, currentSkin.get());
             if (favouriteData.isPresent()) {
                 playerStorage.removeFavourite(target, favouriteData.get().getSkinIdentifier());
                 sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_SKIN_UNFAVOURITE : Message.SUCCESS_SKIN_UNFAVOURITE_OTHER,
                         Placeholder.unparsed("name", targetName),
                         Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))),
-                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, favouriteData.get().getTimestamp(), sender.getLocale())));
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, favouriteData.get().getTimestamp(), sender.getLocale())),
+                        Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                                .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, resolvedSkin.getValue(), resolvedSkin.getSignature()))
+                                .build())));
             } else {
                 playerStorage.addFavourite(target, FavouriteData.of(SRHelpers.getEpochSecond(), currentSkin.get()));
                 sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_SKIN_FAVOURITE : Message.SUCCESS_SKIN_FAVOURITE_OTHER,
                         Placeholder.unparsed("name", targetName),
-                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))));
+                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))),
+                        Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                                .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, resolvedSkin.getValue(), resolvedSkin.getSignature()))
+                                .build())));
             }
         }
     }
@@ -542,10 +549,14 @@ public final class SkinCommand {
 
             sender.sendMessage(Message.DIVIDER);
             for (FavouriteData favouriteData : favouriteDataList) {
+                var resolvedSkin = skinStorage.getSkinDataByIdentifier(favouriteData.getSkinIdentifier()).orElse(HardcodedSkins.STEVE.getProperty());
                 sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
                         Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, favouriteData.getTimestamp(), sender.getLocale())),
                         Placeholder.parsed("skin_id", favouriteData.getSkinIdentifier().getIdentifier()),
-                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(favouriteData.getSkinIdentifier()))));
+                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(favouriteData.getSkinIdentifier()))),
+                        Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                                .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, resolvedSkin.getValue(), resolvedSkin.getSignature()))
+                                .build())));
             }
             sender.sendMessage(Message.DIVIDER);
         }
