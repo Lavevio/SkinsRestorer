@@ -200,13 +200,25 @@ public final class SkinCommand {
             playerStorage.removeSkinIdOfPlayer(target);
 
             try {
+                SkinProperty newSkin;
                 if (targetPlayer.isPresent()) {
                     Optional<SkinProperty> property = playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
+
+                    // Empty skin means based on uuid random hardcoded skin. Use steve as fallback
+                    newSkin = property.orElse(HardcodedSkins.STEVE.getProperty());
+
                     skinApplier.applySkin(targetPlayer.get().getAs(Object.class), property.orElse(PropertyUtils.EMPTY_SKIN));
+                } else {
+                    // Can't determine default skin for offline players, so just use steve
+                    newSkin = HardcodedSkins.STEVE.getProperty();
                 }
 
                 sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_SKIN_CLEAR : Message.SUCCESS_SKIN_CLEAR_OTHER,
-                        Placeholder.unparsed("name", targetName));
+                        Placeholder.unparsed("name", targetName),
+                        Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                                .name(targetName)
+                                .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, newSkin.getValue(), newSkin.getSignature()))
+                                .build())));
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
             } catch (DataRequestException e) {
                 logger.severe("Error while clearing skin", e);
@@ -280,26 +292,42 @@ public final class SkinCommand {
             try {
                 Optional<SkinIdentifier> currentSkin = targetPlayer.isPresent() ? playerStorage.getSkinIdForPlayer(target, targetPlayer.get().getName())
                         : playerStorage.getSkinIdOfPlayer(target);
+                SkinProperty newSkin;
 
                 if (currentSkin.isPresent()) {
                     var skin = currentSkin.get();
-                    if (skin.getSkinType() == SkinType.PLAYER
-                            && skinStorage.updatePlayerSkinData(skin.getPlayerUniqueId()).isEmpty()) {
-
-                        sender.sendMessage(Message.ERROR_UPDATING_SKIN);
-                        return;
+                    if (skin.getSkinType() == SkinType.PLAYER) {
+                        var updatedSkin = skinStorage.updatePlayerSkinData(skin.getPlayerUniqueId());
+                        if (updatedSkin.isEmpty()) {
+                            sender.sendMessage(Message.ERROR_UPDATING_SKIN);
+                            return;
+                        } else {
+                            newSkin = updatedSkin.get();
+                        }
+                    } else {
+                        // Resolve skins like custom or URL. They never change, so just get the existing data
+                        newSkin = skinStorage.getSkinDataByIdentifier(skin).orElse(HardcodedSkins.STEVE.getProperty());
                     }
+                } else {
+                    newSkin = HardcodedSkins.STEVE.getProperty();
                 }
 
                 if (targetPlayer.isPresent()) {
-                    Optional<SkinProperty> newSkin = currentSkin.isEmpty() ?
+                    Optional<SkinProperty> newActiveSkin = currentSkin.isEmpty() ?
                             Optional.empty() : playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
 
-                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), newSkin.orElse(PropertyUtils.EMPTY_SKIN));
+                    // Empty active skin means steve or other. Steve fits best as fallback
+                    newSkin = newActiveSkin.orElse(HardcodedSkins.STEVE.getProperty());
+
+                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), newActiveSkin.orElse(PropertyUtils.EMPTY_SKIN));
                 }
 
                 sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_UPDATING_SKIN : Message.SUCCESS_UPDATING_SKIN_OTHER,
-                        Placeholder.unparsed("name", targetName));
+                        Placeholder.unparsed("name", targetName),
+                        Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                                .name(targetName)
+                                .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, newSkin.getValue(), newSkin.getSignature()))
+                                .build())));
 
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
             } catch (DataRequestException e) {

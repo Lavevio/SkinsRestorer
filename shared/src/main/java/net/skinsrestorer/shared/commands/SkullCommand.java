@@ -20,14 +20,18 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.object.ObjectContents;
+import net.kyori.adventure.text.object.PlayerHeadObjectContents;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
@@ -204,18 +208,18 @@ public final class SkullCommand {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
-            if (!setSkin(sender, target, skinName, skinVariant)) {
+            var givenSkull = giveSkull(sender, target, skinName, skinVariant);
+            if (givenSkull.isEmpty()) {
                 return;
             }
 
-            if (senderEqual(sender, target)) {
-                sender.sendMessage(Message.SUCCESS_SKULL_GET,
-                        Placeholder.unparsed("skin", skinName));
-            } else {
-                sender.sendMessage(Message.SUCCESS_SKULL_GET_OTHER,
-                        Placeholder.unparsed("name", targetName),
-                        Placeholder.unparsed("skin", skinName));
-            }
+            sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_SKULL_GET : Message.SUCCESS_SKULL_GET_OTHER,
+                    Placeholder.unparsed("name", targetName),
+                    Placeholder.unparsed("skin", skinName),
+                    Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                            .name(targetName)
+                            .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, givenSkull.get().getValue(), givenSkull.get().getSignature()))
+                            .build())));
         }
     }
 
@@ -233,11 +237,11 @@ public final class SkullCommand {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean setSkin(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant) {
+    private Optional<SkinProperty> giveSkull(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant) {
         Optional<Message> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
         if (noPermissionMessage.isPresent()) {
             sender.sendMessage(noPermissionMessage.get());
-            return false;
+            return Optional.empty();
         }
 
         try {
@@ -250,13 +254,13 @@ public final class SkullCommand {
 
             if (optional.isEmpty()) {
                 sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
-                return false;
+                return Optional.empty();
             }
 
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             if (targetPlayer.isEmpty()) {
                 // TODO: Send message
-                return false;
+                return Optional.empty();
             }
 
             SkinIdentifier skinIdentifier = optional.get().getIdentifier();
@@ -271,7 +275,7 @@ public final class SkullCommand {
 
             setCoolDown(sender, CommandConfig.SKULL_GET_COOLDOWN);
 
-            return true;
+            return Optional.of(optional.get().getProperty());
         } catch (DataRequestException e) {
             ComponentHelper.sendException(e, sender, locale, logger);
         } catch (MineSkinException e) {
@@ -280,7 +284,7 @@ public final class SkullCommand {
         }
 
         setCoolDown(sender, CommandConfig.SKULL_ERROR_COOLDOWN);
-        return false;
+        return Optional.empty();
     }
 
     private void setCoolDown(SRCommandSender sender, Property<Integer> time) {
