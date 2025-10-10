@@ -47,6 +47,7 @@ tasks {
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
         transform<PreserveFirstFoundResourceTransformer>()
+        exclude("META-INF/annotations.shadow.kotlin_module")
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
     }
 }
