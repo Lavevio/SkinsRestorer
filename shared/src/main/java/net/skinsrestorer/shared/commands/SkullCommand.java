@@ -40,6 +40,7 @@ import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
 import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.commands.library.annotations.SRCooldownGroup;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
@@ -216,10 +217,10 @@ public final class SkullCommand {
             sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_SKULL_GET : Message.SUCCESS_SKULL_GET_OTHER,
                     Placeholder.unparsed("name", targetName),
                     Placeholder.unparsed("skin", skinName),
-                    Placeholder.component("skin_head", Component.object(ObjectContents.playerHead()
+                    Placeholder.component("skin_head", AdvancedConfig.emptyIfPlayerHeadChatObjectsDisabled(settings, Component.object(ObjectContents.playerHead()
                             .name(targetName)
                             .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, givenSkull.get().getValue(), givenSkull.get().getSignature()))
-                            .build())));
+                            .build()))));
         }
     }
 
