@@ -70,8 +70,8 @@ cloud-neoforge = { module = "org.incendo:cloud-neoforge", version.ref = "cloud-n
 fabric-permissions-api = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions-api" }
 bstats-base = { module = "org.bstats:bstats-base", version.ref = "bstats" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
-testcontainers-mariadb = { module = "org.testcontainers:mariadb", version.ref = "testcontainers" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-mariadb = { module = "org.testcontainers:testcontainers-mariadb", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
