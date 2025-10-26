@@ -25,7 +25,8 @@
         "pin",
         "digest"
       ],
-      "automerge": true
+      "automerge": true,
+      "automergeType": "branch"
     },
     {
       "matchPackageNames": [
