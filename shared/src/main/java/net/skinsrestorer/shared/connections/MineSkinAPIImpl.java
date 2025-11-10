@@ -46,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -53,13 +54,14 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static net.skinsrestorer.shared.utils.ValidationUtil.AXOLOTL_PREFIX;
+
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
     private static final int MAX_RETRIES = 5;
     private static final String MINESKIN_USER_AGENT = "SkinsRestorer/MineSkinAPI";
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/v2/generate");
-    private static final String AXOLOTL_SCHEME = "skinsrestorer-axolotl://";
-    private static final URI AXOLOTL_DECRYPT_ENDPOINT = URI.create("https://axolotly.skinsrestorer.net/decrypt-url");
+    private static final URI AXOLOTL_DECRYPT_ENDPOINT = URI.create("https://axolotl.skinsrestorer.net/mineskin/decrypt-url");
     private final Semaphore semaphore = new Semaphore(5);
     private final Gson gson = new Gson();
     private final SRLogger logger;
@@ -207,13 +209,12 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     }
 
     private String decryptAxolotlUrl(String imageUrl) throws DataRequestException {
-        if (!imageUrl.startsWith(AXOLOTL_SCHEME)) {
+        if (!imageUrl.startsWith(AXOLOTL_PREFIX)) {
             return imageUrl;
         }
 
         try {
-            String encryptedPayload = imageUrl.substring(AXOLOTL_SCHEME.length());
-            String encodedUrl = java.net.URLEncoder.encode(encryptedPayload, java.nio.charset.StandardCharsets.UTF_8);
+            String encodedUrl = URLEncoder.encode(imageUrl, java.nio.charset.StandardCharsets.UTF_8);
             URI requestUri = URI.create(AXOLOTL_DECRYPT_ENDPOINT + "?encryptedUrl=" + encodedUrl);
 
             logger.debug("Decrypting axolotl URL: %s".formatted(imageUrl));
