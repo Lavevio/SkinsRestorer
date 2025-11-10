@@ -58,6 +58,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private static final int MAX_RETRIES = 5;
     private static final String MINESKIN_USER_AGENT = "SkinsRestorer/MineSkinAPI";
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/v2/generate");
+    private static final String AXOLOTL_SCHEME = "skinsrestorer-axolotl://";
+    private static final URI AXOLOTL_DECRYPT_ENDPOINT = URI.create("https://axolotly.skinsrestorer.net/decrypt-url");
     private final Semaphore semaphore = new Semaphore(5);
     private final Gson gson = new Gson();
     private final SRLogger logger;
@@ -68,6 +70,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
+        imageUrl = decryptAxolotlUrl(imageUrl);
         imageUrl = SRHelpers.sanitizeImageURL(imageUrl);
 
         try {
@@ -201,5 +204,64 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         }
 
         return Optional.of(apiKey);
+    }
+
+    private String decryptAxolotlUrl(String imageUrl) throws DataRequestException {
+        if (!imageUrl.startsWith(AXOLOTL_SCHEME)) {
+            return imageUrl;
+        }
+
+        try {
+            String encryptedPayload = imageUrl.substring(AXOLOTL_SCHEME.length());
+            String encodedUrl = java.net.URLEncoder.encode(encryptedPayload, java.nio.charset.StandardCharsets.UTF_8);
+            URI requestUri = URI.create(AXOLOTL_DECRYPT_ENDPOINT + "?encryptedUrl=" + encodedUrl);
+
+            logger.debug("Decrypting axolotl URL: %s".formatted(imageUrl));
+
+            HttpResponse response = httpClient.execute(
+                    requestUri,
+                    null,
+                    HttpClient.HttpType.JSON,
+                    MINESKIN_USER_AGENT,
+                    HttpClient.HttpMethod.GET,
+                    Map.of(),
+                    30_000
+            );
+
+            if (response.statusCode() == 200) {
+                AxolotlDecryptResponse decryptResponse = gson.fromJson(response.body(), AxolotlDecryptResponse.class);
+                if (decryptResponse.url != null && !decryptResponse.url.isEmpty()) {
+                    logger.debug("Successfully decrypted axolotl URL to: %s".formatted(decryptResponse.url));
+                    return decryptResponse.url;
+                } else {
+                    logger.debug(SRLogLevel.WARNING, "Axolotl decrypt response missing URL field");
+                    throw new DataRequestExceptionShared(new IOException("Invalid decrypt response: missing URL"));
+                }
+            } else if (response.statusCode() == 400) {
+                AxolotlErrorResponse errorResponse = gson.fromJson(response.body(), AxolotlErrorResponse.class);
+                String errorMsg = errorResponse.error != null ? errorResponse.error : "Malformed ciphertext";
+                logger.debug(SRLogLevel.WARNING, "Axolotl decrypt failed (400): %s".formatted(errorMsg));
+                throw new DataRequestExceptionShared(new IOException("Failed to decrypt axolotl URL: " + errorMsg));
+            } else if (response.statusCode() == 500) {
+                AxolotlErrorResponse errorResponse = gson.fromJson(response.body(), AxolotlErrorResponse.class);
+                String errorMsg = errorResponse.error != null ? errorResponse.error : "Server configuration error";
+                logger.debug(SRLogLevel.WARNING, "Axolotl decrypt server error (500): %s".formatted(errorMsg));
+                throw new DataRequestExceptionShared(new IOException("Axolotl decrypt service error: " + errorMsg));
+            } else {
+                logger.debug(SRLogLevel.WARNING, "Axolotl decrypt unexpected status: %d".formatted(response.statusCode()));
+                throw new DataRequestExceptionShared(new IOException("Unexpected decrypt response: " + response.statusCode()));
+            }
+        } catch (IOException e) {
+            logger.debug(SRLogLevel.WARNING, "Failed to decrypt axolotl URL", e);
+            throw new DataRequestExceptionShared(e);
+        }
+    }
+
+    private static class AxolotlDecryptResponse {
+        private String url;
+    }
+
+    private static class AxolotlErrorResponse {
+        private String error;
     }
 }
