@@ -258,10 +258,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     }
 
     private static class AxolotlDecryptResponse {
-        String url;
+        private String url;
     }
 
     private static class AxolotlErrorResponse {
-        String error;
+        private String error;
     }
 }
