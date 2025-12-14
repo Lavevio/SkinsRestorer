@@ -106,6 +106,15 @@ allprojects {
             name = "Sonatype Snapshot Repository"
             mavenContent { snapshotsOnly() }
         }
+        maven("https://maven.neoforged.net/releases") {
+            name = "NeoForged"
+            content {
+                includeGroup("net.neoforged")
+                includeGroup("net.neoforged.accesstransformers")
+                includeGroup("net.neoforged.fancymodloader")
+            }
+            mavenContent { releasesOnly() }
+        }
         mavenCentral()
     }
 }

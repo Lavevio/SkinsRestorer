@@ -10,9 +10,13 @@ adventure-platform = "4.4.1"
 adventure = "4.25.0"
 architectury = "18.0.8"
 mixin = "0.8.7"
+minecraft-mod = "1.21.10"
+fabric-loader = "0.18.2"
+fabric-api = "0.138.3+1.21.10"
 fabric-api-bom = "0.135.0+1.21.10"
 cloud-fabric = "2.0.0-SNAPSHOT"
 architectury-neoforge = "18.0.8"
+neoforge = "21.10.50-beta"
 cloud-neoforge = "2.0.0-SNAPSHOT"
 fabric-permissions-api = "0.6.1"
 bstats = "3.1.0"
@@ -63,9 +67,11 @@ adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", 
 architectury = { module = "dev.architectury:architectury", version.ref = "architectury" }
 architectury-fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 fabric-api-bom = { module = "net.fabricmc.fabric-api:fabric-api-bom", version.ref = "fabric-api-bom" }
 cloud-fabric = { module = "org.incendo:cloud-fabric", version.ref = "cloud-fabric" }
 architectury-neoforge = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury-neoforge" }
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 cloud-neoforge = { module = "org.incendo:cloud-neoforge", version.ref = "cloud-neoforge" }
 fabric-permissions-api = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions-api" }
 bstats-base = { module = "org.bstats:bstats-base", version.ref = "bstats" }

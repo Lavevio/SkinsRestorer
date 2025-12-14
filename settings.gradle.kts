@@ -2,8 +2,9 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        maven("https://maven.wagyourtail.xyz/releases")
-        maven("https://maven.wagyourtail.xyz/snapshots")
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.architectury.dev/")
+        maven("https://files.minecraftforge.net/maven/")
         gradlePluginPortal()
     }
 }
@@ -46,6 +47,9 @@ setupSRSubproject("bukkit")
 setupSRSubproject("bungee")
 setupSRSubproject("velocity")
 setupSRSubproject("mod")
+include(":skinsrestorer-mod:common")
+include(":skinsrestorer-mod:fabric")
+include(":skinsrestorer-mod:neoforge")
 
 setupSubproject("skinsrestorer") {
     projectDir = file("universal")
