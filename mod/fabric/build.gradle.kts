@@ -46,23 +46,23 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
 
     // Bump fabric api
-    modImplementation(enforcedPlatform(libs.fabric.api.bom))
-    include(enforcedPlatform(libs.fabric.api.bom))
+    modImplementation(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:${rootProject.property("fabric_api_version")}"))
+    include(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:${rootProject.property("fabric_api_version")}"))
 
     // Fabric API. We only need it for compilation.
     modCompileOnly("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
 
     // Architectury API - needed for modImplementations to load
-    modImplementation(libs.architectury.fabric)
-    include(libs.architectury.fabric)
+    modImplementation("dev.architectury:architectury-fabric:${rootProject.property("architectury_version")}")
+    include("dev.architectury:architectury-fabric:${rootProject.property("architectury_version")}")
 
     // Cloud command framework for Fabric
-    modImplementation(libs.cloud.fabric)
-    include(libs.cloud.fabric)
+    modImplementation("org.incendo:cloud-fabric:${rootProject.property("cloud_fabric_version")}")
+    include("org.incendo:cloud-fabric:${rootProject.property("cloud_fabric_version")}")
 
     // Fabric permissions API
-    modImplementation(libs.fabric.permissions.api)
-    include(libs.fabric.permissions.api)
+    modImplementation("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
+    include("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
 
     common(project(path = ":skinsrestorer-mod-common", configuration = "namedElements")) { isTransitive = false }
     shadowBundle(project(":skinsrestorer-mod-common")) { isTransitive = false }

@@ -53,12 +53,12 @@ dependencies {
     neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
     // Architectury API - needed for modImplementations to load
-    modImplementation(libs.architectury.neoforge)
-    include(libs.architectury.neoforge)
+    modImplementation("dev.architectury:architectury-neoforge:${rootProject.property("architectury_version")}")
+    include("dev.architectury:architectury-neoforge:${rootProject.property("architectury_version")}")
 
     // Cloud command framework for NeoForge
-    modImplementation(libs.cloud.neoforge)
-    include(libs.cloud.neoforge)
+    modImplementation("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
+    include("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
 
     common(project(path = ":skinsrestorer-mod-common", configuration = "namedElements")) { isTransitive = false }
     shadowBundle(project(":skinsrestorer-mod-common")) { isTransitive = false }
