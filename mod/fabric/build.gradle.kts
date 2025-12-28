@@ -49,8 +49,8 @@ dependencies {
     modImplementation(enforcedPlatform(libs.fabric.api.bom))
     include(enforcedPlatform(libs.fabric.api.bom))
 
-    // Fabric API.
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
+    // Fabric API. We only need it for compilation.
+    modCompileOnly("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
 
     // Architectury API - needed for modImplementations to load
     modImplementation(libs.architectury.fabric)
