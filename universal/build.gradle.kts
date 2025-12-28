@@ -36,7 +36,7 @@ tasks {
         downgradeTo = JavaVersion.VERSION_1_8
 
         archiveFileName = "SkinsRestorer.jar"
-        destinationDirectory = rootProject.projectDir.resolve("build/libs")
+        destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
 
         shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
     }

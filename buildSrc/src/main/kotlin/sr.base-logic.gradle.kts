@@ -36,7 +36,7 @@ tasks {
     // Variable replacements
     processResources {
         // Use inputs.properties to track the expansion properties - this avoids capturing script references
-        val localesDir = rootProject.layout.projectDirectory.dir("shared/src/main/resources/locales").asFile
+        val localesDir = rootProject.layout.projectDirectory.dir("shared/src/main/resources/locales")
         inputs.property("version", project.version)
         inputs.property("description", project.description ?: "")
         inputs.property("commit", indraGit.commit().map { it.name }.orElse("unknown"))
@@ -53,7 +53,7 @@ tasks {
                 .orElse(providers.environmentVariable("GITHUB_RUN_NUMBER"))
                 .orElse("local")
         )
-        inputs.property("locales", localesDir.list()?.joinToString("|") ?: "")
+        inputs.property("locales", localesDir.asFile.list()?.joinToString("|") ?: "")
 
         filesMatching(
             listOf(
@@ -82,10 +82,14 @@ tasks {
         title = "SkinsRestorer Javadocs"
         options.encoding = Charsets.UTF_8.name()
         (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
-        onlyIf { project.name.contains("api") }
+        // Disabled due to configuration cache incompatibility with Gradle's Javadoc task
+        // Only re-enable for api module when upstream issue is resolved
+        enabled = false
     }
     delombok {
-        onlyIf { project.name.contains("api") }
+        // Disabled due to configuration cache incompatibility
+        // See: https://github.com/freefair/gradle-plugins/issues/1059
+        enabled = false
     }
     compileJava {
         options.encoding = Charsets.UTF_8.name()

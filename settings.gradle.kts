@@ -18,7 +18,7 @@ rootProject.name = "skinsrestorer-parent"
 
 develocity {
     buildScan {
-        val isCi = !System.getenv("CI").isNullOrEmpty()
+        val isCi = providers.environmentVariable("CI").map { it.isNotEmpty() }.getOrElse(false)
         if (isCi) {
             termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
             termsOfUseAgree = "yes"
