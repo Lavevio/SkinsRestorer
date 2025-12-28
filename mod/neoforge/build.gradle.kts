@@ -99,4 +99,5 @@ tasks.shadowJar {
 
 tasks.remapJar {
     inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
+    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
 }
