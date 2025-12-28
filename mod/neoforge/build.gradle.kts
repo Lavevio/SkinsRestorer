@@ -4,11 +4,6 @@ plugins {
     id("com.gradleup.shadow")
 }
 
-//architectury {
-//    platformSetupLoomIde()
-//    neoForge()
-//}
-
 loom {
     silentMojangMappingsLicense()
 }
@@ -49,7 +44,7 @@ dependencies {
     minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
     mappings(loom.officialMojangMappings())
 
-    "neoForge"("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
+    neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
     // Architectury API. This is optional, and you can comment it out if you don't need it.
     modImplementation("dev.architectury:architectury-neoforge:${rootProject.property("architectury_api_version")}")

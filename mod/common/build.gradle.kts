@@ -3,10 +3,6 @@ plugins {
     id("sr.base-logic")
 }
 
-// architectury {
-//     common rootProject.enabled_platforms.split(',')
-// }
-
 loom {
     silentMojangMappingsLicense()
 }
