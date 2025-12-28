@@ -1,11 +1,21 @@
 plugins {
-    id("dev.architectury.loom") version "1.11-SNAPSHOT"
+    id("dev.architectury.loom") version "1.13-SNAPSHOT"
     id("sr.base-logic")
     id("com.gradleup.shadow")
 }
 
+base {
+    archivesName = "SkinsRestorer-Mod-NeoForge"
+}
+
 loom {
     silentMojangMappingsLicense()
+
+    accessWidenerPath = project(":skinsrestorer-mod-common").file("src/main/resources/skinsrestorer.accesswidener")
+
+    neoForge {
+        accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
+    }
 }
 
 val common: Configuration by configurations.creating {
@@ -46,11 +56,32 @@ dependencies {
 
     neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
-    // Architectury API. This is optional, and you can comment it out if you don't need it.
-    modImplementation("dev.architectury:architectury-neoforge:${rootProject.property("architectury_api_version")}")
+    // Architectury API - needed for modImplementations to load
+    modImplementation(libs.architectury.neoforge)
+    include(libs.architectury.neoforge)
+
+    // Cloud command framework for NeoForge
+    modImplementation(libs.cloud.neoforge)
+    include(libs.cloud.neoforge)
 
     common(project(path = ":skinsrestorer-mod-common", configuration = "namedElements")) { isTransitive = false }
-    shadowBundle(project(path = ":skinsrestorer-mod-common", configuration = "transformProductionNeoForge"))
+    shadowBundle(project(":skinsrestorer-mod-common")) { isTransitive = false }
+
+    // Shared project dependencies - added to common for compile-time and shadowBundle for packaging
+    setOf(
+        projects.skinsrestorerShared,
+        projects.multiver.miniplaceholders,
+        projects.multiver.viaversion
+    ).forEach {
+        common(it) {
+            exclude("com.google.code.gson")
+            exclude("com.google.errorprone")
+        }
+        shadowBundle(it) {
+            exclude("com.google.code.gson")
+            exclude("com.google.errorprone")
+        }
+    }
 }
 
 tasks.processResources {

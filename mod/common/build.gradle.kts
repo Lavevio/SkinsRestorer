@@ -1,10 +1,16 @@
 plugins {
-    id("dev.architectury.loom") version "1.11-SNAPSHOT"
+    id("dev.architectury.loom") version "1.13-SNAPSHOT"
     id("sr.base-logic")
+}
+
+base {
+    archivesName = "SkinsRestorer-Mod-Common"
 }
 
 loom {
     silentMojangMappingsLicense()
+
+    accessWidenerPath = file("src/main/resources/skinsrestorer.accesswidener")
 }
 
 dependencies {
@@ -18,4 +24,16 @@ dependencies {
 
     // Architectury API. This is optional, and you can comment it out if you don't need it.
     modImplementation("dev.architectury:architectury:${rootProject.property("architectury_api_version")}")
+
+    // Shared project dependencies
+    setOf(
+        projects.skinsrestorerShared,
+        projects.multiver.miniplaceholders,
+        projects.multiver.viaversion
+    ).forEach {
+        implementation(it) {
+            exclude("com.google.code.gson")
+            exclude("com.google.errorprone")
+        }
+    }
 }
