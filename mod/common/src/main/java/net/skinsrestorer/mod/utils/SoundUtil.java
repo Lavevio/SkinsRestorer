@@ -19,7 +19,9 @@ package net.skinsrestorer.mod.utils;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -52,12 +54,13 @@ public class SoundUtil implements SoundProvider {
         }
 
         logger.debug("Playing sound for player: %s".formatted(player.getName()));
-        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.stream()
+        Holder<SoundEvent> soundEvent = BuiltInRegistries.SOUND_EVENT.stream()
                 .filter(soundEvent1 -> soundEvent1.location().getPath().replace(".", "_").equalsIgnoreCase(record.getSound()))
+                .map(BuiltInRegistries.SOUND_EVENT::wrapAsHolder)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid sound: " + record.getSound()));
         SoundSource source = SoundSource.valueOf(record.getCategory());
 
-        p.playNotifySound(Objects.requireNonNull(soundEvent), source, record.getVolume(), record.getPitch());
+        p.connection.send(new ClientboundSoundPacket(Objects.requireNonNull(soundEvent), source, p.getX(), p.getY(), p.getZ(), record.getVolume(), record.getPitch(), p.getRandom().nextLong()));
     }
 }

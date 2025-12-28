@@ -55,7 +55,8 @@ public class SRModPlatformImpl implements SRModPlatform {
             };
         }
 
-        return stack.hasPermission(stack.getServer().operatorUserPermissionLevel()) ? Tristate.TRUE : Tristate.UNDEFINED;
+        return stack.permissions().hasPermission(net.minecraft.server.permissions.Permission.Atom.create(permission.getPermissionString()))
+                ? Tristate.TRUE : Tristate.UNDEFINED;
     }
 
     @Override
