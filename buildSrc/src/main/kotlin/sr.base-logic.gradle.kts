@@ -35,6 +35,26 @@ tasks {
     }
     // Variable replacements
     processResources {
+        // Use inputs.properties to track the expansion properties - this avoids capturing script references
+        val localesDir = rootProject.layout.projectDirectory.dir("shared/src/main/resources/locales").asFile
+        inputs.property("version", project.version)
+        inputs.property("description", project.description ?: "")
+        inputs.property("commit", indraGit.commit().map { it.name }.orElse("unknown"))
+        inputs.property("branch", indraGit.branchName().orElse("unknown"))
+        inputs.property("build_time", SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(Date()))
+        inputs.property(
+            "ci_name",
+            providers.environmentVariable("GITHUB_ACTIONS").map { if (it == "true") "github-actions" else "local" }
+                .orElse(providers.environmentVariable("JENKINS_URL").map { "jenkins" })
+                .orElse("local")
+        )
+        inputs.property(
+            "ci_build_number", providers.environmentVariable("BUILD_NUMBER")
+                .orElse(providers.environmentVariable("GITHUB_RUN_NUMBER"))
+                .orElse("local")
+        )
+        inputs.property("locales", localesDir.list()?.joinToString("|") ?: "")
+
         filesMatching(
             listOf(
                 "plugin.yml",
@@ -43,20 +63,19 @@ tasks {
                 "skinsrestorer-build-data.properties"
             )
         ) {
-            val sharedResources = rootDir.resolve("shared").resolve("src").resolve("main").resolve("resources")
-            expand(
-                mapOf(
-                    "version" to project.version,
-                    "description" to project.description,
-                    "url" to "https://skinsrestorer.net",
-                    "commit" to (indraGit.commit().orNull?.name ?: "unknown"),
-                    "branch" to (indraGit.branchName().orNull ?: "unknown"),
-                    "build_time" to SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(Date()),
-                    "ci_name" to getCIName(),
-                    "ci_build_number" to getBuildNumber(),
-                    "locales" to sharedResources.resolve("locales").list()?.joinToString("|")
+            expand(inputs.properties.filter {
+                it.key in listOf(
+                    "version",
+                    "description",
+                    "commit",
+                    "branch",
+                    "build_time",
+                    "ci_name",
+                    "ci_build_number",
+                    "locales"
                 )
-            )
+            }
+                .plus("url" to "https://skinsrestorer.net"))
         }
     }
     javadoc {
@@ -81,23 +100,6 @@ tasks {
         options.isFork = true
     }
 }
-
-fun getCIName(): String {
-    val githubActions = System.getenv("GITHUB_ACTIONS")
-    val jenkinsUrl = System.getenv("JENKINS_URL")
-    if (githubActions != null && githubActions == "true") {
-        return "github-actions"
-    } else if (jenkinsUrl != null) {
-        return "jenkins"
-    }
-
-    return "local"
-}
-
-fun getBuildNumber(): String {
-    return System.getenv("BUILD_NUMBER") ?: System.getenv("GITHUB_RUN_NUMBER") ?: "local"
-}
-
 
 java {
     toolchain {
