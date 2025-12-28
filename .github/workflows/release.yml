@@ -129,8 +129,12 @@ jobs:
 
         files: |
           build/libs/SkinsRestorer.jar
-          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
-          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+          mod/fabric/build/libs/SkinsRestorer-Mod-Fabric-*.jar
+          mod/neoforge/build/libs/SkinsRestorer-Mod-NeoForge-*.jar
+        files-secondary: |
+          !mod/*/build/libs/*-dev-shadow.jar
+          !mod/*/build/libs/*-sources.jar
+          !mod/*/build/libs/*-javadoc.jar
 
         name: SkinsRestorer ${{ inputs.version }}
         version: ${{ inputs.version }}
@@ -192,7 +196,11 @@ jobs:
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
-          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
+          mod/fabric/build/libs/SkinsRestorer-Mod-Fabric-*.jar
+        files-secondary: |
+          !mod/fabric/build/libs/*-dev-shadow.jar
+          !mod/fabric/build/libs/*-sources.jar
+          !mod/fabric/build/libs/*-javadoc.jar
 
         name: SkinsRestorer ${{ inputs.version }} Fabric
         version: ${{ inputs.version }}-fabric
@@ -221,7 +229,11 @@ jobs:
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
-          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+          mod/neoforge/build/libs/SkinsRestorer-Mod-NeoForge-*.jar
+        files-secondary: |
+          !mod/neoforge/build/libs/*-dev-shadow.jar
+          !mod/neoforge/build/libs/*-sources.jar
+          !mod/neoforge/build/libs/*-javadoc.jar
 
         name: SkinsRestorer ${{ inputs.version }} NeoForge
         version: ${{ inputs.version }}-neoforge

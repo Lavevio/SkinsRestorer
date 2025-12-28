@@ -40,7 +40,7 @@ configurations.configureEach {
 }
 
 dependencies {
-    minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
+    minecraft("net.minecraft:minecraft:${rootProject.property("modMcVersion")}")
     mappings(loom.officialMojangMappings())
 
     modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")

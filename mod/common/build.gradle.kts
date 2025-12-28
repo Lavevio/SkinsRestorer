@@ -14,7 +14,7 @@ loom {
 }
 
 dependencies {
-    minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
+    minecraft("net.minecraft:minecraft:${rootProject.property("modMcVersion")}")
     mappings(loom.officialMojangMappings())
 
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,

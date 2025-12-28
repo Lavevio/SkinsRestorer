@@ -51,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
+    minecraft("net.minecraft:minecraft:${rootProject.property("modMcVersion")}")
     mappings(loom.officialMojangMappings())
 
     neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
