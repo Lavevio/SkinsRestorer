@@ -64,14 +64,11 @@ val remap = tasks.register<SpigotRemapTask>("remap") {
     }
 }
 
-@Suppress("UnstableApiUsage")
 configurations {
     create("remapped") {
-        val resultFile = layout.buildDirectory.file("libs/${project.name}-${project.version}-remapped.jar")
-
         isCanBeResolved = false
         isCanBeConsumed = true
-        outgoing.artifact(resultFile) {
+        outgoing.artifact(remap.flatMap { it.outputFile }) {
             builtBy(remap)
         }
 
