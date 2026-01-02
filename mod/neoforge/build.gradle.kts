@@ -69,11 +69,11 @@ dependencies {
         projects.multiver.miniplaceholders,
         projects.multiver.viaversion
     ).forEach {
-        implementation(it) {
+        common(it) {
             exclude("com.google.code.gson")
             exclude("com.google.errorprone")
         }
-        include(it) {
+        shadowBundle(it) {
             exclude("com.google.code.gson")
             exclude("com.google.errorprone")
         }
