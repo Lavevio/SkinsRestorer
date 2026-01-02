@@ -62,7 +62,12 @@ dependencies {
     include("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
 
     common(project(path = ":skinsrestorer-mod-common", configuration = "namedElements")) { isTransitive = false }
-    shadowBundle(project(":skinsrestorer-mod-common")) { isTransitive = false }
+    shadowBundle(
+        project(
+            path = ":skinsrestorer-mod-common",
+            configuration = "transformProductionFabric"
+        )
+    ) { isTransitive = false }
 
     // Shared project dependencies - added to common for compile-time and shadowBundle for packaging
     setOf(
