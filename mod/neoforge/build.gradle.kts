@@ -94,6 +94,7 @@ tasks.shadowJar {
 }
 
 tasks.remapJar {
+    atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
     inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
     destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
 }
