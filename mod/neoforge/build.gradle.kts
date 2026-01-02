@@ -64,7 +64,7 @@ dependencies {
     shadowBundle(
         project(
             path = ":skinsrestorer-mod-common",
-            configuration = "transformProductionNeoForge"
+            configuration = "namedElements"
         )
     ) { isTransitive = false }
 

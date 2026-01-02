@@ -65,7 +65,7 @@ dependencies {
     shadowBundle(
         project(
             path = ":skinsrestorer-mod-common",
-            configuration = "transformProductionFabric"
+            configuration = "namedElements"
         )
     ) { isTransitive = false }
 
