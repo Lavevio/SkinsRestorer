@@ -45,12 +45,9 @@ dependencies {
 
     modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
 
-    // Bump fabric api
-    modImplementation(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:${rootProject.property("fabric_api_version")}"))
-    include(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:${rootProject.property("fabric_api_version")}"))
-
-    // Fabric API. We only need it for compilation.
-    modCompileOnly("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
+    // Fabric API
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
+    include("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
 
     // Architectury API - needed for modImplementations to load
     modImplementation("dev.architectury:architectury-fabric:${rootProject.property("architectury_version")}")
