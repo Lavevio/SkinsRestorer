@@ -19,6 +19,7 @@ package net.skinsrestorer.mod;
 
 import ch.jalu.configme.SettingsManager;
 import com.google.common.collect.ImmutableMultimap;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +54,8 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
     private final SettingsManager settings;
     private final SRLogger logger;
 
-    public static void setGameProfileTextures(ServerPlayer player, SkinProperty property) {
-        PropertyMap properties = player.getGameProfile().properties();
+    public static void setGameProfileTextures(GameProfile gameProfile, SkinProperty property) {
+        PropertyMap properties = gameProfile.properties();
         var newProperties = ImmutableMultimap.<String, Object>builder();
         for (var entry : properties.entries()) {
             if (SkinProperty.TEXTURES_NAME.equals(entry.getKey())) {
@@ -99,7 +100,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
         ejectPassengers(player);
 
-        setGameProfileTextures(player, property);
+        setGameProfileTextures(player.getGameProfile(), property);
 
         for (ServerPlayer otherPlayer : getSeenByPlayers(player)) {
             untrackAndHideEntity(otherPlayer, player);

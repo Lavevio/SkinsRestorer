@@ -69,7 +69,7 @@ public class SRModInit implements SRServerPlatformInit {
 
     @Override
     public void initLoginProfileListener() {
-        PlayerEvent.PLAYER_JOIN.register(injector.getSingleton(PlayerJoinListener.class));
+        injector.getSingleton(PlayerJoinListener.class);
     }
 
     @Override

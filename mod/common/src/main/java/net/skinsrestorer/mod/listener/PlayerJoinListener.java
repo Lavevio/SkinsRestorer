@@ -17,9 +17,8 @@
  */
 package net.skinsrestorer.mod.listener;
 
-import dev.architectury.event.events.common.PlayerEvent;
+import com.mojang.authlib.GameProfile;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.mod.SkinApplierMod;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
@@ -29,29 +28,33 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class PlayerJoinListener implements PlayerEvent.PlayerJoin {
+public class PlayerJoinListener {
+    public static PlayerJoinListener INSTANCE;
     private final LoginProfileListenerAdapter<Void> adapter;
 
-    @Override
-    public void join(ServerPlayer player) {
-        adapter.handleLogin(wrap(player));
+    {
+        INSTANCE = this;
     }
 
-    private SRLoginProfileEvent<Void> wrap(ServerPlayer player) {
+    public void join(GameProfile gameProfile) {
+        adapter.handleLogin(wrap(gameProfile));
+    }
+
+    private SRLoginProfileEvent<Void> wrap(GameProfile gameProfile) {
         return new SRLoginProfileEvent<>() {
             @Override
             public boolean hasOnlineProperties() {
-                return !player.getGameProfile().properties().get(SkinProperty.TEXTURES_NAME).isEmpty();
+                return !gameProfile.properties().get(SkinProperty.TEXTURES_NAME).isEmpty();
             }
 
             @Override
             public UUID getPlayerUniqueId() {
-                return player.getGameProfile().id();
+                return gameProfile.id();
             }
 
             @Override
             public String getPlayerName() {
-                return player.getGameProfile().name();
+                return gameProfile.name();
             }
 
             @Override
@@ -61,7 +64,7 @@ public class PlayerJoinListener implements PlayerEvent.PlayerJoin {
 
             @Override
             public void setResultProperty(SkinProperty property) {
-                SkinApplierMod.setGameProfileTextures(player, property);
+                SkinApplierMod.setGameProfileTextures(gameProfile, property);
             }
 
             @Override
