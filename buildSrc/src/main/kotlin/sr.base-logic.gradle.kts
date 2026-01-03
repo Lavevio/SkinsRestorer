@@ -82,14 +82,6 @@ tasks {
         title = "SkinsRestorer Javadocs"
         options.encoding = Charsets.UTF_8.name()
         (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
-        // Disabled due to configuration cache incompatibility with Gradle's Javadoc task
-        // Only re-enable for api module when upstream issue is resolved
-        enabled = false
-    }
-    delombok {
-        // Disabled due to configuration cache incompatibility
-        // See: https://github.com/freefair/gradle-plugins/issues/1059
-        enabled = false
     }
     compileJava {
         options.encoding = Charsets.UTF_8.name()
