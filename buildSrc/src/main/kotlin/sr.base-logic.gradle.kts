@@ -1,3 +1,4 @@
+import net.ltgt.gradle.errorprone.errorprone
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -85,6 +86,9 @@ tasks {
         (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
     }
     compileJava {
+        options.errorprone {
+            disableWarningsInGeneratedCode = true
+        }
         options.encoding = Charsets.UTF_8.name()
         options.compilerArgs.addAll(
             listOf(
