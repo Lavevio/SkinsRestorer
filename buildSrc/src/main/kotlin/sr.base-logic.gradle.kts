@@ -14,6 +14,7 @@ plugins {
 
 spotbugs {
     ignoreFailures = true
+    excludeFilter = file("${rootProject.projectDir}/buildSrc/spotbugs-exclude.xml")
 }
 
 dependencies {
