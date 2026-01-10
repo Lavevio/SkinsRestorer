@@ -46,6 +46,7 @@ public class AdapterReference implements Provider<StorageAdapter> {
         return function.apply(adapter);
     }
 
+    @FunctionalInterface
     public interface ThrowingFunction<I, O, E extends Throwable> {
         O apply(I input) throws E;
     }
