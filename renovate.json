@@ -13,7 +13,8 @@
   "ignoreDeps": [
     "org.spigotmc:spigot-api",
     "net.fabricmc.fabric-api:fabric-api-bom",
-    "net.fabricmc.fabric-api:fabric-api"
+    "net.fabricmc.fabric-api:fabric-api",
+    "dev.architectury.loom"
   ],
   "labels": [
     "renovate"
