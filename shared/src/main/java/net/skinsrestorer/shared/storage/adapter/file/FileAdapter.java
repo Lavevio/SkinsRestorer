@@ -539,9 +539,10 @@ public class FileAdapter implements StorageAdapter {
                 }
 
                 files.add(new GUIFileData(name, path));
+                skinIndex++;
 
                 // We got max skins now, stop
-                if (skinIndex++ >= offset + limit) {
+                if (files.size() >= limit) {
                     break;
                 }
             }
@@ -619,9 +620,10 @@ public class FileAdapter implements StorageAdapter {
                 }
 
                 files.add(new GUIFileData(name, path));
+                skinIndex++;
 
                 // We got max skins now, stop
-                if (skinIndex++ >= offset + limit) {
+                if (files.size() >= limit) {
                     break;
                 }
             }

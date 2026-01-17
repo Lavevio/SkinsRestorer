@@ -104,8 +104,8 @@ public class PostgreSQLAdapter implements StorageAdapter {
                 + "mine_skin_id VARCHAR(36),"
                 + "value TEXT NOT NULL,"
                 + "signature TEXT NOT NULL,"
-                + "skin_variant VARCHAR(20),"
-                + "PRIMARY KEY (url))");
+                + "skin_variant VARCHAR(20) NOT NULL,"
+                + "PRIMARY KEY (url, skin_variant))");
 
         postgres.update("CREATE TABLE IF NOT EXISTS " + resolveURLSkinIndexTable() + " ("
                 + "url VARCHAR(266) NOT NULL," // Max chatbox command length
@@ -118,6 +118,36 @@ public class PostgreSQLAdapter implements StorageAdapter {
                 + "value TEXT NOT NULL,"
                 + "signature TEXT NOT NULL,"
                 + "PRIMARY KEY (name))");
+
+        migrateURLSkinTable();
+    }
+
+    private void migrateURLSkinTable() {
+        // Check if the url_skins table exists and needs migration
+        // We detect this by checking if skin_variant is nullable
+        try (ResultSet rs = postgres.query(
+                "SELECT is_nullable FROM information_schema.columns WHERE table_name = ? AND column_name = 'skin_variant'",
+                resolveURLSkinTable())) {
+            if (rs.next() && "YES".equals(rs.getString("is_nullable"))) {
+                logger.info("Migrating URL skin table to use composite primary key...");
+
+                // Delete rows with NULL skin_variant as they are invalid
+                postgres.update("DELETE FROM " + resolveURLSkinTable() + " WHERE skin_variant IS NULL");
+
+                // Drop old primary key constraint
+                postgres.update("ALTER TABLE " + resolveURLSkinTable() + " DROP CONSTRAINT " + resolveURLSkinTable() + "_pkey");
+
+                // Make skin_variant NOT NULL
+                postgres.update("ALTER TABLE " + resolveURLSkinTable() + " ALTER COLUMN skin_variant SET NOT NULL");
+
+                // Add new composite primary key
+                postgres.update("ALTER TABLE " + resolveURLSkinTable() + " ADD PRIMARY KEY (url, skin_variant)");
+
+                logger.info("URL skin table migration complete!");
+            }
+        } catch (SQLException e) {
+            logger.warning("Failed to check URL skin table schema", e);
+        }
     }
 
     @Override
@@ -286,7 +316,7 @@ public class PostgreSQLAdapter implements StorageAdapter {
     @Override
     public void setURLSkinData(String url, URLSkinData skinData) {
         postgres.update("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature, skin_variant) VALUES (?, ?, ?, ?, ?) "
-                        + "ON CONFLICT (url) DO UPDATE SET mine_skin_id=EXCLUDED.mine_skin_id, value=EXCLUDED.value, signature=EXCLUDED.signature, skin_variant=EXCLUDED.skin_variant",
+                        + "ON CONFLICT (url, skin_variant) DO UPDATE SET mine_skin_id=EXCLUDED.mine_skin_id, value=EXCLUDED.value, signature=EXCLUDED.signature",
                 url,
                 skinData.getMineSkinId(),
                 skinData.getProperty().getValue(),

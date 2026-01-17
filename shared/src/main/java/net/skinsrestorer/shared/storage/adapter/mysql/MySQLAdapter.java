@@ -109,8 +109,8 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`mine_skin_id` VARCHAR(36),"
                 + "`value` TEXT NOT NULL,"
                 + "`signature` TEXT NOT NULL,"
-                + "`skin_variant` VARCHAR(20),"
-                + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                + "`skin_variant` VARCHAR(20) NOT NULL,"
+                + "PRIMARY KEY (`url`, `skin_variant`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.update("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinIndexTable() + "` ("
                 + "`url` VARCHAR(266) NOT NULL," // Max chatbox command length
@@ -131,6 +131,9 @@ public class MySQLAdapter implements StorageAdapter {
 
             // v15
             migrateV15();
+
+            // v15.9.4
+            migrateURLSkinTable();
         } catch (IOException e) {
             logger.severe("Failed to migrate tables", e);
         }
@@ -144,6 +147,33 @@ public class MySQLAdapter implements StorageAdapter {
 
         if (!columnExists(resolveCustomSkinTable(), "display_name")) {
             mysql.update("ALTER TABLE `" + resolveCustomSkinTable() + "` ADD COLUMN `display_name` TEXT");
+        }
+    }
+
+    private void migrateURLSkinTable() {
+        if (!tableExists(resolveURLSkinTable())) {
+            return;
+        }
+
+        // Check if we need to migrate by seeing if skin_variant is nullable
+        // If it's nullable, we need to migrate to the new composite primary key
+        try (ResultSet rs = mysql.query("SELECT IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = 'skin_variant'", resolveURLSkinTable())) {
+            if (rs.next() && "YES".equals(rs.getString("IS_NULLABLE"))) {
+                logger.info("Migrating URL skin table to use composite primary key...");
+
+                // Delete rows with NULL skin_variant as they are invalid
+                mysql.update("DELETE FROM `" + resolveURLSkinTable() + "` WHERE `skin_variant` IS NULL");
+
+                // Drop old primary key and add new composite primary key
+                mysql.update("ALTER TABLE `" + resolveURLSkinTable() + "` DROP PRIMARY KEY, ADD PRIMARY KEY (`url`, `skin_variant`)");
+
+                // Make skin_variant NOT NULL
+                mysql.update("ALTER TABLE `" + resolveURLSkinTable() + "` MODIFY COLUMN `skin_variant` VARCHAR(20) NOT NULL");
+
+                logger.info("URL skin table migration complete!");
+            }
+        } catch (SQLException e) {
+            logger.warning("Failed to check URL skin table schema", e);
         }
     }
 
@@ -318,7 +348,7 @@ public class MySQLAdapter implements StorageAdapter {
 
         mysql.update("DELETE FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? AND timestamp NOT IN (" +
                 (data.getHistory().isEmpty() ? "NULL" : data.getHistory().stream().map(HistoryData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
-                + ")", uuid);
+                + ")", uuid.toString());
         for (HistoryData historyData : data.getHistory()) {
             SkinIdentifier historyIdentifier = historyData.getSkinIdentifier();
             String historySkinIdentifier = historyIdentifier.getIdentifier();
@@ -338,7 +368,7 @@ public class MySQLAdapter implements StorageAdapter {
 
         mysql.update("DELETE FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? AND timestamp NOT IN (" +
                 (data.getFavourites().isEmpty() ? "NULL" : data.getFavourites().stream().map(FavouriteData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
-                + ")", uuid);
+                + ")", uuid.toString());
         for (FavouriteData favouriteData : data.getFavourites()) {
             SkinIdentifier favouriteIdentifier = favouriteData.getSkinIdentifier();
             String favouriteSkinIdentifier = favouriteIdentifier.getIdentifier();
@@ -419,7 +449,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void setURLSkinData(String url, URLSkinData skinData) {
-        mysql.update("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE mine_skin_id=?, value=?, signature=?, skin_variant=?",
+        mysql.update("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE mine_skin_id=?, value=?, signature=?",
                 url,
                 skinData.getMineSkinId(),
                 skinData.getProperty().getValue(),
@@ -427,8 +457,7 @@ public class MySQLAdapter implements StorageAdapter {
                 skinData.getSkinVariant().name(),
                 skinData.getMineSkinId(),
                 skinData.getProperty().getValue(),
-                skinData.getProperty().getSignature(),
-                skinData.getSkinVariant().name());
+                skinData.getProperty().getSignature());
     }
 
     @Override
@@ -682,7 +711,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void purgeStoredOldSkins(long targetPurgeTimestamp) {
-        mysql.update("DELETE FROM " + resolvePlayerSkinTable() + " WHERE timestamp NOT LIKE 0 AND timestamp<=?", targetPurgeTimestamp);
+        mysql.update("DELETE FROM " + resolvePlayerSkinTable() + " WHERE timestamp <> 0 AND timestamp<=?", targetPurgeTimestamp);
     }
 
     @Override
