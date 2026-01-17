@@ -43,7 +43,6 @@ import javax.inject.Inject;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRBungeeAdapter implements SRProxyAdapter {
@@ -138,7 +137,7 @@ public class SRBungeeAdapter implements SRProxyAdapter {
                         p.getDescription().getMain(),
                         Map.of(),
                         List.of(p.getDescription().getAuthor())
-                )).collect(Collectors.toList());
+                )).toList();
     }
 
     @Override
@@ -148,7 +147,7 @@ public class SRBungeeAdapter implements SRProxyAdapter {
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
-        return proxy.getPlayers().stream().map(injector.getSingleton(WrapperBungee.class)::player).collect(Collectors.toList());
+        return proxy.getPlayers().stream().<SRPlayer>map(injector.getSingleton(WrapperBungee.class)::player).toList();
     }
 
     @Override

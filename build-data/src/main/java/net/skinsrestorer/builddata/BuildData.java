@@ -56,7 +56,7 @@ public class BuildData {
         BUILD_TIME = properties.getProperty("build_time");
         CI_NAME = properties.getProperty("ci_name");
         CI_BUILD_NUMBER = properties.getProperty("ci_build_number");
-        COMMIT_SHORT = COMMIT.substring(0, 7);
+        COMMIT_SHORT = COMMIT != null && COMMIT.length() >= 7 ? COMMIT.substring(0, 7) : COMMIT;
         LOCALES = properties.getProperty("locales").split("\\|");
     }
 

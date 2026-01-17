@@ -61,7 +61,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class SRBukkitAdapter implements SRServerAdapter {
     private final Injector injector;
@@ -239,7 +238,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
                                 "website", Objects.requireNonNullElse(plugin.getDescription().getWebsite(), "N/A")
                         ),
                         List.copyOf(plugin.getDescription().getAuthors())
-                )).collect(Collectors.toList());
+                )).toList();
     }
 
     @Override
@@ -249,7 +248,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
-        return server.getOnlinePlayers().stream().map(injector.getSingleton(WrapperBukkit.class)::player).collect(Collectors.toList());
+        return server.getOnlinePlayers().stream().<SRPlayer>map(injector.getSingleton(WrapperBukkit.class)::player).toList();
     }
 
     @Override

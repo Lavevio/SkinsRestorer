@@ -64,9 +64,13 @@ public class SRModPlatformImpl implements SRModPlatform {
 
     @Override
     public void registerPermission(Permission permission, Component description) {
-        int dotIndex = permission.getPermissionString().indexOf('.');
-        String beforeDot = permission.getPermissionString().substring(0, dotIndex);
-        String afterDot = permission.getPermissionString().substring(dotIndex + 1);
+        String permissionString = permission.getPermissionString();
+        int dotIndex = permissionString.indexOf('.');
+        if (dotIndex == -1) {
+            throw new IllegalArgumentException("Permission string must contain a dot: " + permissionString);
+        }
+        String beforeDot = permissionString.substring(0, dotIndex);
+        String afterDot = permissionString.substring(dotIndex + 1);
         PermissionNode<Boolean> node = new PermissionNode<>(beforeDot, afterDot, PermissionTypes.BOOLEAN, (arg, uUID, permissionDynamicContexts) -> permission.isInDefaultGroup());
         node.setInformation(Component.literal(permission.getPermissionString()), description);
 

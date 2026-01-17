@@ -42,7 +42,6 @@ import javax.inject.Inject;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginInstance,
                                 ProxyServer proxy) implements SRProxyAdapter {
@@ -138,7 +137,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
                         "url", p.getDescription().getUrl().orElse("N/A")
                 ),
                 List.copyOf(p.getDescription().getAuthors())
-        )).collect(Collectors.toList());
+        )).toList();
     }
 
     @Override
@@ -148,7 +147,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
-        return proxy.getAllPlayers().stream().map(injector.getSingleton(WrapperVelocity.class)::player).collect(Collectors.toList());
+        return proxy.getAllPlayers().stream().<SRPlayer>map(injector.getSingleton(WrapperVelocity.class)::player).toList();
     }
 
     @Override

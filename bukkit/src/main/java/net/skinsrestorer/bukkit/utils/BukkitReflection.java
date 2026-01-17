@@ -50,7 +50,8 @@ public class BukkitReflection {
 
     private static SemanticVersion getServerVersion() {
         String fullVersion = Bukkit.getServer().getBukkitVersion();
-        String versionString = fullVersion.substring(0, fullVersion.indexOf('-'));
+        int hyphenIndex = fullVersion.indexOf('-');
+        String versionString = hyphenIndex == -1 ? fullVersion : fullVersion.substring(0, hyphenIndex);
         return SemanticVersion.fromString(versionString);
     }
 

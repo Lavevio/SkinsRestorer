@@ -175,6 +175,9 @@ public class FileAdapter implements StorageAdapter {
                     }
 
                     String[] lines = Files.readString(path).split("\n");
+                    if (lines.length < 2) {
+                        throw new IOException("Invalid skin file format: expected at least 2 lines, got " + lines.length);
+                    }
                     String skinValue = lines[0].trim();
                     String skinSignature = lines[1].trim();
                     SkinProperty skinProperty = SkinProperty.of(skinValue, skinSignature);

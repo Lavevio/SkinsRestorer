@@ -279,9 +279,14 @@ public final class SpigotSkinRefresher implements SkinRefresher {
     }
 
     private Object getFromListExcluded(List<Object> list, Object... excluded) {
+        outer:
         for (Object obj : list) {
-            if (obj != excluded)
-                return obj;
+            for (Object ex : excluded) {
+                if (obj == ex) {
+                    continue outer;
+                }
+            }
+            return obj;
         }
 
         return null;

@@ -58,7 +58,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class SRModAdapter implements SRServerAdapter {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -228,7 +227,7 @@ public class SRModAdapter implements SRServerAdapter {
                                 "issueTracker", plugin.getIssueTracker().orElse("N/A")
                         ),
                         List.copyOf(plugin.getAuthors())
-                )).collect(Collectors.toList());
+                )).toList();
     }
 
     @Override
@@ -245,7 +244,7 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
-        return sender.getAs(CommandSourceStack.class).getServer().getPlayerList().getPlayers().stream().map(injector.getSingleton(WrapperMod.class)::player).collect(Collectors.toList());
+        return sender.getAs(CommandSourceStack.class).getServer().getPlayerList().getPlayers().stream().<SRPlayer>map(injector.getSingleton(WrapperMod.class)::player).toList();
     }
 
     @Override
