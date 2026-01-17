@@ -27,6 +27,7 @@ dependencies {
     api(libs.cloud.processors.requirements)
     api(libs.cloud.processors.cooldown)
     api(libs.cloud.brigadier)
+    compileOnly(libs.brigadier)
     api(libs.cloud.translations.core)
     api(libs.cloud.minecraft.extras)
     api(libs.cloud.translations.minecraft.extras)

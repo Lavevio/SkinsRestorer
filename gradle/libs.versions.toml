@@ -38,6 +38,7 @@ cloud-brigadier = "2.0.0-SNAPSHOT"
 cloud-translations-core = "1.0.0-SNAPSHOT"
 cloud-minecraft-extras = "2.0.0-SNAPSHOT"
 cloud-translations-minecraft-extras = "1.0.0-SNAPSHOT"
+brigadier = "1.0.18"
 floodgate = "2.2.2-SNAPSHOT"
 viaversion = "5.7.0"
 viabackwards = "5.7.0"
@@ -89,6 +90,7 @@ cloud-brigadier = { module = "org.incendo:cloud-brigadier", version.ref = "cloud
 cloud-translations-core = { module = "org.incendo:cloud-translations-core", version.ref = "cloud-translations-core" }
 cloud-minecraft-extras = { module = "org.incendo:cloud-minecraft-extras", version.ref = "cloud-minecraft-extras" }
 cloud-translations-minecraft-extras = { module = "org.incendo:cloud-translations-minecraft-extras", version.ref = "cloud-translations-minecraft-extras" }
+brigadier = { module = "com.mojang:brigadier", version.ref = "brigadier" }
 floodgate-api = { module = "org.geysermc.floodgate:api", version.ref = "floodgate" }
 viaversion = { module = "com.viaversion:viaversion", version.ref = "viaversion" }
 viabackwards = { module = "com.viaversion:viabackwards-common", version.ref = "viabackwards" }
