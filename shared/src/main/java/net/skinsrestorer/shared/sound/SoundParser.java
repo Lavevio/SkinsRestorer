@@ -66,7 +66,7 @@ public class SoundParser {
 
         Record record = new Record();
         String name = split.getFirst();
-        if (name.charAt(0) == '~') {
+        if (!name.isEmpty() && name.charAt(0) == '~') {
             name = name.substring(1);
             record.publicSound(true);
         } else {

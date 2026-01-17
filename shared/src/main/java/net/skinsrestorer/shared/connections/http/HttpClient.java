@@ -38,6 +38,32 @@ public class HttpClient {
     private final SRLogger logger;
     private final SettingsManager settings;
 
+    private InputStream extractInputStream(HttpsURLConnection connection) throws IOException {
+        InputStream is;
+        try {
+            is = connection.getInputStream();
+        } catch (IOException e) {
+            logger.debug("Failed to get input stream, falling back to error stream.", e);
+            is = connection.getErrorStream();
+        }
+
+        if (is == null) {
+            throw new IOException("Failed to get input stream.");
+        }
+
+        return is;
+    }
+
+    private HttpResponse parseResponse(HttpsURLConnection connection) throws IOException {
+        try (InputStream is = extractInputStream(connection)) {
+            return new HttpResponse(
+                    connection.getResponseCode(),
+                    new String(is.readAllBytes(), StandardCharsets.UTF_8),
+                    connection.getHeaderFields()
+            );
+        }
+    }
+
     public HttpResponse execute(URI uri, RequestBody requestBody, HttpType accepts,
                                 String userAgent, HttpMethod method,
                                 Map<String, String> headers, int timeout) throws IOException {
@@ -82,23 +108,7 @@ public class HttpClient {
 
         connection.connect();
 
-        InputStream is;
-        try {
-            is = connection.getInputStream();
-        } catch (IOException e) {
-            logger.debug("Failed to get input stream, falling back to error stream.", e);
-            is = connection.getErrorStream();
-        }
-
-        if (is == null) {
-            throw new IOException("Failed to get input stream.");
-        }
-
-        HttpResponse response = new HttpResponse(
-                connection.getResponseCode(),
-                new String(is.readAllBytes(), StandardCharsets.UTF_8),
-                connection.getHeaderFields()
-        );
+        HttpResponse response = parseResponse(connection);
 
         logger.debug("Response body: %s".formatted(response.body()
                 .replace("\n", "")
