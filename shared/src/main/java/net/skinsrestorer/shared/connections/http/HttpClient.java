@@ -40,15 +40,22 @@ public class HttpClient {
 
     private InputStream extractInputStream(HttpsURLConnection connection) throws IOException {
         InputStream is;
+        IOException suppressedException = null;
         try {
             is = connection.getInputStream();
         } catch (IOException e) {
+            suppressedException = e;
             logger.debug("Failed to get input stream, falling back to error stream.", e);
             is = connection.getErrorStream();
         }
 
         if (is == null) {
-            throw new IOException("Failed to get input stream.");
+            IOException ioException = new IOException("Both input stream and error stream are null.");
+            if (suppressedException != null) {
+                ioException.addSuppressed(suppressedException);
+            }
+
+            throw ioException;
         }
 
         return is;
