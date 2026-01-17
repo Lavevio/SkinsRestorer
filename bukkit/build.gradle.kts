@@ -38,6 +38,7 @@ dependencies {
     // MultiPaper support
     implementation(libs.multilib)
     implementation(libs.cloud.paper)
+    compileOnly(libs.brigadier)
 
     // PAPI API hook
     compileOnly(libs.placeholderapi) {

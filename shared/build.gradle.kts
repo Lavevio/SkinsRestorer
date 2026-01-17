@@ -24,13 +24,13 @@ dependencies {
 
     api(libs.cloud.annotations)
     annotationProcessor(libs.cloud.annotations)
-    api(libs.cloud.processors.requirements)
-    api(libs.cloud.processors.cooldown)
+    implementation(libs.cloud.processors.requirements)
+    implementation(libs.cloud.processors.cooldown)
     implementation(libs.cloud.brigadier)
     compileOnly(libs.brigadier)
-    api(libs.cloud.translations.core)
-    api(libs.cloud.minecraft.extras)
-    api(libs.cloud.translations.minecraft.extras)
+    implementation(libs.cloud.translations.core)
+    implementation(libs.cloud.minecraft.extras)
+    implementation(libs.cloud.translations.minecraft.extras)
     api(libs.reflect)
 
     implementation(libs.bstats.base) {
