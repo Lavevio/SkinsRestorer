@@ -12,7 +12,8 @@
   ],
   "ignoreDeps": [
     "org.spigotmc:spigot-api",
-    "net.fabricmc.fabric-api:fabric-api-bom"
+    "net.fabricmc.fabric-api:fabric-api-bom",
+    "net.fabricmc.fabric-api:fabric-api"
   ],
   "labels": [
     "renovate"
