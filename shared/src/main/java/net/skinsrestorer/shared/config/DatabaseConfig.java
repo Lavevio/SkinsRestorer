@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.config;
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
@@ -25,15 +26,18 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static net.skinsrestorer.shared.config.ConfigHelpers.newCappedProperty;
 
 public class DatabaseConfig implements SettingsHolder {
-    public static final Property<Boolean> MYSQL_ENABLED = newProperty("database.enabled", false);
-    public static final Property<String> MYSQL_HOST = newProperty("database.host", "localhost");
-    public static final Property<Integer> MYSQL_PORT = newCappedProperty("database.port", 3306, 1, 65535);
-    public static final Property<String> MYSQL_DATABASE = newProperty("database.database", "db");
-    public static final Property<String> MYSQL_USERNAME = newProperty("database.username", "root");
-    public static final Property<String> MYSQL_PASSWORD = newProperty("database.password", "pass");
-    public static final Property<Integer> MYSQL_MAX_POOL_SIZE = newCappedProperty("database.maxPoolSize", 10, 1, 1000);
-    public static final Property<String> MYSQL_TABLE_PREFIX = newProperty("database.tablePrefix", "sr_");
-    public static final Property<String> MYSQL_CONNECTION_OPTIONS = newProperty("database.connectionOptions", "sslMode=trust&serverTimezone=UTC");
+    @Comment({
+            "Database backend selection. Valid values: FILE, MYSQL, POSTGRESQL."
+    })
+    public static final Property<DatabaseType> DATABASE_TYPE = newProperty(DatabaseType.class, "database.type", DatabaseType.FILE);
+    public static final Property<String> DATABASE_HOST = newProperty("database.host", "localhost");
+    public static final Property<Integer> DATABASE_PORT = newCappedProperty("database.port", 3306, 1, 65535);
+    public static final Property<String> DATABASE_DATABASE = newProperty("database.database", "db");
+    public static final Property<String> DATABASE_USERNAME = newProperty("database.username", "root");
+    public static final Property<String> DATABASE_PASSWORD = newProperty("database.password", "pass");
+    public static final Property<Integer> DATABASE_MAX_POOL_SIZE = newCappedProperty("database.maxPoolSize", 10, 1, 1000);
+    public static final Property<String> DATABASE_TABLE_PREFIX = newProperty("database.tablePrefix", "sr_");
+    public static final Property<String> DATABASE_CONNECTION_OPTIONS = newProperty("database.connectionOptions", "sslMode=trust&serverTimezone=UTC");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
@@ -44,9 +48,16 @@ public class DatabaseConfig implements SettingsHolder {
                 "\n############",
                 "\n",
                 "Settings for databases skin storage (recommended for large networks with a lot of skins)",
-                "[!] Make sure you have the correct permissions set for your MySQL user. [!]",
+                "Set database.type to FILE, MYSQL or POSTGRESQL.",
+                "[!] Make sure you have the correct permissions set for your database user. [!]",
                 "[!] Make sure to fill in database.connectionOptions if you're using certificate / ssl authentication. [!]",
                 "[!] If you're not using ssl, change sslMode=trust to sslMode=disable [!]"
         );
+    }
+
+    public enum DatabaseType {
+        FILE,
+        MYSQL,
+        POSTGRESQL
     }
 }
