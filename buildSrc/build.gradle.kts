@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation("com.gradleup.shadow:shadow-gradle-plugin:9.3.1")
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:8.1.0")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:8.2.0")
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.4.8")
     implementation("net.kyori:indra-git:4.0.0")
     implementation("io.freefair.gradle:lombok-plugin:9.2.0")
