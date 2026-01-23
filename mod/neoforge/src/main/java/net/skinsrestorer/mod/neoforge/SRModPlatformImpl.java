@@ -19,6 +19,7 @@ package net.skinsrestorer.mod.neoforge;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
@@ -55,7 +56,7 @@ public class SRModPlatformImpl implements SRModPlatform {
     @Override
     public Tristate test(CommandSourceStack stack, Permission permission) {
         if (!stack.isPlayer()) {
-            return stack.permissions().hasPermission(net.minecraft.server.permissions.Permission.Atom.create(permission.getPermissionString()))
+            return stack.permissions().hasPermission(new HasCommandLevel(stack.getLevel().getServer().operatorUserPermissions().level()))
                     ? Tristate.TRUE : Tristate.UNDEFINED;
         }
 

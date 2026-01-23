@@ -21,6 +21,7 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.skinsrestorer.mod.SRModPlatform;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
@@ -55,7 +56,7 @@ public class SRModPlatformImpl implements SRModPlatform {
             };
         }
 
-        return stack.permissions().hasPermission(net.minecraft.server.permissions.Permission.Atom.create(permission.getPermissionString()))
+        return stack.permissions().hasPermission(new HasCommandLevel(stack.getLevel().getServer().operatorUserPermissions().level()))
                 ? Tristate.TRUE : Tristate.UNDEFINED;
     }
 
