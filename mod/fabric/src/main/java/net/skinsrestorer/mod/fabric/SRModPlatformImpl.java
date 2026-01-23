@@ -22,6 +22,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.permissions.Permission.HasCommandLevel;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.skinsrestorer.mod.SRModPlatform;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
@@ -52,11 +53,15 @@ public class SRModPlatformImpl implements SRModPlatform {
             return switch (Permissions.getPermissionValue(stack, permission.getPermissionString())) {
                 case TRUE -> Tristate.TRUE;
                 case FALSE -> Tristate.FALSE;
-                case DEFAULT -> Tristate.UNDEFINED;
+                case DEFAULT -> getOpBasedPermission(stack);
             };
         }
 
-        return stack.permissions().hasPermission(new HasCommandLevel(stack.getLevel().getServer().operatorUserPermissions().level()))
+        return getOpBasedPermission(stack);
+    }
+
+    private Tristate getOpBasedPermission(CommandSourceStack stack) {
+        return stack.permissions().hasPermission(new HasCommandLevel(PermissionLevel.GAMEMASTERS))
                 ? Tristate.TRUE : Tristate.UNDEFINED;
     }
 
