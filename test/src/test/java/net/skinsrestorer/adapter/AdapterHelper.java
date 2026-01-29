@@ -40,14 +40,14 @@ public class AdapterHelper {
 
     public static void testAdapter(StorageAdapter adapter) {
         UUID playerId = UUID.randomUUID();
-        PlayerData playerData = PlayerData.of(playerId, null, List.of(
-                HistoryData.of(0, SkinIdentifier.ofCustom("abc"))
-        ), List.of(
-                FavouriteData.of(0, SkinIdentifier.ofCustom("abc"))
-        ));
+        PlayerData playerData = PlayerData.of(playerId, null);
+        HistoryData historyEntry = HistoryData.of(0, SkinIdentifier.ofCustom("abc"));
+        FavouriteData favouriteEntry = FavouriteData.of(0, SkinIdentifier.ofCustom("abc"));
 
         adapter.setCachedUUID("test", MojangCacheData.of(UUID.randomUUID(), -1));
         adapter.setPlayerData(playerId, playerData);
+        adapter.addPlayerHistory(playerId, historyEntry);
+        adapter.addPlayerFavourite(playerId, favouriteEntry);
         adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME,
                 HardcodedSkins.STEVE.getProperty(), -1));
         adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test",
@@ -71,6 +71,14 @@ public class AdapterHelper {
 
         try {
             Assertions.assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
+
+            List<HistoryData> history = adapter.getPlayerHistory(playerId, 0, 10);
+            Assertions.assertEquals(1, history.size());
+            Assertions.assertEquals(historyEntry, history.getFirst());
+
+            List<FavouriteData> favourites = adapter.getPlayerFavourites(playerId, 0, 10);
+            Assertions.assertEquals(1, favourites.size());
+            Assertions.assertEquals(favouriteEntry, favourites.getFirst());
         } catch (StorageAdapter.StorageException e) {
             throw new RuntimeException(e);
         }

@@ -22,6 +22,8 @@ import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.gui.GUIUtils;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
+import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
@@ -38,6 +40,26 @@ public interface StorageAdapter {
     Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException;
 
     void setPlayerData(UUID uuid, PlayerData data);
+
+    List<HistoryData> getPlayerHistory(UUID uuid, int offset, int limit) throws StorageException;
+
+    int getPlayerHistoryCount(UUID uuid) throws StorageException;
+
+    List<FavouriteData> getPlayerFavourites(UUID uuid, int offset, int limit) throws StorageException;
+
+    int getPlayerFavouriteCount(UUID uuid) throws StorageException;
+
+    void addPlayerHistory(UUID uuid, HistoryData data);
+
+    void removePlayerHistory(UUID uuid, long timestamp);
+
+    void trimPlayerHistory(UUID uuid, int keepCount);
+
+    void addPlayerFavourite(UUID uuid, FavouriteData data);
+
+    void removePlayerFavourite(UUID uuid, SkinIdentifier skinIdentifier);
+
+    void trimPlayerFavourites(UUID uuid, int keepCount);
 
     Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException;
 
@@ -101,8 +123,8 @@ public interface StorageAdapter {
 
         // Handle migrated or new custom skins
         Optional<CustomSkinData> customSkinData = getCustomSkinData(legacyPlayerData.get().getSkinName());
-        setPlayerData(uuid, customSkinData.map(skinData -> PlayerData.of(uuid, SkinIdentifier.ofCustom(skinData.getSkinName()), List.of(), List.of()))
-                .orElseGet(() -> PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY), List.of(), List.of())));
+        setPlayerData(uuid, customSkinData.map(skinData -> PlayerData.of(uuid, SkinIdentifier.ofCustom(skinData.getSkinName())))
+                .orElseGet(() -> PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY))));
 
         removeLegacyPlayerData(playerName);
     }

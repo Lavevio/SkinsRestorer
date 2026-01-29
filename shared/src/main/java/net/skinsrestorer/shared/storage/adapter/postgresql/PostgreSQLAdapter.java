@@ -152,9 +152,7 @@ public class PostgreSQLAdapter implements StorageAdapter {
 
     @Override
     public Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException {
-        try (ResultSet crs = postgres.query("SELECT * FROM " + resolvePlayerTable() + " WHERE uuid=?", uuid.toString());
-             ResultSet historyCrs = postgres.query("SELECT * FROM " + resolvePlayerHistoryTable() + " WHERE uuid=?", uuid.toString());
-             ResultSet favouritesCrs = postgres.query("SELECT * FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=?", uuid.toString())) {
+        try (ResultSet crs = postgres.query("SELECT * FROM " + resolvePlayerTable() + " WHERE uuid=?", uuid.toString())) {
             if (!crs.next()) {
                 return Optional.empty();
             }
@@ -167,37 +165,7 @@ public class PostgreSQLAdapter implements StorageAdapter {
                     SkinIdentifier.of(skinIdentifier,
                             skinVariant == null ? null : SkinVariant.valueOf(skinVariant), SkinType.valueOf(skinType)) : null;
 
-            List<HistoryData> history = new ArrayList<>();
-            while (historyCrs.next()) {
-                String historySkinIdentifier = historyCrs.getString("skin_identifier");
-                String historySkinType = historyCrs.getString("skin_type");
-                String historySkinVariant = historyCrs.getString("skin_variant");
-
-                SkinIdentifier historyIdentifier = SkinIdentifier.of(
-                        historySkinIdentifier,
-                        historySkinVariant == null ? null : SkinVariant.valueOf(historySkinVariant),
-                        SkinType.valueOf(historySkinType)
-                );
-
-                history.add(HistoryData.of(historyCrs.getLong("timestamp"), historyIdentifier));
-            }
-
-            List<FavouriteData> favourites = new ArrayList<>();
-            while (favouritesCrs.next()) {
-                String favouriteSkinIdentifier = favouritesCrs.getString("skin_identifier");
-                String favouriteSkinType = favouritesCrs.getString("skin_type");
-                String favouriteSkinVariant = favouritesCrs.getString("skin_variant");
-
-                SkinIdentifier favouriteIdentifier = SkinIdentifier.of(
-                        favouriteSkinIdentifier,
-                        favouriteSkinVariant == null ? null : SkinVariant.valueOf(favouriteSkinVariant),
-                        SkinType.valueOf(favouriteSkinType)
-                );
-
-                favourites.add(FavouriteData.of(favouritesCrs.getLong("timestamp"), favouriteIdentifier));
-            }
-
-            return Optional.of(PlayerData.of(uuid, identifier, history, favourites));
+            return Optional.of(PlayerData.of(uuid, identifier));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -218,42 +186,139 @@ public class PostgreSQLAdapter implements StorageAdapter {
                 skinIdentifierString,
                 skinType,
                 skinVariant);
+    }
 
-        postgres.update("DELETE FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? AND timestamp NOT IN (" +
-                (data.getHistory().isEmpty() ? "NULL" : data.getHistory().stream().map(HistoryData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
-                + ")", uuid.toString());
-        for (HistoryData historyData : data.getHistory()) {
-            SkinIdentifier historyIdentifier = historyData.getSkinIdentifier();
-            String historySkinIdentifier = historyIdentifier.getIdentifier();
-            String historySkinType = historyIdentifier.getSkinType().name();
-            String historySkinVariant = historyIdentifier.getSkinVariant() != null ? historyIdentifier.getSkinVariant().name() : null;
+    @Override
+    public List<HistoryData> getPlayerHistory(UUID uuid, int offset, int limit) throws StorageException {
+        List<HistoryData> history = new ArrayList<>();
+        try (ResultSet crs = postgres.query("SELECT * FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? ORDER BY timestamp DESC LIMIT ? OFFSET ?",
+                uuid.toString(), limit, offset)) {
+            while (crs.next()) {
+                String skinIdentifier = crs.getString("skin_identifier");
+                String skinType = crs.getString("skin_type");
+                String skinVariant = crs.getString("skin_variant");
 
-            postgres.update("INSERT INTO " + resolvePlayerHistoryTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) "
-                            + "ON CONFLICT (uuid, timestamp) DO UPDATE SET skin_identifier=EXCLUDED.skin_identifier, skin_type=EXCLUDED.skin_type, skin_variant=EXCLUDED.skin_variant",
-                    uuid.toString(),
-                    historyData.getTimestamp(),
-                    historySkinIdentifier,
-                    historySkinType,
-                    historySkinVariant);
+                SkinIdentifier identifier = SkinIdentifier.of(
+                        skinIdentifier,
+                        skinVariant == null ? null : SkinVariant.valueOf(skinVariant),
+                        SkinType.valueOf(skinType)
+                );
+
+                history.add(HistoryData.of(crs.getLong("timestamp"), identifier));
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
         }
 
-        postgres.update("DELETE FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? AND timestamp NOT IN (" +
-                (data.getFavourites().isEmpty() ? "NULL" : data.getFavourites().stream().map(FavouriteData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
-                + ")", uuid.toString());
-        for (FavouriteData favouriteData : data.getFavourites()) {
-            SkinIdentifier favouriteIdentifier = favouriteData.getSkinIdentifier();
-            String favouriteSkinIdentifier = favouriteIdentifier.getIdentifier();
-            String favouriteSkinType = favouriteIdentifier.getSkinType().name();
-            String favouriteSkinVariant = favouriteIdentifier.getSkinVariant() != null ? favouriteIdentifier.getSkinVariant().name() : null;
+        return history;
+    }
 
-            postgres.update("INSERT INTO " + resolvePlayerFavouritesTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) "
-                            + "ON CONFLICT (uuid, timestamp) DO UPDATE SET skin_identifier=EXCLUDED.skin_identifier, skin_type=EXCLUDED.skin_type, skin_variant=EXCLUDED.skin_variant",
-                    uuid.toString(),
-                    favouriteData.getTimestamp(),
-                    favouriteSkinIdentifier,
-                    favouriteSkinType,
-                    favouriteSkinVariant);
+    @Override
+    public int getPlayerHistoryCount(UUID uuid) throws StorageException {
+        try (ResultSet crs = postgres.query("SELECT COUNT(*) FROM " + resolvePlayerHistoryTable() + " WHERE uuid=?", uuid.toString())) {
+            if (crs.next()) {
+                return crs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
         }
+
+        return 0;
+    }
+
+    @Override
+    public List<FavouriteData> getPlayerFavourites(UUID uuid, int offset, int limit) throws StorageException {
+        List<FavouriteData> favourites = new ArrayList<>();
+        try (ResultSet crs = postgres.query("SELECT * FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? ORDER BY timestamp DESC LIMIT ? OFFSET ?",
+                uuid.toString(), limit, offset)) {
+            while (crs.next()) {
+                String skinIdentifier = crs.getString("skin_identifier");
+                String skinType = crs.getString("skin_type");
+                String skinVariant = crs.getString("skin_variant");
+
+                SkinIdentifier identifier = SkinIdentifier.of(
+                        skinIdentifier,
+                        skinVariant == null ? null : SkinVariant.valueOf(skinVariant),
+                        SkinType.valueOf(skinType)
+                );
+
+                favourites.add(FavouriteData.of(crs.getLong("timestamp"), identifier));
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+
+        return favourites;
+    }
+
+    @Override
+    public int getPlayerFavouriteCount(UUID uuid) throws StorageException {
+        try (ResultSet crs = postgres.query("SELECT COUNT(*) FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=?", uuid.toString())) {
+            if (crs.next()) {
+                return crs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+
+        return 0;
+    }
+
+    @Override
+    public void addPlayerHistory(UUID uuid, HistoryData data) {
+        SkinIdentifier id = data.getSkinIdentifier();
+        String skinVariant = id.getSkinVariant() != null ? id.getSkinVariant().name() : null;
+
+        postgres.update("INSERT INTO " + resolvePlayerHistoryTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) "
+                        + "ON CONFLICT (uuid, timestamp) DO UPDATE SET skin_identifier=EXCLUDED.skin_identifier, skin_type=EXCLUDED.skin_type, skin_variant=EXCLUDED.skin_variant",
+                uuid.toString(),
+                data.getTimestamp(),
+                id.getIdentifier(),
+                id.getSkinType().name(),
+                skinVariant);
+    }
+
+    @Override
+    public void removePlayerHistory(UUID uuid, long timestamp) {
+        postgres.update("DELETE FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? AND timestamp=?",
+                uuid.toString(), timestamp);
+    }
+
+    @Override
+    public void trimPlayerHistory(UUID uuid, int keepCount) {
+        postgres.update("DELETE FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? AND timestamp NOT IN ("
+                        + "SELECT timestamp FROM " + resolvePlayerHistoryTable()
+                        + " WHERE uuid=? ORDER BY timestamp DESC LIMIT ?)",
+                uuid.toString(), uuid.toString(), keepCount);
+    }
+
+    @Override
+    public void addPlayerFavourite(UUID uuid, FavouriteData data) {
+        SkinIdentifier id = data.getSkinIdentifier();
+        String skinVariant = id.getSkinVariant() != null ? id.getSkinVariant().name() : null;
+
+        postgres.update("INSERT INTO " + resolvePlayerFavouritesTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) "
+                        + "ON CONFLICT (uuid, timestamp) DO UPDATE SET skin_identifier=EXCLUDED.skin_identifier, skin_type=EXCLUDED.skin_type, skin_variant=EXCLUDED.skin_variant",
+                uuid.toString(),
+                data.getTimestamp(),
+                id.getIdentifier(),
+                id.getSkinType().name(),
+                skinVariant);
+    }
+
+    @Override
+    public void removePlayerFavourite(UUID uuid, SkinIdentifier skinIdentifier) {
+        String skinVariant = skinIdentifier.getSkinVariant() != null ? skinIdentifier.getSkinVariant().name() : null;
+        postgres.update("DELETE FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? AND skin_identifier=? AND skin_type=? AND skin_variant IS NOT DISTINCT FROM ?",
+                uuid.toString(), skinIdentifier.getIdentifier(), skinIdentifier.getSkinType().name(), skinVariant);
+    }
+
+    @Override
+    public void trimPlayerFavourites(UUID uuid, int keepCount) {
+        postgres.update("DELETE FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? AND timestamp NOT IN ("
+                        + "SELECT timestamp FROM " + resolvePlayerFavouritesTable()
+                        + " WHERE uuid=? ORDER BY timestamp DESC LIMIT ?)",
+                uuid.toString(), uuid.toString(), keepCount);
     }
 
     @Override

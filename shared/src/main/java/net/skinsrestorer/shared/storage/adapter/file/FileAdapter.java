@@ -35,6 +35,8 @@ import net.skinsrestorer.shared.storage.adapter.file.model.player.LegacyPlayerFi
 import net.skinsrestorer.shared.storage.adapter.file.model.player.PlayerFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.skin.*;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
+import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
@@ -225,14 +227,167 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void setPlayerData(UUID uuid, PlayerData data) {
-        Path playerFile = resolvePlayerFile(uuid);
+        Path playerFilePath = resolvePlayerFile(uuid);
 
         try {
-            PlayerFile file = PlayerFile.fromPlayerData(data);
+            PlayerFile file = loadPlayerFile(uuid).orElseGet(() -> PlayerFile.create(uuid));
+            file.setSkinIdentifier(data.getSkinIdentifier());
 
-            SRHelpers.writeIfNeeded(playerFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(playerFilePath, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save player data for " + uuid, e);
+        }
+    }
+
+    @Override
+    public List<HistoryData> getPlayerHistory(UUID uuid, int offset, int limit) {
+        Optional<PlayerFile> optional = loadPlayerFile(uuid);
+        if (optional.isEmpty()) {
+            return List.of();
+        }
+
+        return optional.get().getHistoryData().stream()
+                .sorted(Comparator.comparing(HistoryData::getTimestamp).reversed())
+                .skip(offset)
+                .limit(limit)
+                .toList();
+    }
+
+    @Override
+    public int getPlayerHistoryCount(UUID uuid) {
+        Optional<PlayerFile> optional = loadPlayerFile(uuid);
+        return optional.map(file -> file.getHistoryData().size()).orElse(0);
+    }
+
+    @Override
+    public List<FavouriteData> getPlayerFavourites(UUID uuid, int offset, int limit) {
+        Optional<PlayerFile> optional = loadPlayerFile(uuid);
+        if (optional.isEmpty()) {
+            return List.of();
+        }
+
+        return optional.get().getFavouritesData().stream()
+                .sorted(Comparator.comparing(FavouriteData::getTimestamp).reversed())
+                .skip(offset)
+                .limit(limit)
+                .toList();
+    }
+
+    @Override
+    public int getPlayerFavouriteCount(UUID uuid) {
+        Optional<PlayerFile> optional = loadPlayerFile(uuid);
+        return optional.map(file -> file.getFavouritesData().size()).orElse(0);
+    }
+
+    @Override
+    public void addPlayerHistory(UUID uuid, HistoryData data) {
+        try {
+            PlayerFile file = loadPlayerFile(uuid).orElseGet(() -> PlayerFile.create(uuid));
+            List<HistoryData> history = new ArrayList<>(file.getHistoryData());
+            history.add(data);
+            file.setHistoryData(history);
+            SRHelpers.writeIfNeeded(resolvePlayerFile(uuid), gson.toJson(file));
+        } catch (IOException e) {
+            logger.warning("Failed to add player history for " + uuid, e);
+        }
+    }
+
+    @Override
+    public void removePlayerHistory(UUID uuid, long timestamp) {
+        try {
+            Optional<PlayerFile> optional = loadPlayerFile(uuid);
+            if (optional.isEmpty()) {
+                return;
+            }
+
+            PlayerFile file = optional.get();
+            List<HistoryData> history = new ArrayList<>(file.getHistoryData());
+            history.removeIf(h -> h.getTimestamp() == timestamp);
+            file.setHistoryData(history);
+            SRHelpers.writeIfNeeded(resolvePlayerFile(uuid), gson.toJson(file));
+        } catch (IOException e) {
+            logger.warning("Failed to remove player history for " + uuid, e);
+        }
+    }
+
+    @Override
+    public void trimPlayerHistory(UUID uuid, int keepCount) {
+        try {
+            Optional<PlayerFile> optional = loadPlayerFile(uuid);
+            if (optional.isEmpty()) {
+                return;
+            }
+
+            PlayerFile file = optional.get();
+            List<HistoryData> history = file.getHistoryData();
+            if (history.size() <= keepCount) {
+                return;
+            }
+
+            List<HistoryData> trimmed = history.stream()
+                    .sorted(Comparator.comparing(HistoryData::getTimestamp).reversed())
+                    .limit(keepCount)
+                    .toList();
+            file.setHistoryData(trimmed);
+            SRHelpers.writeIfNeeded(resolvePlayerFile(uuid), gson.toJson(file));
+        } catch (IOException e) {
+            logger.warning("Failed to trim player history for " + uuid, e);
+        }
+    }
+
+    @Override
+    public void addPlayerFavourite(UUID uuid, FavouriteData data) {
+        try {
+            PlayerFile file = loadPlayerFile(uuid).orElseGet(() -> PlayerFile.create(uuid));
+            List<FavouriteData> favourites = new ArrayList<>(file.getFavouritesData());
+            favourites.add(data);
+            file.setFavouritesData(favourites);
+            SRHelpers.writeIfNeeded(resolvePlayerFile(uuid), gson.toJson(file));
+        } catch (IOException e) {
+            logger.warning("Failed to add player favourite for " + uuid, e);
+        }
+    }
+
+    @Override
+    public void removePlayerFavourite(UUID uuid, SkinIdentifier skinIdentifier) {
+        try {
+            Optional<PlayerFile> optional = loadPlayerFile(uuid);
+            if (optional.isEmpty()) {
+                return;
+            }
+
+            PlayerFile file = optional.get();
+            List<FavouriteData> favourites = new ArrayList<>(file.getFavouritesData());
+            favourites.removeIf(f -> f.getSkinIdentifier().equals(skinIdentifier));
+            file.setFavouritesData(favourites);
+            SRHelpers.writeIfNeeded(resolvePlayerFile(uuid), gson.toJson(file));
+        } catch (IOException e) {
+            logger.warning("Failed to remove player favourite for " + uuid, e);
+        }
+    }
+
+    @Override
+    public void trimPlayerFavourites(UUID uuid, int keepCount) {
+        try {
+            Optional<PlayerFile> optional = loadPlayerFile(uuid);
+            if (optional.isEmpty()) {
+                return;
+            }
+
+            PlayerFile file = optional.get();
+            List<FavouriteData> favourites = file.getFavouritesData();
+            if (favourites.size() <= keepCount) {
+                return;
+            }
+
+            List<FavouriteData> trimmed = favourites.stream()
+                    .sorted(Comparator.comparing(FavouriteData::getTimestamp).reversed())
+                    .limit(keepCount)
+                    .toList();
+            file.setFavouritesData(trimmed);
+            SRHelpers.writeIfNeeded(resolvePlayerFile(uuid), gson.toJson(file));
+        } catch (IOException e) {
+            logger.warning("Failed to trim player favourites for " + uuid, e);
         }
     }
 
@@ -792,6 +947,21 @@ public class FileAdapter implements StorageAdapter {
 
     private Path resolvePlayerSkinFile(UUID uuid) {
         return skinsFolder.resolve(uuid + ".playerskin");
+    }
+
+    private Optional<PlayerFile> loadPlayerFile(UUID uuid) {
+        Path playerFilePath = resolvePlayerFile(uuid);
+        if (!Files.exists(playerFilePath)) {
+            return Optional.empty();
+        }
+
+        try {
+            String json = Files.readString(playerFilePath);
+            return Optional.of(gson.fromJson(json, PlayerFile.class));
+        } catch (Exception e) {
+            logger.warning("Failed to load player file for " + uuid, e);
+            return Optional.empty();
+        }
     }
 
     private Path resolvePlayerFile(UUID uuid) {

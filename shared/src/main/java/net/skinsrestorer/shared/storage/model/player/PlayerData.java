@@ -22,7 +22,6 @@ import lombok.Data;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -31,6 +30,4 @@ public class PlayerData {
     private final UUID uniqueId;
     @Nullable
     private SkinIdentifier skinIdentifier;
-    private List<HistoryData> history;
-    private List<FavouriteData> favourites;
 }

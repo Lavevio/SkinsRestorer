@@ -39,11 +39,9 @@ import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerStorageImpl implements PlayerStorage {
@@ -71,32 +69,18 @@ public class PlayerStorageImpl implements PlayerStorage {
 
     @Override
     public void setSkinIdOfPlayer(UUID uuid, SkinIdentifier identifier) {
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
-
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                playerData.setSkinIdentifier(identifier);
-                adapterReference.get().setPlayerData(uuid, playerData);
-            } else {
-                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier, List.of(), List.of()));
-            }
-        } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to set skin data of player %s".formatted(uuid), e);
-        }
+        adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier));
     }
 
     public Optional<HistoryData> getTopOfHistory(UUID uuid, int skip) {
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+        int maxHistoryLength = settings.getProperty(CommandConfig.MAX_HISTORY_LENGTH);
+        if (skip >= maxHistoryLength) {
+            return Optional.empty();
+        }
 
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                return playerData.getHistory().stream()
-                        .sorted(Comparator.comparing(HistoryData::getTimestamp).reversed())
-                        .skip(skip)
-                        .findFirst();
-            }
+        try {
+            List<HistoryData> result = adapterReference.get().getPlayerHistory(uuid, skip, 1);
+            return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
         } catch (StorageAdapter.StorageException e) {
             logger.severe("Failed to get skin data of player %s".formatted(uuid), e);
         }
@@ -105,21 +89,25 @@ public class PlayerStorageImpl implements PlayerStorage {
     }
 
     public int getHistoryCount(UUID uuid) {
-        return getHistoryEntries(uuid, 0, Integer.MAX_VALUE).size();
+        int maxHistoryLength = settings.getProperty(CommandConfig.MAX_HISTORY_LENGTH);
+        try {
+            return Math.min(adapterReference.get().getPlayerHistoryCount(uuid), maxHistoryLength);
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to get history count of player %s".formatted(uuid), e);
+        }
+
+        return 0;
     }
 
     public List<HistoryData> getHistoryEntries(UUID uuid, int skip, int limit) {
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+        int maxHistoryLength = settings.getProperty(CommandConfig.MAX_HISTORY_LENGTH);
+        if (skip >= maxHistoryLength) {
+            return List.of();
+        }
 
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                return playerData.getHistory().stream()
-                        .sorted(Comparator.comparing(HistoryData::getTimestamp).reversed())
-                        .skip(skip)
-                        .limit(limit)
-                        .toList();
-            }
+        int effectiveLimit = Math.min(limit, maxHistoryLength - skip);
+        try {
+            return adapterReference.get().getPlayerHistory(uuid, skip, effectiveLimit);
         } catch (StorageAdapter.StorageException e) {
             logger.severe("Failed to get skin data of player %s".formatted(uuid), e);
         }
@@ -133,67 +121,53 @@ public class PlayerStorageImpl implements PlayerStorage {
             return;
         }
 
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
-            boolean topIsSame = getTopOfHistory(uuid, 0).map(data -> data.getSkinIdentifier().equals(historyData.getSkinIdentifier())).orElse(false);
-            if (topIsSame) {
-                // don't push the same skin to the top of the history
-                return;
-            }
-
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                playerData.setHistory(Stream.concat(playerData.getHistory().stream(), Stream.of(historyData))
-                        .sorted(Comparator.comparing(HistoryData::getTimestamp))
-                        .skip(Math.max(0, playerData.getHistory().size() + 1 - maxHistoryLength))
-                        .toList());
-
-                adapterReference.get().setPlayerData(uuid, playerData);
-            } else {
-                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null, List.of(historyData), List.of()));
-            }
-        } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to push skin data of player %s".formatted(uuid), e);
+        boolean topIsSame = getTopOfHistory(uuid, 0).map(data -> data.getSkinIdentifier().equals(historyData.getSkinIdentifier())).orElse(false);
+        if (topIsSame) {
+            // don't push the same skin to the top of the history
+            return;
         }
+
+        adapterReference.get().addPlayerHistory(uuid, historyData);
+        adapterReference.get().trimPlayerHistory(uuid, maxHistoryLength);
     }
 
     public void removeFromHistory(UUID uuid, HistoryData historyData) {
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
-
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                playerData.setHistory(playerData.getHistory().stream().filter(data -> !data.equals(historyData)).toList());
-
-                adapterReference.get().setPlayerData(uuid, playerData);
-            }
-        } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to remove skin data of player %s".formatted(uuid), e);
-        }
+        adapterReference.get().removePlayerHistory(uuid, historyData.getTimestamp());
     }
 
     public Optional<FavouriteData> getFavouriteData(UUID uuid, SkinIdentifier skinIdentifier) {
-        return getFavouriteEntries(uuid, 0, Integer.MAX_VALUE).stream()
-                .filter(data -> data.getSkinIdentifier().equals(skinIdentifier))
-                .findFirst();
+        int maxFavourites = settings.getProperty(CommandConfig.MAX_FAVOURITE_LENGTH);
+        try {
+            return adapterReference.get().getPlayerFavourites(uuid, 0, maxFavourites).stream()
+                    .filter(data -> data.getSkinIdentifier().equals(skinIdentifier))
+                    .findFirst();
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to get favourite data of player %s".formatted(uuid), e);
+        }
+
+        return Optional.empty();
     }
 
     public int getFavouriteCount(UUID uuid) {
-        return getFavouriteEntries(uuid, 0, Integer.MAX_VALUE).size();
+        int maxFavourites = settings.getProperty(CommandConfig.MAX_FAVOURITE_LENGTH);
+        try {
+            return Math.min(adapterReference.get().getPlayerFavouriteCount(uuid), maxFavourites);
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to get favourite count of player %s".formatted(uuid), e);
+        }
+
+        return 0;
     }
 
     public List<FavouriteData> getFavouriteEntries(UUID uuid, int skip, int limit) {
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+        int maxFavourites = settings.getProperty(CommandConfig.MAX_FAVOURITE_LENGTH);
+        if (skip >= maxFavourites) {
+            return List.of();
+        }
 
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                return playerData.getFavourites().stream()
-                        .sorted(Comparator.comparing(FavouriteData::getTimestamp).reversed())
-                        .skip(skip)
-                        .limit(limit)
-                        .toList();
-            }
+        int effectiveLimit = Math.min(limit, maxFavourites - skip);
+        try {
+            return adapterReference.get().getPlayerFavourites(uuid, skip, effectiveLimit);
         } catch (StorageAdapter.StorageException e) {
             logger.severe("Failed to get skin data of player %s".formatted(uuid), e);
         }
@@ -207,58 +181,23 @@ public class PlayerStorageImpl implements PlayerStorage {
             return;
         }
 
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                boolean alreadyIsFavourite = playerData.getFavourites().stream().anyMatch(data -> data.getSkinIdentifier().equals(favouriteData.getSkinIdentifier()));
-                if (alreadyIsFavourite) {
-                    // don't add the same skin to the favourites
-                    return;
-                }
-
-                playerData.setFavourites(Stream.concat(playerData.getFavourites().stream(), Stream.of(favouriteData))
-                        .sorted(Comparator.comparing(FavouriteData::getTimestamp))
-                        .skip(Math.max(0, playerData.getHistory().size() + 1 - maxFavourites))
-                        .toList());
-
-                adapterReference.get().setPlayerData(uuid, playerData);
-            } else {
-                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null, List.of(), List.of(favouriteData)));
-            }
-        } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to push skin data of player %s".formatted(uuid), e);
+        boolean alreadyIsFavourite = getFavouriteData(uuid, favouriteData.getSkinIdentifier()).isPresent();
+        if (alreadyIsFavourite) {
+            // don't add the same skin to the favourites
+            return;
         }
+
+        adapterReference.get().addPlayerFavourite(uuid, favouriteData);
+        adapterReference.get().trimPlayerFavourites(uuid, maxFavourites);
     }
 
     public void removeFavourite(UUID uuid, SkinIdentifier skinIdentifier) {
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
-
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                playerData.setFavourites(playerData.getFavourites().stream().filter(data -> !data.getSkinIdentifier().equals(skinIdentifier)).toList());
-
-                adapterReference.get().setPlayerData(uuid, playerData);
-            }
-        } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to remove skin data of player %s".formatted(uuid), e);
-        }
+        adapterReference.get().removePlayerFavourite(uuid, skinIdentifier);
     }
 
     @Override
     public void removeSkinIdOfPlayer(UUID uuid) {
-        try {
-            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
-
-            if (optional.isPresent()) {
-                PlayerData playerData = optional.get();
-                playerData.setSkinIdentifier(null);
-                adapterReference.get().setPlayerData(uuid, playerData);
-            }
-        } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to remove skin data of player %s".formatted(uuid), e);
-        }
+        adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null));
     }
 
     @Override

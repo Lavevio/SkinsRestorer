@@ -40,23 +40,38 @@ public class PlayerFile {
     private List<FavouritesFile> favourites;
     private int dataVersion;
 
-    public static PlayerFile fromPlayerData(PlayerData playerData) {
+    public static PlayerFile create(UUID uniqueId) {
         PlayerFile playerFile = new PlayerFile();
-        playerFile.uniqueId = playerData.getUniqueId();
-        playerFile.skinIdentifier = IdentifierFile.of(playerData.getSkinIdentifier());
+        playerFile.uniqueId = uniqueId;
         playerFile.dataVersion = CURRENT_DATA_VERSION;
-        playerFile.history = playerData.getHistory().stream().map(HistoryFile::of).toList();
-        playerFile.favourites = playerData.getFavourites().stream().map(FavouritesFile::of).toList();
         return playerFile;
     }
 
     public PlayerData toPlayerData() {
         return PlayerData.of(
                 uniqueId,
-                skinIdentifier == null ? null : skinIdentifier.toIdentifier(),
-                history == null ? List.of() : history.stream().map(HistoryFile::toHistoryData).toList(),
-                favourites == null ? List.of() : favourites.stream().map(FavouritesFile::toFavouritesData).toList()
+                skinIdentifier == null ? null : skinIdentifier.toIdentifier()
         );
+    }
+
+    public void setSkinIdentifier(SkinIdentifier identifier) {
+        this.skinIdentifier = IdentifierFile.of(identifier);
+    }
+
+    public List<HistoryData> getHistoryData() {
+        return history == null ? List.of() : history.stream().map(HistoryFile::toHistoryData).toList();
+    }
+
+    public void setHistoryData(List<HistoryData> historyData) {
+        this.history = historyData.stream().map(HistoryFile::of).toList();
+    }
+
+    public List<FavouriteData> getFavouritesData() {
+        return favourites == null ? List.of() : favourites.stream().map(FavouritesFile::toFavouritesData).toList();
+    }
+
+    public void setFavouritesData(List<FavouriteData> favouritesData) {
+        this.favourites = favouritesData.stream().map(FavouritesFile::of).toList();
     }
 
     @Getter
