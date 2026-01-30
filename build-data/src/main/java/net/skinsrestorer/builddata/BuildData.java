@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 @ApiStatus.Internal
-public class BuildData {
+public final class BuildData {
 
     public static final String VERSION;
     public static final String DESCRIPTION;

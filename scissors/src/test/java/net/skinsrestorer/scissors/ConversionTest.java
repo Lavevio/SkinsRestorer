@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConversionTest {
     @BeforeAll
-    public static void setupHeadless() {
+    static void setupHeadless() {
         System.setProperty("java.awt.headless", "true");
     }
 
@@ -51,7 +51,7 @@ public class ConversionTest {
 
     @Test
     @SneakyThrows
-    public void loadAndSave() {
+    void loadAndSave() {
         var image = loadImage("/skin/steve.png");
         var skinDefinition = SkinDefinition.extractFrom(image, null, true);
         var extracted = skinDefinition.export();

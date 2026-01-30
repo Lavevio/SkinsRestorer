@@ -25,5 +25,5 @@ public enum CapeTag {
     LEFT,
     FRONT,
     RIGHT,
-    BACK;
+    BACK
 }

@@ -20,7 +20,7 @@ package net.skinsrestorer.scissors;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Scissors {
+public final class Scissors {
     private Scissors() {
     }
 

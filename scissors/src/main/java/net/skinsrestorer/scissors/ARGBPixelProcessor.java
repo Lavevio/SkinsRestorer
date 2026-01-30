@@ -95,7 +95,9 @@ public interface ARGBPixelProcessor extends IntUnaryOperator {
         return pixel -> {
             HSBA hsba = new HSBA(pixel);
             float newHue = (hsba.hue + hueAdjustment) % 1.0f;
-            if (newHue < 0) newHue += 1.0f; // Ensure hue is in [0, 1)
+            if (newHue < 0) {
+                newHue += 1.0f; // Ensure hue is in [0, 1)
+            }
             return new HSBA(newHue, hsba.saturation, hsba.brightness, hsba.alpha).toARGB();
         };
     }
