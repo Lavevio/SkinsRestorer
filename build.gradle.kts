@@ -4,6 +4,10 @@ plugins {
     eclipse
 }
 
+tasks.named<UpdateDaemonJvm>("updateDaemonJvm") {
+    languageVersion = JavaLanguageVersion.of(25)
+}
+
 allprojects {
     group = "net.skinsrestorer"
     version = property("maven_version")!!
