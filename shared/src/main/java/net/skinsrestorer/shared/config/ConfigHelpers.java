@@ -38,4 +38,7 @@ public class ConfigHelpers {
             super(path, defaultValue, new PrimitivePropertyType<>(object -> object instanceof Number num ? Math.min(Math.max(num.intValue(), min), max) : null));
         }
     }
+
+    private ConfigHelpers() {
+    }
 }

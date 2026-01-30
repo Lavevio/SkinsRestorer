@@ -28,15 +28,19 @@ import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
-import org.junit.jupiter.api.Assertions;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class AdapterHelper {
     private static final String DEFAULT_NAME = "Pistonmaster";
     private static final UUID DEFAULT_UUID = UUID.nameUUIDFromBytes(DEFAULT_NAME.getBytes(StandardCharsets.UTF_8));
+
+    private AdapterHelper() {
+    }
 
     public static void testAdapter(StorageAdapter adapter) {
         UUID playerId = UUID.randomUUID();
@@ -57,28 +61,28 @@ public class AdapterHelper {
         adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2",
                 null, HardcodedSkins.ALEX.getProperty()));
 
-        Assertions.assertEquals(2, adapter.getTotalCustomSkins());
-        Assertions.assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
+        assertEquals(2, adapter.getTotalCustomSkins());
+        assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
 
         // Check if offset works as well, we actually have two skins in the storage for GUI
-        Assertions.assertEquals(1, adapter.getCustomGUISkins(1, Integer.MAX_VALUE).size());
+        assertEquals(1, adapter.getCustomGUISkins(1, Integer.MAX_VALUE).size());
 
-        Assertions.assertEquals(1, adapter.getTotalPlayerSkins());
-        Assertions.assertEquals(1, adapter.getPlayerGUISkins(0, Integer.MAX_VALUE).size());
+        assertEquals(1, adapter.getTotalPlayerSkins());
+        assertEquals(1, adapter.getPlayerGUISkins(0, Integer.MAX_VALUE).size());
 
         // Check if offset works as well, we actually have one skins in the storage for GUI
-        Assertions.assertEquals(0, adapter.getPlayerGUISkins(1, Integer.MAX_VALUE).size());
+        assertEquals(0, adapter.getPlayerGUISkins(1, Integer.MAX_VALUE).size());
 
         try {
-            Assertions.assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
+            assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
 
             List<HistoryData> history = adapter.getPlayerHistory(playerId, 0, 10);
-            Assertions.assertEquals(1, history.size());
-            Assertions.assertEquals(historyEntry, history.getFirst());
+            assertEquals(1, history.size());
+            assertEquals(historyEntry, history.getFirst());
 
             List<FavouriteData> favourites = adapter.getPlayerFavourites(playerId, 0, 10);
-            Assertions.assertEquals(1, favourites.size());
-            Assertions.assertEquals(favouriteEntry, favourites.getFirst());
+            assertEquals(1, favourites.size());
+            assertEquals(favouriteEntry, favourites.getFirst());
         } catch (StorageAdapter.StorageException e) {
             throw new RuntimeException(e);
         }

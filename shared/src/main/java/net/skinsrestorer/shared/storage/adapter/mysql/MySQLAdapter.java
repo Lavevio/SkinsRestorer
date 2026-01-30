@@ -286,8 +286,8 @@ public class MySQLAdapter implements StorageAdapter {
             String skinType = crs.getString("skin_type");
             String skinVariant = crs.getString("skin_variant");
 
-            SkinIdentifier identifier = skinIdentifier != null && skinType != null ?
-                    SkinIdentifier.of(skinIdentifier,
+            SkinIdentifier identifier = skinIdentifier != null && skinType != null
+                    ? SkinIdentifier.of(skinIdentifier,
                             skinVariant == null ? null : SkinVariant.valueOf(skinVariant), SkinType.valueOf(skinType)) : null;
 
             return Optional.of(PlayerData.of(uuid, identifier));

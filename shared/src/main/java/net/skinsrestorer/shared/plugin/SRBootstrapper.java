@@ -83,4 +83,7 @@ public class SRBootstrapper {
             injector.register(clazz, value);
         }
     }
+
+    private SRBootstrapper() {
+    }
 }

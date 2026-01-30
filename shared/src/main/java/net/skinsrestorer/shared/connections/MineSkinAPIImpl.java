@@ -47,6 +47,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -201,7 +202,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     private Optional<String> getApiKey(SettingsManager settings) {
         String apiKey = settings.getProperty(APIConfig.MINESKIN_API_KEY);
-        if (apiKey.isEmpty() || apiKey.equals("key")) {
+        if (apiKey.isEmpty() || "key".equals(apiKey)) {
             return Optional.empty();
         }
 
@@ -214,7 +215,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         }
 
         try {
-            String encodedUrl = URLEncoder.encode(imageUrl, java.nio.charset.StandardCharsets.UTF_8);
+            String encodedUrl = URLEncoder.encode(imageUrl, StandardCharsets.UTF_8);
             URI requestUri = URI.create(AXOLOTL_DECRYPT_ENDPOINT + "?encryptedUrl=" + encodedUrl);
 
             logger.debug("Decrypting axolotl URL: %s".formatted(imageUrl));

@@ -82,7 +82,7 @@ public class HttpClient {
         URL url = uri.toURL();
 
         // Ensure we're never sending a request to a non-HTTPS URL.
-        if (!url.getProtocol().equals("https")) {
+        if (!"https".equals(url.getProtocol())) {
             throw new IOException("Only HTTPS is supported.");
         }
 

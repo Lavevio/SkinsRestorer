@@ -40,8 +40,8 @@ import java.lang.annotation.Target;
  * This annotation is retained at runtime, which means others can see it in compiled class files.
  * </p>
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = {ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
 public @interface CodeComment {
     @SuppressWarnings("unused")
     String[] value();

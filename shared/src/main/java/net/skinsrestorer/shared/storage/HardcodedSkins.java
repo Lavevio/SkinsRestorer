@@ -59,4 +59,7 @@ public class HardcodedSkins {
                 .map(property -> InputDataResult.of(
                         SkinIdentifier.ofCustom(lowerCaseName), property));
     }
+
+    private HardcodedSkins() {
+    }
 }

@@ -60,10 +60,10 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
 
             isFirst = false;
 
-            if (requestedPlayer.equalsIgnoreCase("-all")) {
+            if ("-all".equalsIgnoreCase(requestedPlayer)) {
                 toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.ALL_PLAYERS));
                 continue;
-            } else if (requestedPlayer.equalsIgnoreCase("-random")) {
+            } else if ("-random".equalsIgnoreCase(requestedPlayer)) {
                 toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.RANDOM_PLAYER));
                 continue;
             }

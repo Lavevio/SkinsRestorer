@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TranslationReader {
-    private final static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     public static Map<String, String> readJsonTranslation(String str) {
         JsonObject jsonObject = gson.fromJson(str, JsonObject.class);
@@ -36,5 +36,8 @@ public class TranslationReader {
         }
 
         return map;
+    }
+
+    private TranslationReader() {
     }
 }

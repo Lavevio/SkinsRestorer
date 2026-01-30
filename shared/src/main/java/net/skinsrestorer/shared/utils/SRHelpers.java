@@ -52,7 +52,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class SRHelpers {
+public final class SRHelpers {
     public static final String MESSAGE_CHANNEL = "sr:messagechannel";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     public static final String DOWNLOAD_URL = "https://modrinth.com/plugin/skinsrestorer";
@@ -97,7 +97,9 @@ public class SRHelpers {
         StringBuilder hexString = new StringBuilder();
         for (byte b : bytes) {
             String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) hexString.append('0');
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
             hexString.append(hex);
         }
         return hexString.toString();
@@ -152,7 +154,7 @@ public class SRHelpers {
             throw new IllegalArgumentException("Invalid Java version: %s".formatted(specVersion));
         } else if (split.length == 1) {
             majorVersion = split[0];
-        } else if (split[0].equals("1")) {
+        } else if ("1".equals(split[0])) {
             majorVersion = split[1];
         } else {
             throw new IllegalArgumentException("Invalid Java version: %s".formatted(specVersion));
@@ -181,7 +183,7 @@ public class SRHelpers {
             return imageUrl;
         }
 
-        boolean isNamemc = host.equals("namemc.com") || host.endsWith(".namemc.com");
+        boolean isNamemc = "namemc.com".equals(host) || host.endsWith(".namemc.com");
         if (isNamemc) {
             String path = uriOptional.get().getPath();
             if (path == null) {
@@ -209,7 +211,7 @@ public class SRHelpers {
             return skinInput;
         }
 
-        boolean isNamemc = host.equals("namemc.com") || host.endsWith(".namemc.com");
+        boolean isNamemc = "namemc.com".equals(host) || host.endsWith(".namemc.com");
         if (isNamemc) {
             String path = uriOptional.get().getPath();
             String profilePath = "/profile/";

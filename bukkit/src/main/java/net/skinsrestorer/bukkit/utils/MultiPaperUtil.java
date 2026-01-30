@@ -26,4 +26,7 @@ public class MultiPaperUtil {
     public static Collection<? extends Player> getOnlinePlayers() {
         return MultiLib.getAllOnlinePlayers();
     }
+
+    private MultiPaperUtil() {
+    }
 }

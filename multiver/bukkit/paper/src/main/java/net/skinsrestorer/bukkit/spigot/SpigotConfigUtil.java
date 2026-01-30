@@ -31,4 +31,7 @@ public class SpigotConfigUtil {
             return Optional.empty();
         }
     }
+
+    private SpigotConfigUtil() {
+    }
 }

@@ -21,7 +21,7 @@ import lombok.Data;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 
 @Data
-public class ClassInfo {
+public final class ClassInfo {
     private static final ClassInfo INSTANCE = new ClassInfo();
     private final boolean craftBukkit;
     private final boolean spigot;

@@ -132,7 +132,9 @@ public interface StorageAdapter {
     default boolean isLegacyCustomSkinTimestamp(long timestamp) {
         if (timestamp == 0L || timestamp == -1L) {
             return true;
-        } else return timestamp >= 4102444800000L; // 2100-01-01
+        } else {
+            return timestamp >= 4102444800000L; // 2100-01-01
+        }
     }
 
     class StorageException extends Exception {

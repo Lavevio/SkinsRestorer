@@ -32,14 +32,14 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({MockitoExtension.class, SRExtension.class})
-public class EventBusTest {
+class EventBusTest {
     @Mock
     private SRPlatformAdapter srPlatformAdapter;
     @Mock
     private Object plugin;
 
     @Test
-    public void testServices(Injector injector) {
+    void services(Injector injector) {
         injector.register(SRPlatformAdapter.class, srPlatformAdapter);
 
         EventBusImpl eventBus = injector.getSingleton(EventBusImpl.class);

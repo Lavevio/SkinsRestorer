@@ -23,16 +23,21 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class SoundParser {
-    public static final float DEFAULT_VOLUME = 1.0f, DEFAULT_PITCH = 1.0f;
+    public static final float DEFAULT_VOLUME = 1.0F;
+    public static final float DEFAULT_PITCH = 1.0F;
     public static final Pattern NAMESPACED_SOUND_PATTERN = Pattern.compile("(?<namespace>[a-z0-9._-]+):(?<key>[a-z0-9/._-]+)");
 
     private static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
     }
 
+    private SoundParser() {
+    }
+
     private static List<String> split(@Nonnull String str, @SuppressWarnings("SameParameterValue") char separatorChar) {
         List<String> list = new ArrayList<>(4);
-        boolean match = false, lastMatch = false;
+        boolean match = false;
+        boolean lastMatch = false;
         int len = str.length();
         int start = 0;
 
@@ -57,61 +62,6 @@ public class SoundParser {
             list.add(str.substring(start, len));
         }
         return list;
-    }
-
-    @Nullable
-    public static Record parse(@Nullable String sound) {
-        if (isNullOrEmpty(sound) || sound.equalsIgnoreCase("none")) return null;
-        @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern") List<String> split = split(sound.replace(" ", ""), ',');
-
-        Record record = new Record();
-        String name = split.getFirst();
-        if (!name.isEmpty() && name.charAt(0) == '~') {
-            name = name.substring(1);
-            record.publicSound(true);
-        } else {
-            record.publicSound(false);
-        }
-
-        if (name.isEmpty()) throw new IllegalArgumentException("No sound name specified: " + sound);
-        {
-            String soundName;
-            int atIndex = name.indexOf('@');
-            if (atIndex != -1) {
-                String category = name.substring(0, atIndex);
-                soundName = name.substring(atIndex + 1);
-
-                String soundCategory = category.toUpperCase(Locale.ENGLISH);
-                record.inCategory(soundCategory);
-            } else {
-                soundName = name;
-            }
-
-            if (soundName.isEmpty()) {
-                throw new IllegalArgumentException("No sound name specified: " + name);
-            }
-
-            record.withSound(soundName.toUpperCase(Locale.ENGLISH));
-        }
-
-        try {
-            if (split.size() > 1) record.withVolume(Float.parseFloat(split.get(1)));
-        } catch (NumberFormatException ex) {
-            throw new NumberFormatException("Invalid number '" + split.get(1) + "' for sound volume '" + sound + '\'');
-        }
-        try {
-            if (split.size() > 2) record.withPitch(Float.parseFloat(split.get(2)));
-        } catch (NumberFormatException ex) {
-            throw new NumberFormatException("Invalid number '" + split.get(2) + "' for sound pitch '" + sound + '\'');
-        }
-
-        try {
-            if (split.size() > 3) record.withSeed(Long.parseLong(split.get(3)));
-        } catch (NumberFormatException ex) {
-            throw new NumberFormatException("Invalid number '" + split.get(3) + "' for sound seed '" + sound + '\'');
-        }
-
-        return record;
     }
 
     public static class Record {
@@ -178,5 +128,70 @@ public class SoundParser {
         public void withSeed(Long seed) {
             this.seed = seed;
         }
+    }
+
+    @Nullable
+    public static Record parse(@Nullable String sound) {
+        if (isNullOrEmpty(sound) || "none".equalsIgnoreCase(sound)) {
+            return null;
+        }
+        @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern") List<String> split = split(sound.replace(" ", ""), ',');
+
+        Record record = new Record();
+        String name = split.getFirst();
+        if (!name.isEmpty() && name.charAt(0) == '~') {
+            name = name.substring(1);
+            record.publicSound(true);
+        } else {
+            record.publicSound(false);
+        }
+
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("No sound name specified: " + sound);
+        }
+        {
+            String soundName;
+            int atIndex = name.indexOf('@');
+            if (atIndex != -1) {
+                String category = name.substring(0, atIndex);
+                soundName = name.substring(atIndex + 1);
+
+                String soundCategory = category.toUpperCase(Locale.ENGLISH);
+                record.inCategory(soundCategory);
+            } else {
+                soundName = name;
+            }
+
+            if (soundName.isEmpty()) {
+                throw new IllegalArgumentException("No sound name specified: " + name);
+            }
+
+            record.withSound(soundName.toUpperCase(Locale.ENGLISH));
+        }
+
+        try {
+            if (split.size() > 1) {
+                record.withVolume(Float.parseFloat(split.get(1)));
+            }
+        } catch (NumberFormatException ex) {
+            throw new NumberFormatException("Invalid number '" + split.get(1) + "' for sound volume '" + sound + '\'');
+        }
+        try {
+            if (split.size() > 2) {
+                record.withPitch(Float.parseFloat(split.get(2)));
+            }
+        } catch (NumberFormatException ex) {
+            throw new NumberFormatException("Invalid number '" + split.get(2) + "' for sound pitch '" + sound + '\'');
+        }
+
+        try {
+            if (split.size() > 3) {
+                record.withSeed(Long.parseLong(split.get(3)));
+            }
+        } catch (NumberFormatException ex) {
+            throw new NumberFormatException("Invalid number '" + split.get(3) + "' for sound seed '" + sound + '\'');
+        }
+
+        return record;
     }
 }

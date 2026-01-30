@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.config;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LocaleProperty implements PropertyType<Locale> {
     public static LocaleProperty instance() {
         return new LocaleProperty();

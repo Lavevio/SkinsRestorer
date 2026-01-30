@@ -46,7 +46,7 @@ public final class GUICommand {
     @Command("skins")
     @RootDescription(Message.HELP_SKINS)
     @CommandDescription(Message.HELP_SKINS)
-    @CommandPermission(value = PermissionRegistry.SKINS)
+    @CommandPermission(PermissionRegistry.SKINS)
     private void onDefault(SRPlayer player) {
         player.sendMessage(Message.SKINSMENU_OPEN);
         platformAdapter.openGUI(player, sharedGUI.createGUIPage(player, guiStorage.getGUIPage(player, 0, PageType.SELECT)));

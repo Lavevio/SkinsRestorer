@@ -83,9 +83,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
             if (params.startsWith("skin_name_")) {
                 String subString = params.substring("skin_name_".length());
 
-                if (subString.equalsIgnoreCase("or_empty")) {
+                if ("or_empty".equalsIgnoreCase(subString)) {
                     return "";
-                } else if (subString.equalsIgnoreCase("or_player_name")) {
+                } else if ("or_player_name".equalsIgnoreCase(subString)) {
                     return offlinePlayer.getName();
                 }
             }
@@ -106,11 +106,11 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 if (params.startsWith("texture_url_")) {
                     String subString = params.substring("texture_url_".length());
 
-                    if (subString.equalsIgnoreCase("or_empty")) {
+                    if ("or_empty".equalsIgnoreCase(subString)) {
                         return "";
-                    } else if (subString.equalsIgnoreCase("or_steve")) {
+                    } else if ("or_steve".equalsIgnoreCase(subString)) {
                         return extractTextureUrl(HardcodedSkins.STEVE.getProperty());
-                    } else if (subString.equalsIgnoreCase("or_alex")) {
+                    } else if ("or_alex".equalsIgnoreCase(subString)) {
                         return extractTextureUrl(HardcodedSkins.ALEX.getProperty());
                     }
                 }
@@ -134,11 +134,11 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 if (params.startsWith("texture_id_")) {
                     String subString = params.substring("texture_id_".length());
 
-                    if (subString.equalsIgnoreCase("or_empty")) {
+                    if ("or_empty".equalsIgnoreCase(subString)) {
                         return "";
-                    } else if (subString.equalsIgnoreCase("or_steve")) {
+                    } else if ("or_steve".equalsIgnoreCase(subString)) {
                         return extractTextureHash(HardcodedSkins.STEVE.getProperty());
-                    } else if (subString.equalsIgnoreCase("or_alex")) {
+                    } else if ("or_alex".equalsIgnoreCase(subString)) {
                         return extractTextureHash(HardcodedSkins.ALEX.getProperty());
                     }
                 }

@@ -63,13 +63,13 @@ public class ProxyAckTracker {
         } else if (brokenServers.contains(server)) {
             logger.debug("Backend server '%s' is already marked as broken, skipping state check.".formatted(server));
         } else if (serverNackCounts.compute(server, (key, count) -> count == null ? 1 : count + 1) >= 3) {
-            logger.warning(("Backend server '%s' does likely not have SkinsRestorer installed or is not responding to ACK messages. " +
-                    "Please make sure that the server has SkinsRestorer installed and is running the latest version. %s").formatted(server, SRHelpers.DOWNLOAD_URL));
+            logger.warning(("Backend server '%s' does likely not have SkinsRestorer installed or is not responding to ACK messages. "
+                    + "Please make sure that the server has SkinsRestorer installed and is running the latest version. %s").formatted(server, SRHelpers.DOWNLOAD_URL));
             brokenServers.add(server);
             serverNackCounts.remove(server);
         } else {
-            logger.debug(("Backend server '%s' did not respond to ACK message in time. " +
-                    "This may indicate that the server is not running SkinsRestorer or is not responding to ACK messages.").formatted(server));
+            logger.debug(("Backend server '%s' did not respond to ACK message in time. "
+                    + "This may indicate that the server is not running SkinsRestorer or is not responding to ACK messages.").formatted(server));
         }
     }
 
@@ -87,7 +87,7 @@ public class ProxyAckTracker {
             return;
         }
 
-        if (serverSrVersion.equalsIgnoreCase(BuildData.VERSION)) {
+        if (BuildData.VERSION.equalsIgnoreCase(serverSrVersion)) {
             logger.debug("Backend server '%s' is verified with SkinsRestorer version %s.".formatted(server, serverSrVersion));
         } else {
             logger.warning("Backend server '%s' is running a different version of SkinsRestorer (%s) than this proxy (%s). Make sure both server and proxy run the latest version of SkinsRestorer. %s"

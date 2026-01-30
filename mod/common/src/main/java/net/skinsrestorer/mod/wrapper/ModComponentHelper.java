@@ -33,4 +33,7 @@ public class ModComponentHelper {
                 .getOrThrow()
                 .getFirst();
     }
+
+    private ModComponentHelper() {
+    }
 }

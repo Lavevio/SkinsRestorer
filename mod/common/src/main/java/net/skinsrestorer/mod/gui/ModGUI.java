@@ -159,7 +159,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
                     case 1 -> ClickEventType.RIGHT;
                     default -> ClickEventType.OTHER;
                 };
-                case QUICK_MOVE -> (button == 0)
+                case QUICK_MOVE -> button == 0
                         ? ClickEventType.SHIFT_LEFT
                         : ClickEventType.OTHER;
                 default -> ClickEventType.OTHER;

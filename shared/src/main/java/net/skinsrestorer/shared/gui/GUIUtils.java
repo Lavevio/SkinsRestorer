@@ -131,4 +131,7 @@ public class GUIUtils {
     public record GUIRawSkinEntry(SkinIdentifier skinIdentifier, ComponentString skinName, String textureHash,
                                   List<ComponentString> extraLore) {
     }
+
+    private GUIUtils() {
+    }
 }

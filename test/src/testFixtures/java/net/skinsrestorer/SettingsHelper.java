@@ -29,4 +29,7 @@ public class SettingsHelper {
         given(settings.getProperty(any(Property.class)))
                 .willAnswer(invocation -> ((Property<?>) invocation.getArgument(0)).getDefaultValue());
     }
+
+    private SettingsHelper() {
+    }
 }

@@ -42,7 +42,7 @@ public class ServerLoginPacketListenerImplMixin {
     private volatile ServerLoginPacketListenerImpl.State state;
 
     @WrapMethod(method = "finishLoginAndWaitForClient")
-    private void skinsrestorer$onLoginFinish(GameProfile gameProfile, Operation<Void> original) {
+    private void skinsrestorerOnLoginFinish(GameProfile gameProfile, Operation<Void> original) {
         state = ServerLoginPacketListenerImpl.State.PROTOCOL_SWITCHING;
         Thread thread = new Thread("SkinsRestorer Login Handler #" + UNIQUE_THREAD_ID.incrementAndGet()) {
             public void run() {

@@ -34,6 +34,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
 @Testcontainers(disabledWithoutDocker = true)
@@ -54,7 +55,7 @@ public class PostgreSQLAdapterTest {
     private SettingsManager settingsManager;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         SettingsHelper.returnDefaultsForAllProperties(settingsManager);
         when(settingsManager.getProperty(DatabaseConfig.DATABASE_HOST)).thenReturn(postgreSQLContainer.getHost());
         when(settingsManager.getProperty(DatabaseConfig.DATABASE_PORT)).thenReturn(postgreSQLContainer.getFirstMappedPort());
@@ -66,14 +67,16 @@ public class PostgreSQLAdapterTest {
     }
 
     @Test
-    public void testLoad(Injector injector) {
-        injector.register(SettingsManager.class, settingsManager);
-        PostgreSQLProvider provider = injector.getSingleton(PostgreSQLProvider.class);
-        provider.initPool();
+    void load(Injector injector) {
+        assertDoesNotThrow(() -> {
+            injector.register(SettingsManager.class, settingsManager);
+            PostgreSQLProvider provider = injector.getSingleton(PostgreSQLProvider.class);
+            provider.initPool();
 
-        PostgreSQLAdapter adapter = injector.getSingleton(PostgreSQLAdapter.class);
-        adapter.init();
+            PostgreSQLAdapter adapter = injector.getSingleton(PostgreSQLAdapter.class);
+            adapter.init();
 
-        AdapterHelper.testAdapter(adapter);
+            AdapterHelper.testAdapter(adapter);
+        });
     }
 }

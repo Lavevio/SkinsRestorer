@@ -25,4 +25,7 @@ public class BungeeComponentHelper {
     public static Component deserialize(ComponentString messageJson) {
         return GsonComponentSerializer.gson().deserialize(messageJson.jsonString());
     }
+
+    private BungeeComponentHelper() {
+    }
 }

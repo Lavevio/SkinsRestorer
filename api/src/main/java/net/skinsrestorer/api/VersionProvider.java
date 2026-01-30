@@ -101,4 +101,7 @@ public class VersionProvider {
     public static String getCommit() {
         return COMMIT;
     }
+
+    private VersionProvider() {
+    }
 }

@@ -25,19 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class SkinsRestorerProvider {
     private static SkinsRestorer api;
 
-    /**
-     * Gets the SkinsRestorer API instance.
-     *
-     * @return The SkinsRestorer API instance.
-     */
-    public static SkinsRestorer get() {
-        if (SkinsRestorerProvider.api == null) {
-            throw new IllegalStateException("SkinsRestorer API is not enabled! " +
-                    "This can have multiple reasons, for example 'server.proxyMode.api' was enabled in the server-side config.yml, but the database was not configured in the server-side config.yml. " +
-                    "For more information read this page: https://skinsrestorer.net/docs/troubleshooting/proxy-mode");
-        }
-
-        return SkinsRestorerProvider.api;
+    private SkinsRestorerProvider() {
     }
 
     @ApiStatus.Internal
@@ -47,5 +35,20 @@ public class SkinsRestorerProvider {
         }
 
         SkinsRestorerProvider.api = api;
+    }
+
+    /**
+     * Gets the SkinsRestorer API instance.
+     *
+     * @return The SkinsRestorer API instance.
+     */
+    public static SkinsRestorer get() {
+        if (SkinsRestorerProvider.api == null) {
+            throw new IllegalStateException("SkinsRestorer API is not enabled! "
+                    + "This can have multiple reasons, for example 'server.proxyMode.api' was enabled in the server-side config.yml, but the database was not configured in the server-side config.yml. "
+                    + "For more information read this page: https://skinsrestorer.net/docs/troubleshooting/proxy-mode");
+        }
+
+        return SkinsRestorerProvider.api;
     }
 }

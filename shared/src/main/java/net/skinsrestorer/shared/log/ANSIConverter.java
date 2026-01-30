@@ -56,4 +56,7 @@ public class ANSIConverter {
         }
         return result;
     }
+
+    private ANSIConverter() {
+    }
 }

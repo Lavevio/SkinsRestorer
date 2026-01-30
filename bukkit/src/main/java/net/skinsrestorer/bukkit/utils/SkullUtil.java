@@ -49,4 +49,7 @@ public class SkullUtil {
                     .apply();
         }
     }
+
+    private SkullUtil() {
+    }
 }

@@ -25,7 +25,7 @@ public class SRLogger {
     private final SRPlatformLogger logger;
     private final boolean color;
     @Setter
-    private boolean debug = false;
+    private boolean debug;
 
     public void debug(String message) {
         debug(SRLogLevel.INFO, message);
@@ -94,7 +94,6 @@ public class SRLogger {
             case SEVERE -> "§c";
         }, message) : message;
         message += "§r";
-        message = ANSIConverter.convertToAnsi(message);
-        return message;
+        return ANSIConverter.convertToAnsi(message);
     }
 }

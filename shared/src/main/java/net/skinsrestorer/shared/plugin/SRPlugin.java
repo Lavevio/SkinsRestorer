@@ -34,11 +34,7 @@ import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
-import net.skinsrestorer.shared.commands.GUICommand;
-import net.skinsrestorer.shared.commands.SRCommand;
-import net.skinsrestorer.shared.commands.SRProxyCommand;
-import net.skinsrestorer.shared.commands.SkinCommand;
-import net.skinsrestorer.shared.commands.SkullCommand;
+import net.skinsrestorer.shared.commands.*;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
@@ -93,9 +89,9 @@ public class SRPlugin {
     @Getter
     private final List<Runnable> shutdownHooks = new ArrayList<>();
     @Getter
-    private boolean outdated = false;
+    private boolean outdated;
     @Getter
-    private boolean updaterInitialized = false;
+    private boolean updaterInitialized;
 
     public SRPlugin(Injector injector, Path dataFolder) {
         injector.register(SRPlugin.class, this);
@@ -189,7 +185,7 @@ public class SRPlugin {
             }
         }
 
-        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT).equalsIgnoreCase(CommandConfig.CONSENT_MESSAGE)) {
+        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !CommandConfig.CONSENT_MESSAGE.equalsIgnoreCase(settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT))) {
             logger.warning("You must agree to the rules at '%s' in the config to use per skin permissions.".formatted(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT.getPath()));
         }
 

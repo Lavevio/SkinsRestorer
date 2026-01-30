@@ -37,8 +37,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.nio.file.Path;
-import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -62,7 +62,7 @@ public class MySQLAdapterTest {
     private Path tempDir;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         SettingsHelper.returnDefaultsForAllProperties(settingsManager);
         when(settingsManager.getProperty(DatabaseConfig.DATABASE_HOST)).thenReturn(mariaDBContainer.getHost());
         when(settingsManager.getProperty(DatabaseConfig.DATABASE_PORT)).thenReturn(mariaDBContainer.getFirstMappedPort());
@@ -73,18 +73,20 @@ public class MySQLAdapterTest {
     }
 
     @Test
-    public void testLoad(Injector injector) throws SQLException {
-        injector.register(SettingsManager.class, settingsManager);
-        SRPlugin plugin = mock(SRPlugin.class);
-        when(plugin.getDataFolder()).thenReturn(tempDir);
-        injector.register(SRPlugin.class, plugin);
+    void load(Injector injector) throws Exception {
+        assertDoesNotThrow(() -> {
+            injector.register(SettingsManager.class, settingsManager);
+            SRPlugin plugin = mock(SRPlugin.class);
+            when(plugin.getDataFolder()).thenReturn(tempDir);
+            injector.register(SRPlugin.class, plugin);
 
-        MySQLProvider provider = injector.getSingleton(MySQLProvider.class);
-        provider.initPool();
+            MySQLProvider provider = injector.getSingleton(MySQLProvider.class);
+            provider.initPool();
 
-        MySQLAdapter adapter = injector.getSingleton(MySQLAdapter.class);
-        adapter.init();
+            MySQLAdapter adapter = injector.getSingleton(MySQLAdapter.class);
+            adapter.init();
 
-        AdapterHelper.testAdapter(adapter);
+            AdapterHelper.testAdapter(adapter);
+        });
     }
 }

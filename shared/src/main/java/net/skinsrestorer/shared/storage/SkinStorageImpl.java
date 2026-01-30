@@ -70,7 +70,7 @@ public class SkinStorageImpl implements SkinStorage {
         List<String> toRemove = new ArrayList<>();
         List<String> defaultSkins = new ArrayList<>(settings.getProperty(StorageConfig.DEFAULT_SKINS));
         defaultSkins.forEach(skin -> {
-            if (skin.equalsIgnoreCase("<random>")) {
+            if ("<random>".equalsIgnoreCase(skin)) {
                 return;
             }
 

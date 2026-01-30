@@ -95,4 +95,7 @@ public class ComponentHelper {
 
         message.ifPresent(sender::sendMessage);
     }
+
+    private ComponentHelper() {
+    }
 }

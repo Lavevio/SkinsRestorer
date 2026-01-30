@@ -50,13 +50,7 @@ public class PropertyUtils {
         return getSkinTextureUrl(property.getValue());
     }
 
-    public static SkinVariant getSkinVariant(@NotNull String base64) {
-        MojangProfileTextureMeta meta = getSkinProfileData(base64).getTextures().getSKIN().getMetadata();
-        if (meta == null) {
-            return SkinVariant.CLASSIC;
-        }
-
-        return meta.getModel().equalsIgnoreCase("slim") ? SkinVariant.SLIM : SkinVariant.CLASSIC;
+    private PropertyUtils() {
     }
 
     public static SkinVariant getSkinVariant(@NotNull SkinProperty property) {
@@ -107,5 +101,14 @@ public class PropertyUtils {
 
     public static MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property) {
         return getSkinProfileData(property.getValue());
+    }
+
+    public static SkinVariant getSkinVariant(@NotNull String base64) {
+        MojangProfileTextureMeta meta = getSkinProfileData(base64).getTextures().getSKIN().getMetadata();
+        if (meta == null) {
+            return SkinVariant.CLASSIC;
+        }
+
+        return "slim".equalsIgnoreCase(meta.getModel()) ? SkinVariant.SLIM : SkinVariant.CLASSIC;
     }
 }

@@ -45,9 +45,9 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
 
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (mapping.isEmpty()) {
-            logger.severe(("Your Minecraft version (%s) is not supported by this version of SkinsRestorer! " +
-                    "Is there a newer version available? %s " +
-                    "If not, join our Discord server!").formatted(
+            logger.severe(("Your Minecraft version (%s) is not supported by this version of SkinsRestorer! "
+                    + "Is there a newer version available? %s "
+                    + "If not, join our Discord server!").formatted(
                     MappingManager.getSpigotMappingVersion(server)
                             .or(MappingManager::getPaperMinecraftVersionId)
                             .orElse("unknown version"),

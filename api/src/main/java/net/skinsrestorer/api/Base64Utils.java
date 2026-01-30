@@ -55,4 +55,7 @@ public class Base64Utils {
         String base64 = Base64.getEncoder().encodeToString(pngData);
         return "data:image/png;base64," + base64;
     }
+
+    private Base64Utils() {
+    }
 }

@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static java.lang.invoke.MethodHandles.insertArguments;
 import static net.kyori.adventure.platform.bukkit.BukkitComponentSerializer.gson;
@@ -126,7 +127,7 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
                                 return CLASS_JSON_DESERIALIZER.isAssignableFrom(c);
                             } else {
                                 for (final Class<?> itf : c.getInterfaces()) {
-                                    if (itf.getSimpleName().equals("JsonDeserializer")) {
+                                    if ("JsonDeserializer".equals(itf.getSimpleName())) {
                                         return true;
                                     }
                                 }
@@ -215,7 +216,7 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
                 if (registryAccess != null && CLASS_HOLDERLOOKUP_PROVIDER != null) {
                     for (final Method m : CLASS_HOLDERLOOKUP_PROVIDER.getDeclaredMethods()) {
                         m.setAccessible(true);
-                        if (m.getParameterCount() == 1 && m.getParameterTypes()[0].getSimpleName().equals("DynamicOps") && m.getReturnType().getSimpleName().contains("RegistryOps")) {
+                        if (m.getParameterCount() == 1 && "DynamicOps".equals(m.getParameterTypes()[0].getSimpleName()) && m.getReturnType().getSimpleName().contains("RegistryOps")) {
                             createContext = lookup().unreflect(m);
                             break;
                         }
@@ -223,14 +224,14 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
                 }
                 if (CLASS_COMPONENT_SERIALIZATION != null) {
                     for (final Field f : CLASS_COMPONENT_SERIALIZATION.getDeclaredFields()) {
-                        if (Modifier.isStatic(f.getModifiers()) && f.getType().getSimpleName().equals("Codec")) {
+                        if (Modifier.isStatic(f.getModifiers()) && "Codec".equals(f.getType().getSimpleName())) {
                             f.setAccessible(true);
                             final Object codecInstance = f.get(null);
                             final Class<?> codecClass = codecInstance.getClass();
                             for (final Method m : codecClass.getDeclaredMethods()) {
-                                if (m.getName().equals("decode")) {
+                                if ("decode".equals(m.getName())) {
                                     codecDecode = lookup().unreflect(m).bindTo(codecInstance);
-                                } else if (m.getName().equals("encode")) {
+                                } else if ("encode".equals(m.getName())) {
                                     codecEncode = lookup().unreflect(m).bindTo(codecInstance);
                                 }
                             }
@@ -278,7 +279,9 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
 
     @Override
     public @NotNull Component deserialize(final @NotNull Object input) {
-        if (!isSupported()) throw INITIALIZATION_ERROR.get();
+        if (!isSupported()) {
+            throw INITIALIZATION_ERROR.get();
+        }
 
         try {
             final Object element;
@@ -289,8 +292,8 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
             } else if (COMPONENTSERIALIZATION_CODEC_ENCODE != null && CREATE_SERIALIZATION_CONTEXT != null) {
                 final Object serializationContext = CREATE_SERIALIZATION_CONTEXT.bindTo(REGISTRY_ACCESS).invoke(JSON_OPS_INSTANCE);
                 final Object result = COMPONENTSERIALIZATION_CODEC_ENCODE.invoke(input, serializationContext, null);
-                final Method getOrThrow = result.getClass().getMethod("getOrThrow", java.util.function.Function.class);
-                final Object jsonElement = getOrThrow.invoke(result, (java.util.function.Function<Throwable, RuntimeException>) RuntimeException::new);
+                final Method getOrThrow = result.getClass().getMethod("getOrThrow", Function.class);
+                final Object jsonElement = getOrThrow.invoke(result, (Function<Throwable, RuntimeException>) RuntimeException::new);
                 return gson().serializer().fromJson(jsonElement.toString(), Component.class);
             } else {
                 return gson().serializer().fromJson((String) TEXT_SERIALIZER_SERIALIZE.invoke(input), Component.class);
@@ -303,7 +306,9 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
 
     @Override
     public @NotNull Object serialize(final @NotNull Component component) {
-        if (!isSupported()) throw INITIALIZATION_ERROR.get();
+        if (!isSupported()) {
+            throw INITIALIZATION_ERROR.get();
+        }
 
         if (TEXT_SERIALIZER_DESERIALIZE_TREE != null || MC_TEXT_GSON != null) {
             final JsonElement json = gson().serializer().toJsonTree(component);
@@ -323,8 +328,8 @@ public final class MinecraftComponentSerializer implements ComponentSerializer<C
                     final Object serializationContext = CREATE_SERIALIZATION_CONTEXT.bindTo(REGISTRY_ACCESS).invoke(JSON_OPS_INSTANCE);
                     final Object unRelocatedJsonElement = PARSE_JSON.invoke(JSON_PARSER_INSTANCE, json.toString());
                     final Object result = COMPONENTSERIALIZATION_CODEC_DECODE.invoke(serializationContext, unRelocatedJsonElement);
-                    final Method getOrThrow = result.getClass().getMethod("getOrThrow", java.util.function.Function.class);
-                    final Object pair = getOrThrow.invoke(result, (java.util.function.Function<Throwable, RuntimeException>) RuntimeException::new);
+                    final Method getOrThrow = result.getClass().getMethod("getOrThrow", Function.class);
+                    final Object pair = getOrThrow.invoke(result, (Function<Throwable, RuntimeException>) RuntimeException::new);
                     final Method getFirst = pair.getClass().getMethod("getFirst");
                     return getFirst.invoke(pair);
                 }

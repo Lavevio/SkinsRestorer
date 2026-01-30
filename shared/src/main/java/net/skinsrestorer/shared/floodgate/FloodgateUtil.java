@@ -44,4 +44,7 @@ public class FloodgateUtil {
             logger.severe("Failed to register Floodgate skin listener (Is floodgate and SkinsRestorer up to date?)", t);
         }
     }
+
+    private FloodgateUtil() {
+    }
 }

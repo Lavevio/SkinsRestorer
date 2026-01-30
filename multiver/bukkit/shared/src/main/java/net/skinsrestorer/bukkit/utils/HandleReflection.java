@@ -27,4 +27,7 @@ public class HandleReflection {
             throw new RuntimeException("Failed to get handle of player", e);
         }
     }
+
+    private HandleReflection() {
+    }
 }

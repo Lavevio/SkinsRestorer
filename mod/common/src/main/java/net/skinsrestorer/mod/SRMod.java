@@ -43,4 +43,7 @@ public final class SRMod {
                 SRModInit.class
         );
     }
+
+    private SRMod() {
+    }
 }

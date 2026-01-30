@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ReflectionUtil {
+public final class ReflectionUtil {
     private static final Map<Class<?>, Class<?>> wrap2primitiveMap = new HashMap<>();
 
     static {
@@ -87,13 +87,15 @@ public class ReflectionUtil {
 
     private static Class<?> getSubClass(Class<?> clazz, String className) throws ReflectiveOperationException {
         for (Class<?> subClass : clazz.getDeclaredClasses()) {
-            if (subClass.getSimpleName().equals(className))
+            if (subClass.getSimpleName().equals(className)) {
                 return subClass;
+            }
         }
 
         for (Class<?> subClass : clazz.getClasses()) {
-            if (subClass.getSimpleName().equals(className))
+            if (subClass.getSimpleName().equals(className)) {
                 return subClass;
+            }
         }
 
         throw new ClassNotFoundException("Sub class %s of %s not found!".formatted(className, clazz.getSimpleName()));

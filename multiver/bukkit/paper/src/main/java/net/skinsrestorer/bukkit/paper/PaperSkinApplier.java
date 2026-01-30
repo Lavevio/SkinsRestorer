@@ -23,19 +23,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import org.bukkit.entity.Player;
 
 public class PaperSkinApplier {
-    public static void applySkin(Player player, SkinProperty property) {
-        PlayerProfile profile = player.getPlayerProfile();
-
-        profile.getProperties().removeIf(profileProperty -> profileProperty.getName().equals(SkinProperty.TEXTURES_NAME));
-        profile.getProperties().add(new ProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
-
-        player.setPlayerProfile(profile);
-
-        // Update the player health and food, does not work on older versions
-        try {
-            player.sendHealthUpdate();
-        } catch (NoSuchMethodError ignored) {
-        }
+    private PaperSkinApplier() {
     }
 
     public static boolean hasProfileMethod() {
@@ -44,6 +32,21 @@ public class PaperSkinApplier {
             return true;
         } catch (ReflectiveOperationException e) {
             return false;
+        }
+    }
+
+    public static void applySkin(Player player, SkinProperty property) {
+        PlayerProfile profile = player.getPlayerProfile();
+
+        profile.getProperties().removeIf(profileProperty -> SkinProperty.TEXTURES_NAME.equals(profileProperty.getName()));
+        profile.getProperties().add(new ProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+
+        player.setPlayerProfile(profile);
+
+        // Update the player health and food, does not work on older versions
+        try {
+            player.sendHealthUpdate();
+        } catch (NoSuchMethodError ignored) {
         }
     }
 }

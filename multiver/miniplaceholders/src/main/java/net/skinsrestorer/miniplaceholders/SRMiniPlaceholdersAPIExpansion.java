@@ -46,7 +46,7 @@ public class SRMiniPlaceholdersAPIExpansion<P> {
         Expansion.builder("skinsrestorer")
                 .version(BuildData.VERSION)
                 .author("SRTeam")
-                .audiencePlaceholder(playerClass, "skin_name_or_empty", ((audience, queue, ctx) -> {
+                .audiencePlaceholder(playerClass, "skin_name_or_empty", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     Optional<SkinIdentifier> skin = SkinsRestorerProvider.get()
@@ -58,8 +58,8 @@ public class SRMiniPlaceholdersAPIExpansion<P> {
                     }
 
                     return Tags.EMPTY_TAG;
-                }))
-                .audiencePlaceholder(playerClass, "skin_name_or_player_name", ((audience, queue, ctx) -> {
+                })
+                .audiencePlaceholder(playerClass, "skin_name_or_player_name", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     Optional<SkinIdentifier> skin = SkinsRestorerProvider.get()
@@ -68,37 +68,37 @@ public class SRMiniPlaceholdersAPIExpansion<P> {
 
                     return skin.map(skinIdentifier -> Tag.preProcessParsed(skinIdentifier.getIdentifier()))
                             .orElseGet(() -> Tag.preProcessParsed(player.getName()));
-                }))
-                .audiencePlaceholder(playerClass, "texture_url_or_empty", ((audience, queue, ctx) -> {
+                })
+                .audiencePlaceholder(playerClass, "texture_url_or_empty", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     return adapter.getSkinProperty(player).map(this::extractTextureUrl).orElse(Tags.EMPTY_TAG);
-                }))
-                .audiencePlaceholder(playerClass, "texture_url_or_steve", ((audience, queue, ctx) -> {
+                })
+                .audiencePlaceholder(playerClass, "texture_url_or_steve", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     return adapter.getSkinProperty(player).map(this::extractTextureUrl).orElseGet(() -> extractTextureUrl(HardcodedSkins.STEVE.getProperty()));
-                }))
-                .audiencePlaceholder(playerClass, "texture_url_or_alex", ((audience, queue, ctx) -> {
+                })
+                .audiencePlaceholder(playerClass, "texture_url_or_alex", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     return adapter.getSkinProperty(player).map(this::extractTextureUrl).orElseGet(() -> extractTextureUrl(HardcodedSkins.ALEX.getProperty()));
-                }))
-                .audiencePlaceholder(playerClass, "texture_id_or_empty", ((audience, queue, ctx) -> {
+                })
+                .audiencePlaceholder(playerClass, "texture_id_or_empty", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     return adapter.getSkinProperty(player).map(this::extractTextureHash).orElse(Tags.EMPTY_TAG);
-                }))
-                .audiencePlaceholder(playerClass, "texture_id_or_steve", ((audience, queue, ctx) -> {
+                })
+                .audiencePlaceholder(playerClass, "texture_id_or_steve", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     return adapter.getSkinProperty(player).map(this::extractTextureHash).orElseGet(() -> extractTextureHash(HardcodedSkins.STEVE.getProperty()));
-                }))
-                .audiencePlaceholder(playerClass, "texture_id_or_alex", ((audience, queue, ctx) -> {
+                })
+                .audiencePlaceholder(playerClass, "texture_id_or_alex", (audience, queue, ctx) -> {
                     SRPlayer player = playerProvider.apply((P) audience);
 
                     return adapter.getSkinProperty(player).map(this::extractTextureHash).orElseGet(() -> extractTextureHash(HardcodedSkins.ALEX.getProperty()));
-                }))
+                })
                 .build()
                 .register();
     }

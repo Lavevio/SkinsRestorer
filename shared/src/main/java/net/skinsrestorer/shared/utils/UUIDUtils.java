@@ -60,4 +60,7 @@ public class UUIDUtils {
     public static String convertToNoDashes(UUID uuid) {
         return uuid.toString().replace("-", "");
     }
+
+    private UUIDUtils() {
+    }
 }

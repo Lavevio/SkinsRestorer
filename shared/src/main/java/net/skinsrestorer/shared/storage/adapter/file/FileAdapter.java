@@ -681,7 +681,7 @@ public class FileAdapter implements StorageAdapter {
                 String extension = fileName.substring(lastDotIndex + 1);
                 String name = fileName.substring(0, lastDotIndex);
 
-                if (name.startsWith(SkinStorageImpl.RECOMMENDATION_PREFIX) || !extension.equals("customskin")) {
+                if (name.startsWith(SkinStorageImpl.RECOMMENDATION_PREFIX) || !"customskin".equals(extension)) {
                     continue;
                 }
 
@@ -762,7 +762,7 @@ public class FileAdapter implements StorageAdapter {
                 String extension = fileName.substring(lastDotIndex + 1);
                 String name = fileName.substring(0, lastDotIndex);
 
-                if (!extension.equals("playerskin")) {
+                if (!"playerskin".equals(extension)) {
                     continue;
                 }
 

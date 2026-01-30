@@ -40,4 +40,7 @@ public class PaperUtil {
             return Optional.empty();
         }
     }
+
+    private PaperUtil() {
+    }
 }

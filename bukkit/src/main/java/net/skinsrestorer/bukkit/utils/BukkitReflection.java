@@ -58,4 +58,7 @@ public class BukkitReflection {
     private static String getLegacyVersionString() {
         return CRAFTBUKKIT_PACKAGE.substring(CRAFTBUKKIT_PACKAGE.lastIndexOf('.') + 1);
     }
+
+    private BukkitReflection() {
+    }
 }

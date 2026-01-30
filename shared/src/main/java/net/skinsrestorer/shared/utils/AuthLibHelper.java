@@ -31,4 +31,7 @@ public class AuthLibHelper {
     public static String getPropertySignature(Object property) {
         return RStream.of(property).fields().by("signature").get();
     }
+
+    private AuthLibHelper() {
+    }
 }

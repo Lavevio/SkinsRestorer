@@ -33,11 +33,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith({MockitoExtension.class, SRExtension.class})
-public class MineSkinTest {
+class MineSkinTest {
     private static final String TEST_URL = "https://skinsrestorer.net/skinsrestorer-skin.png";
     @Mock
     private SettingsManager settings;
@@ -45,23 +46,32 @@ public class MineSkinTest {
     private SkinsRestorerLocale skinsRestorerLocale;
 
     @Test
-    public void testServices(Injector injector) {
-        injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
+    void services(Injector injector) {
+        assertDoesNotThrow(() -> {
+            injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
 
-        when(settings.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");
-        when(settings.getProperty(AdvancedConfig.NO_CONNECTIONS)).thenReturn(false);
+            when(settings.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");
+            when(settings.getProperty(AdvancedConfig.NO_CONNECTIONS)).thenReturn(false);
 
-        injector.register(SettingsManager.class, settings);
+            injector.register(SettingsManager.class, settings);
 
-        String randomUrl = TEST_URL + "?" + UUID.randomUUID(); // Random URL to avoid caching
-        MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
+            String randomUrl = TEST_URL + "?" + UUID.randomUUID(); // Random URL to avoid caching
+            MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
 
-        try {
-            MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class)
-                    .genSkin(randomUrl, null);
-        } catch (Exception e) {
-            log.error("Failed to generate skin", e);
-        }
+            try {
+                MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class)
+                        .genSkin(randomUrl, null);
+            } catch (Exception e) {
+                log.error("Failed to generate skin", e);
+            }
+
+            /*
+
+        assertNotNull(response);
+
+        assertEquals(1, metricsCounter.collect(MetricsCounter.Service.MINE_SKIN));
+         */
+        });
 
         /*
 

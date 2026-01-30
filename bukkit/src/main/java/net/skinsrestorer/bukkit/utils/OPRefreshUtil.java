@@ -46,4 +46,7 @@ public class OPRefreshUtil {
             });
         }
     }
+
+    private OPRefreshUtil() {
+    }
 }

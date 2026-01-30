@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
-public class SRFunction {
+public final class SRFunction {
     private SRFunction() {}
 
     @FunctionalInterface

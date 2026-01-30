@@ -64,4 +64,7 @@ public class BuiltInCodecs {
             SkinIdentifier::getSkinType,
             (identifier, variant, type) -> SkinIdentifier.of(identifier, variant.orElse(null), type)
     );
+
+    private BuiltInCodecs() {
+    }
 }

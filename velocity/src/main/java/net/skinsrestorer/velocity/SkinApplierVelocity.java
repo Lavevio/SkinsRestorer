@@ -67,7 +67,7 @@ public class SkinApplierVelocity implements SkinApplierAccess<Player> {
     private List<Property> updatePropertiesSkin(List<Property> original, SkinProperty property) {
         List<Property> properties = new ArrayList<>(original);
 
-        properties.removeIf(property1 -> property1.getName().equals(SkinProperty.TEXTURES_NAME));
+        properties.removeIf(property1 -> SkinProperty.TEXTURES_NAME.equals(property1.getName()));
         properties.add(new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
         return properties;

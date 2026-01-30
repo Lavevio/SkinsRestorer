@@ -25,4 +25,7 @@ public class VelocityComponentHelper {
     public static Component deserialize(ComponentString messageJson) {
         return GsonComponentSerializer.gson().deserialize(messageJson.jsonString());
     }
+
+    private VelocityComponentHelper() {
+    }
 }

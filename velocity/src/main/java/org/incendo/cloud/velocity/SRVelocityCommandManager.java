@@ -112,4 +112,3 @@ public class SRVelocityCommandManager<C> extends CommandManager<C> implements Se
         return this.senderMapper;
     }
 }
-

@@ -3,7 +3,7 @@ package org.incendo.cloud.bukkit;
 import org.incendo.cloud.CommandManager;
 
 @SuppressWarnings("unused")
-public class BukkitParsers {
+public final class BukkitParsers {
     private BukkitParsers() {
     }
 

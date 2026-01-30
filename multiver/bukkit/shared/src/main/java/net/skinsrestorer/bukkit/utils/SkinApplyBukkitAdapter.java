@@ -35,7 +35,7 @@ public interface SkinApplyBukkitAdapter {
                 .withSuper()
                 .fields()
                 .filter(false)
-                .filter(f -> f.type().getSimpleName().equals("GameProfile"))
+                .filter(f -> "GameProfile".equals(f.type().getSimpleName()))
                 .by(0);
     }
 

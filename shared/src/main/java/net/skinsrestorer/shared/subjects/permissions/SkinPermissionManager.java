@@ -61,7 +61,7 @@ public class SkinPermissionManager {
 
     private boolean isPerSkinPermissions() {
         if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS)) {
-            return settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT).equalsIgnoreCase(CommandConfig.CONSENT_MESSAGE);
+            return CommandConfig.CONSENT_MESSAGE.equalsIgnoreCase(settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT));
         } else {
             return false;
         }

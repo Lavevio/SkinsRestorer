@@ -42,7 +42,7 @@ public final class SRServerMessageAdapter {
     private final SharedSkinApplier<Object> skinApplier;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
-        if (!event.getChannel().equals(SRHelpers.MESSAGE_CHANNEL)) {
+        if (!SRHelpers.MESSAGE_CHANNEL.equals(event.getChannel())) {
             return;
         }
 
@@ -63,7 +63,7 @@ public final class SRServerMessageAdapter {
                 ) -> () -> {
                     skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
                     ackPayload.ifPresent(value -> {
-                        if (value.proxySrVersion().equalsIgnoreCase(BuildData.VERSION)) {
+                        if (BuildData.VERSION.equalsIgnoreCase(value.proxySrVersion())) {
                             logger.debug("Proxy version %s matches server version %s.".formatted(value.proxySrVersion(), BuildData.VERSION));
                         } else {
                             logger.warning("The proxy is running a different version of SkinsRestorer (%s) than this server (%s). Make sure both proxy and server run the latest version of SkinsRestorer. %s"

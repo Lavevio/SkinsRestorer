@@ -41,7 +41,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class, SRExtension.class})
-public class ServicesTest {
+class ServicesTest {
     @Mock
     private SRPlatformAdapter srPlatformAdapter;
     @Mock
@@ -50,7 +50,7 @@ public class ServicesTest {
     private SkinsRestorerLocale skinsRestorerLocale;
 
     @Test
-    public void testServices(Injector injector) {
+    void services(Injector injector) {
         doAnswer((Answer<Void>) invocation -> {
             Runnable runnable = invocation.getArgument(0);
             long delay = invocation.getArgument(1);

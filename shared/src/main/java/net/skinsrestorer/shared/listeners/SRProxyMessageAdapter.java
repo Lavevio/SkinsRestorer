@@ -40,7 +40,7 @@ public final class SRProxyMessageAdapter {
             return;
         }
 
-        if (!event.getChannel().equals(SRHelpers.MESSAGE_CHANNEL)) {
+        if (!SRHelpers.MESSAGE_CHANNEL.equals(event.getChannel())) {
             return;
         }
 

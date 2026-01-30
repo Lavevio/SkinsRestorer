@@ -20,7 +20,7 @@ package net.skinsrestorer.shared.utils;
 import java.net.URL;
 import java.util.Optional;
 
-public class ValidationUtil {
+public final class ValidationUtil {
     public static final String AXOLOTL_PREFIX = "skinsrestorer-axolotl://";
 
     private ValidationUtil() {
@@ -49,6 +49,6 @@ public class ValidationUtil {
         }
 
         Optional<URL> uriOptional = SRHelpers.parseURL(str);
-        return uriOptional.isPresent() && (uriOptional.get().getProtocol().equals("http") || uriOptional.get().getProtocol().equals("https"));
+        return uriOptional.isPresent() && ("http".equals(uriOptional.get().getProtocol()) || "https".equals(uriOptional.get().getProtocol()));
     }
 }

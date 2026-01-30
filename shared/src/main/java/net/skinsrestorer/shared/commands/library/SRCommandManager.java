@@ -20,8 +20,8 @@ package net.skinsrestorer.shared.commands.library;
 import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.SkinVariant;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.PlayerSelectorArgumentParser;
 import net.skinsrestorer.shared.config.ProxyConfig;
@@ -110,7 +110,7 @@ public class SRCommandManager {
                 .build());
 
         try {
-            for (UUID cooldownProfile : reference.getOrDefaultThrowing(StorageAdapter::getAllCooldownProfiles, List.<UUID>of())) {
+            for (UUID cooldownProfile : reference.getOrDefaultThrowing(StorageAdapter::getAllCooldownProfiles, List.of())) {
                 StorageBackedProfile profile = storageRepository.getProfileIfExists(cooldownProfile);
                 for (ImmutableCooldownInstance instance : profile.getAllCooldowns()) {
                     long secondsUntilDeletion = instance.creationTime().plus(instance.duration()).getEpochSecond() - SRHelpers.getEpochSecond();

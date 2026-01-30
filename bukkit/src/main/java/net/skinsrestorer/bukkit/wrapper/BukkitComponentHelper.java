@@ -29,4 +29,7 @@ public class BukkitComponentHelper {
     public static String toStupidHex(ComponentString messageJson) {
         return BukkitComponentSerializer.legacy().serialize(deserialize(messageJson));
     }
+
+    private BukkitComponentHelper() {
+    }
 }

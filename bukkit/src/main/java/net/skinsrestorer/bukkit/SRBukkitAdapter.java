@@ -58,7 +58,6 @@ import javax.inject.Inject;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -162,8 +161,8 @@ public class SRBukkitAdapter implements SRServerAdapter {
 
     @Override
     public boolean determineProxy() {
-        Path spigotFile = Paths.get("spigot.yml");
-        Path paperFile = Paths.get("paper.yml");
+        Path spigotFile = Path.of("spigot.yml");
+        Path paperFile = Path.of("paper.yml");
 
         if (SpigotConfigUtil.getSpigotConfig(server).map(config ->
                 config.getBoolean("settings.bungeecord")).orElse(false)) {
@@ -177,10 +176,12 @@ public class SRBukkitAdapter implements SRServerAdapter {
                 config.getBoolean("settings.velocity-support.enabled")
                         || config.getBoolean("proxies.velocity.enabled")).orElse(false)) {
             return true;
-        } else return ClassInfo.get().isPaper() // Only consider files if classes for that platform are present
-                && Files.exists(paperFile)
-                && YamlConfiguration.loadConfiguration(paperFile.toFile())
-                .getBoolean("settings.velocity-support.enabled");
+        } else {
+            return ClassInfo.get().isPaper() // Only consider files if classes for that platform are present
+                    && Files.exists(paperFile)
+                    && YamlConfiguration.loadConfiguration(paperFile.toFile())
+                    .getBoolean("settings.velocity-support.enabled");
+        }
     }
 
     @Override

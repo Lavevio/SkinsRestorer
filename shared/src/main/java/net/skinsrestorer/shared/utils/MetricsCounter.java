@@ -72,8 +72,12 @@ public class MetricsCounter {
     private void collectConfigDiff(Map<String, Map<String, Integer>> map, String name, Class<?> configClass) {
         Map<String, Integer> configMap = new HashMap<>();
         for (Field field : configClass.getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers())) continue;
-            if (!Property.class.isAssignableFrom(field.getType())) continue;
+            if (!Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            if (!Property.class.isAssignableFrom(field.getType())) {
+                continue;
+            }
             try {
                 Property<?> property = (Property<?>) field.get(null);
                 Object value = settings.getProperty(property);

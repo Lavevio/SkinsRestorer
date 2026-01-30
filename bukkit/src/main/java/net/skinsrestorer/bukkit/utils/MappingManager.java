@@ -83,4 +83,7 @@ public class MappingManager {
     public static Optional<String> getPaperMinecraftVersionId() {
         return PaperUtil.getMinecraftVersionId();
     }
+
+    private MappingManager() {
+    }
 }

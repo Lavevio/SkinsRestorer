@@ -289,8 +289,8 @@ public final class SkinCommand {
                 }
 
                 if (targetPlayer.isPresent()) {
-                    Optional<SkinProperty> newActiveSkin = currentSkin.isEmpty() ?
-                            Optional.empty() : playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
+                    Optional<SkinProperty> newActiveSkin = currentSkin.isEmpty()
+                            ? Optional.empty() : playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
 
                     // Empty active skin means steve or other. Steve fits best as fallback
                     newSkin = newActiveSkin.orElse(HardcodedSkins.STEVE.getProperty());

@@ -79,7 +79,7 @@ public class UpdateCheckerGitHub {
             }
 
             Optional<GitHubAssetInfo> jarAssetUrl = releaseInfo.getAssets().stream()
-                    .filter(asset -> asset.getName().equals(JAR_ASSET_NAME))
+                    .filter(asset -> JAR_ASSET_NAME.equals(asset.getName()))
                     .findFirst();
 
             if (jarAssetUrl.isEmpty()) {
