@@ -3,9 +3,9 @@ metadata.format.version = "1.1"
 [versions]
 
 runtask = "3.0.2"
-runpaperversion = "1.21.9"
+runpaperversion = "1.21.11"
 runwaterfallversion = "1.19"
-runvelocityversion = "3.4.0-SNAPSHOT"
+runvelocityversion = "3.5.0-SNAPSHOT"
 adventure-platform = "4.4.1"
 adventure = "4.26.1"
 mixin = "0.8.7"
