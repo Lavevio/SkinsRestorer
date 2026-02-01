@@ -61,6 +61,7 @@ public class PostgreSQLProvider {
         }
 
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.postgresql.Driver");
         config.setJdbcUrl(jdbcUrlBuilder.toString());
         config.setUsername(username);
         config.setPassword(password);
