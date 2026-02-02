@@ -110,7 +110,7 @@ public class SRCommandManager {
                 .build());
 
         try {
-            for (UUID cooldownProfile : reference.getOrDefaultThrowing(StorageAdapter::getAllCooldownProfiles, List.of())) {
+            for (UUID cooldownProfile : getCooldownUniqueIds(reference)) {
                 StorageBackedProfile profile = storageRepository.getProfileIfExists(cooldownProfile);
                 for (ImmutableCooldownInstance instance : profile.getAllCooldowns()) {
                     long secondsUntilDeletion = instance.creationTime().plus(instance.duration()).getEpochSecond() - SRHelpers.getEpochSecond();
@@ -204,6 +204,10 @@ public class SRCommandManager {
                 ConsoleOnly.class,
                 annotation -> new ConsoleOnlyRequirement()
         );
+    }
+
+    private List<UUID> getCooldownUniqueIds(AdapterReference reference) throws StorageAdapter.StorageException {
+        return reference.getOrDefaultThrowing(StorageAdapter::getAllCooldownProfiles, List.of());
     }
 
     public void registerCommand(Object command) {
