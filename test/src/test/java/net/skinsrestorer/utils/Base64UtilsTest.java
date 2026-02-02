@@ -20,6 +20,9 @@ package net.skinsrestorer.utils;
 import net.skinsrestorer.api.Base64Utils;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class Base64UtilsTest {
@@ -51,9 +54,9 @@ class Base64UtilsTest {
 
     @Test
     void encodePNGAsUrlRoundTrip() {
-        byte[] data = "fake png data".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte[] data = "fake png data".getBytes(StandardCharsets.UTF_8);
         String dataUri = Base64Utils.encodePNGAsUrl(data);
         String base64Part = dataUri.substring("data:image/png;base64,".length());
-        assertArrayEquals(data, java.util.Base64.getDecoder().decode(base64Part));
+        assertArrayEquals(data, Base64.getDecoder().decode(base64Part));
     }
 }

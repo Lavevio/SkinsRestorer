@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
  *
  * @see SRBukkitAdapter
  */
-public class OPRefreshUtil {
+public final class OPRefreshUtil {
     @CodeComment({
             "This method is used to refresh the OP status of a player.",
             "This is used to fix a bug where changing your skin causes command blocks to no longer work.",

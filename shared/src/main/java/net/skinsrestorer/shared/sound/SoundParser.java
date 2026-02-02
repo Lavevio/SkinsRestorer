@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class SoundParser {
+public final class SoundParser {
     public static final float DEFAULT_VOLUME = 1.0F;
     public static final float DEFAULT_PITCH = 1.0F;
     public static final Pattern NAMESPACED_SOUND_PATTERN = Pattern.compile("(?<namespace>[a-z0-9._-]+):(?<key>[a-z0-9/._-]+)");

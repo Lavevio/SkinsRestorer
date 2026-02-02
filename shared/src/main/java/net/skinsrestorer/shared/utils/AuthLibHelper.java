@@ -19,7 +19,7 @@ package net.skinsrestorer.shared.utils;
 
 import net.lenni0451.reflect.stream.RStream;
 
-public class AuthLibHelper {
+public final class AuthLibHelper {
     public static String getPropertyName(Object property) {
         return RStream.of(property).fields().by("name").get();
     }

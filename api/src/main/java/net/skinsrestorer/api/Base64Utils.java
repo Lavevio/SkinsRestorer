@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 
-public class Base64Utils {
+public final class Base64Utils {
     public static String encode(String data) {
         return Base64.getEncoder().encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }

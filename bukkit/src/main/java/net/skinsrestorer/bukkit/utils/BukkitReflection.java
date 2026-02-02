@@ -21,7 +21,7 @@ import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import org.bukkit.Bukkit;
 
-public class BukkitReflection {
+public final class BukkitReflection {
     public static final String CRAFTBUKKIT_PACKAGE = getCraftBukkitString();
     public static final SemanticVersion SERVER_VERSION = getServerVersion();
 

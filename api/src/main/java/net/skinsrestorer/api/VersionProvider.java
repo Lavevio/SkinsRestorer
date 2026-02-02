@@ -28,7 +28,7 @@ import net.skinsrestorer.api.semver.SemanticVersion;
  * @since 15.0.0
  */
 @SuppressWarnings("unused")
-public class VersionProvider {
+public final class VersionProvider {
     private static final String VERSION = SkinsRestorerProvider.get().getVersion();
     private static final String COMMIT = SkinsRestorerProvider.get().getCommit();
     private static final String COMMIT_SHORT = SkinsRestorerProvider.get().getCommitShort();

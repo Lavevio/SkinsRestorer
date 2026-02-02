@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UUIDUtils {
+public final class UUIDUtils {
     public static Optional<UUID> tryParseUniqueId(String str) {
         try {
             return Optional.of(UUID.fromString(str));

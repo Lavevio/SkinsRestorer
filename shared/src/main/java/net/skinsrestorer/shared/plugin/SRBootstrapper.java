@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SRBootstrapper {
+public final class SRBootstrapper {
     public static void startPlugin(
             Consumer<Runnable> shutdownHookConsumer,
             List<PlatformClass<?>> platformRegister,

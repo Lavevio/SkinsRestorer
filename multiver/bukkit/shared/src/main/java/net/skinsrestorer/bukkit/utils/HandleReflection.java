@@ -19,7 +19,7 @@ package net.skinsrestorer.bukkit.utils;
 
 import org.bukkit.entity.Player;
 
-public class HandleReflection {
+public final class HandleReflection {
     public static <S> S getHandle(Player player, Class<S> serverPlayerClass) {
         try {
             return serverPlayerClass.cast(player.getClass().getMethod("getHandle").invoke(player));

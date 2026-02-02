@@ -20,7 +20,8 @@ package net.skinsrestorer.utils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class ValidationUtilTest {
     @Test

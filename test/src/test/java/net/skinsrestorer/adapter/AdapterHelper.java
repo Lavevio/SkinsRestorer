@@ -38,7 +38,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AdapterHelper {
+public final class AdapterHelper {
     private static final String DEFAULT_NAME = "Pistonmaster";
     private static final UUID DEFAULT_UUID = UUID.nameUUIDFromBytes(DEFAULT_NAME.getBytes(StandardCharsets.UTF_8));
 

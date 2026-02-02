@@ -21,7 +21,7 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 
 import java.util.Map;
 
-public class ANSIConverter {
+public final class ANSIConverter {
     private static final Map<SRChatColor, String> replacements = SRHelpers.suppliedMap(SRChatColor.class, e -> switch (e) {
         case BLACK -> "\u001B[30;22m";
         case DARK_BLUE -> "\u001B[34;22m";

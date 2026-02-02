@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TranslationReader {
+public final class TranslationReader {
     private static final Gson gson = new Gson();
 
     public static Map<String, String> readJsonTranslation(String str) {

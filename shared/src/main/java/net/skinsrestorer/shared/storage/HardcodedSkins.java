@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class HardcodedSkins {
+public final class HardcodedSkins {
     private static final Map<String, SkinProperty> SKINS = new HashMap<>();
     public static final InputDataResult STEVE;
     public static final InputDataResult ALEX;

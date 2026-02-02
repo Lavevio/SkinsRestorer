@@ -24,7 +24,7 @@ import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
 
 import java.util.UUID;
 
-public class FloodgateUtil {
+public final class FloodgateUtil {
     public static boolean isFloodgateBedrockPlayer(UUID uuid) {
         try {
             return FloodgateApi.getInstance().isFloodgateId(uuid);

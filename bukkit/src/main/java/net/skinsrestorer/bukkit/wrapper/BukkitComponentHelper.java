@@ -21,7 +21,7 @@ import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
-public class BukkitComponentHelper {
+public final class BukkitComponentHelper {
     public static Component deserialize(ComponentString messageJson) {
         return BukkitComponentSerializer.gson().deserialize(messageJson.jsonString());
     }

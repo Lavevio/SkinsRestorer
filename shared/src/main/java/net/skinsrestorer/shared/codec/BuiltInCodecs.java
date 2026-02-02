@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BuiltInCodecs {
+public final class BuiltInCodecs {
     public static final NetworkCodec<String> STRING_CODEC = NetworkCodec.of(
             SROutputWriter::writeString,
             SRInputReader::readString

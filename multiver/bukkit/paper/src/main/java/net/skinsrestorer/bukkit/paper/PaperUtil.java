@@ -23,7 +23,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.Optional;
 
-public class PaperUtil {
+public final class PaperUtil {
     @SuppressWarnings("removal")
     public static Optional<YamlConfiguration> getPaperConfig(Server server) {
         try {

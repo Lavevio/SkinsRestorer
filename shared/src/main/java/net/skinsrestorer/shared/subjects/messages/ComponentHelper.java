@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class ComponentHelper {
+public final class ComponentHelper {
     private static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     private static final MiniMessage MINI_MESSAGE_COMPONENT_SERIALIZER = MiniMessage.miniMessage();

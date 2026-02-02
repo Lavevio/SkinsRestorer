@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public class ConfigHelpers {
+public final class ConfigHelpers {
     public static Property<Integer> newCappedProperty(String path, int defaultValue, int min, int max) {
         return new CappedIntegerProperty(path, defaultValue, min, max);
     }

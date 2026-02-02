@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Utility class for retrieving information from profile properties related to skins.
  */
-public class PropertyUtils {
+public final class PropertyUtils {
     /**
      * To "clear"/"empty" a skin. Set this to remove the applies skin.
      */

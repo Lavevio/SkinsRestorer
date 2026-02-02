@@ -30,7 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 
-public class SkullUtil {
+public final class SkullUtil {
     public static void setSkull(ItemStack skullItem, Server server, String hash) {
         try {
             SkullMeta skullMeta = (SkullMeta) skullItem.getItemMeta();

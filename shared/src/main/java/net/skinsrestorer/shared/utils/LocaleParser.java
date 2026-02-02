@@ -20,7 +20,7 @@ package net.skinsrestorer.shared.utils;
 import java.util.Locale;
 import java.util.Optional;
 
-public class LocaleParser {
+public final class LocaleParser {
     public static Optional<Locale> parseLocale(String locale) {
         if (locale == null) {
             return Optional.empty();

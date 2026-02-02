@@ -24,7 +24,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
-public class ModComponentHelper {
+public final class ModComponentHelper {
     private static final Gson GSON = new Gson();
 
     public static Component deserialize(ComponentString messageJson) {

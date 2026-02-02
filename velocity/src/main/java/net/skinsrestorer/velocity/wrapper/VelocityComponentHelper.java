@@ -21,7 +21,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
-public class VelocityComponentHelper {
+public final class VelocityComponentHelper {
     public static Component deserialize(ComponentString messageJson) {
         return GsonComponentSerializer.gson().deserialize(messageJson.jsonString());
     }

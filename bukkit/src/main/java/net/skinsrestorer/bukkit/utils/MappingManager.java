@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class MappingManager {
+public final class MappingManager {
     private static final List<IMapping> MAPPINGS = List.of(
             new Mapping1_18(),
             new Mapping1_18_2(),

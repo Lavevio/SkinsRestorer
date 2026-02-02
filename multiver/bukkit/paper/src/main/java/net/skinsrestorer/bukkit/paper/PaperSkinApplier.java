@@ -22,7 +22,7 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import net.skinsrestorer.api.property.SkinProperty;
 import org.bukkit.entity.Player;
 
-public class PaperSkinApplier {
+public final class PaperSkinApplier {
     private PaperSkinApplier() {
     }
 

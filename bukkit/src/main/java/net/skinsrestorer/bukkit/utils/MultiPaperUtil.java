@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
-public class MultiPaperUtil {
+public final class MultiPaperUtil {
     public static Collection<? extends Player> getOnlinePlayers() {
         return MultiLib.getAllOnlinePlayers();
     }

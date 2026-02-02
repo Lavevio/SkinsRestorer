@@ -32,7 +32,7 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 
 import java.util.*;
 
-public class GUIUtils {
+public final class GUIUtils {
     public static PageInfo getGUIPage(SRPlayer player,
                                       SkinsRestorerLocale locale,
                                       SettingsManager settings,

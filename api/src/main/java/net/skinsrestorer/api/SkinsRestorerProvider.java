@@ -22,7 +22,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Provides the SkinsRestorer API instance to other plugins.
  */
-public class SkinsRestorerProvider {
+public final class SkinsRestorerProvider {
     private static SkinsRestorer api;
 
     private SkinsRestorerProvider() {

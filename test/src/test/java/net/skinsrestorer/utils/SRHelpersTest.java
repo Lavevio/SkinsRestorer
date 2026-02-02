@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -136,7 +137,7 @@ class SRHelpersTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         // Should be valid base64 that decodes to JSON containing the hash
-        String decoded = new String(java.util.Base64.getDecoder().decode(result), StandardCharsets.UTF_8);
+        String decoded = new String(Base64.getDecoder().decode(result), StandardCharsets.UTF_8);
         assertTrue(decoded.contains("abc123"));
         assertTrue(decoded.contains("textures.minecraft.net/texture/"));
     }
