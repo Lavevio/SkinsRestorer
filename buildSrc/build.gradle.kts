@@ -31,7 +31,7 @@ dependencies {
     implementation("org.codehaus.plexus:plexus-utils:4.0.2")
 
     // For custom SpigotRemapTask
-    implementation("net.md-5:SpecialSource:1.11.5")
+    implementation("net.md-5:SpecialSource:1.11.6")
 }
 
 java {
