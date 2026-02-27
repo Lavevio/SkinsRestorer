@@ -33,7 +33,7 @@ dependencies {
     api("org.jetbrains:annotations:26.1.0")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.8")
 
-    errorprone("com.google.errorprone:error_prone_core:2.47.0")
+    errorprone("com.google.errorprone:error_prone_core:2.48.0")
     spotbugs("com.github.spotbugs:spotbugs:4.9.8")
 
     rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.28.0")
@@ -42,8 +42,8 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testFixturesApi("org.junit.jupiter:junit-jupiter:6.0.3")
-    testFixturesApi("org.mockito:mockito-core:5.21.0")
-    testFixturesApi("org.mockito:mockito-junit-jupiter:5.21.0")
+    testFixturesApi("org.mockito:mockito-core:5.22.0")
+    testFixturesApi("org.mockito:mockito-junit-jupiter:5.22.0")
 }
 
 tasks {
