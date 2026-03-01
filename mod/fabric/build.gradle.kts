@@ -92,6 +92,10 @@ tasks.processResources {
     filesMatching("fabric.mod.json") {
         expand(mapOf("version" to inputs.properties["version"]))
     }
+
+    from(loom.accessWidenerPath) {
+        into("/")
+    }
 }
 
 tasks.shadowJar {
