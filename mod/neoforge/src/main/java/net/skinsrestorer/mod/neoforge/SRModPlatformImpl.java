@@ -25,8 +25,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.minecraft.server.permissions.PermissionLevel;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -34,7 +37,9 @@ import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+import net.neoforged.neoforgespi.language.IModInfo;
 import net.skinsrestorer.mod.SRModPlatform;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.Tristate;
@@ -43,14 +48,51 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.neoforge.NeoForgeServerCommandManager;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public class SRModPlatformImpl implements SRModPlatform {
     private static final Map<String, PermissionNode<Boolean>> PERMISSIONS = new HashMap<>();
+
+    @Override
+    public Path getConfigFolder() {
+        return FMLPaths.CONFIGDIR.get();
+    }
+
+    @Override
+    public List<PluginInfo> getPlugins() {
+        return ModList.get().getMods().stream()
+                .map(mod -> {
+                    String homepage = mod.getModURL()
+                            .map(Object::toString).orElse("N/A");
+                    String issueTracker = mod.getOwningFile().getConfig()
+                            .<String>getConfigElement("issueTrackerURL").orElse("N/A");
+                    String authors = mod.getConfig()
+                            .<String>getConfigElement("authors").orElse("N/A");
+                    return new PluginInfo(
+                            true,
+                            mod.getModId(),
+                            mod.getDisplayName(),
+                            mod.getVersion().toString(),
+                            "N/A",
+                            Map.of(
+                                    "homepage", homepage,
+                                    "sources", "N/A",
+                                    "issueTracker", issueTracker
+                            ),
+                            List.of(authors)
+                    );
+                }).toList();
+    }
+
+    @Override
+    public void registerPlayerJoinListener(Consumer<ServerPlayer> listener) {
+        NeoForge.EVENT_BUS.addListener(PlayerEvent.PlayerLoggedInEvent.class,
+                e -> listener.accept((ServerPlayer) e.getEntity()));
+    }
 
     @Override
     public String getPlatformName() {

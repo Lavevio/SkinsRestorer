@@ -22,9 +22,6 @@ dependencies {
     // Do NOT use other classes from Fabric Loader.
     modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
 
-    // Architectury API. This is optional, and you can comment it out if you don't need it.
-    modImplementation("dev.architectury:architectury:${rootProject.property("architectury_version")}")
-
     // Shared project dependencies
     setOf(
         projects.skinsrestorerShared,

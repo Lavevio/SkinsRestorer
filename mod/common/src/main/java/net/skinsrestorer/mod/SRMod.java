@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.mod;
 
-import dev.architectury.platform.Platform;
 import net.skinsrestorer.mod.logger.Slf4jLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
@@ -39,7 +38,7 @@ public final class SRMod {
                 true,
                 SRModAdapter.class,
                 SRServerPlugin.class,
-                Platform.getConfigFolder().resolve(MOD_ID_NAME),
+                SRModPlatform.INSTANCE.getConfigFolder().resolve(MOD_ID_NAME),
                 SRModInit.class
         );
     }

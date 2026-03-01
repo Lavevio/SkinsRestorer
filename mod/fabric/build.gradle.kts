@@ -49,10 +49,6 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
     include("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
 
-    // Architectury API - needed for modImplementations to load
-    modImplementation("dev.architectury:architectury-fabric:${rootProject.property("architectury_version")}")
-    include("dev.architectury:architectury-fabric:${rootProject.property("architectury_version")}")
-
     // Cloud command framework for Fabric
     modImplementation("org.incendo:cloud-fabric:${rootProject.property("cloud_fabric_version")}")
     include("org.incendo:cloud-fabric:${rootProject.property("cloud_fabric_version")}")

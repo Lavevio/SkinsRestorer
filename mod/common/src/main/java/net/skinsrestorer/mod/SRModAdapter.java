@@ -198,7 +198,7 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public String getPlatformVersion() {
-        return dev.architectury.platform.Platform.getMinecraftVersion();
+        return net.minecraft.SharedConstants.getCurrentVersion().name();
     }
 
     @Override
@@ -218,20 +218,7 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public List<PluginInfo> getPlugins() {
-        return dev.architectury.platform.Platform.getMods().stream()
-                .map(plugin -> new PluginInfo(
-                        true,
-                        plugin.getModId(),
-                        plugin.getName(),
-                        plugin.getVersion(),
-                        "N/A",
-                        Map.of(
-                                "homepage", plugin.getHomepage().orElse("N/A"),
-                                "sources", plugin.getSources().orElse("N/A"),
-                                "issueTracker", plugin.getIssueTracker().orElse("N/A")
-                        ),
-                        List.copyOf(plugin.getAuthors())
-                )).toList();
+        return SRModPlatform.INSTANCE.getPlugins();
     }
 
     @Override

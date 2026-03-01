@@ -18,9 +18,8 @@
 package net.skinsrestorer.mod;
 
 import ch.jalu.injector.Injector;
-import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.platform.Platform;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.SharedConstants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -65,7 +64,7 @@ public class SRModInit implements SRServerPlatformInit {
     public void initSkinApplier() {
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierMod.class), ServerPlayer.class, wrapper);
         // Log information about the platform
-        logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + Platform.getMinecraftVersion() + SRChatColor.GREEN + ".");
+        logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + SharedConstants.getCurrentVersion().name() + SRChatColor.GREEN + ".");
     }
 
     @Override
@@ -75,7 +74,7 @@ public class SRModInit implements SRServerPlatformInit {
 
     @Override
     public void initAdminInfoListener() {
-        PlayerEvent.PLAYER_JOIN.register(injector.getSingleton(AdminInfoListener.class));
+        SRModPlatform.INSTANCE.registerPlayerJoinListener(injector.getSingleton(AdminInfoListener.class)::join);
     }
 
     @Override

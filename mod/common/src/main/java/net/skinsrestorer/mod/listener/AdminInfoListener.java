@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.mod.listener;
 
-import dev.architectury.event.events.common.PlayerEvent;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
@@ -27,11 +26,10 @@ import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class AdminInfoListener implements PlayerEvent.PlayerJoin {
+public class AdminInfoListener {
     private final WrapperMod wrapper;
     private final AdminInfoListenerAdapter adapter;
 
-    @Override
     public void join(ServerPlayer player) {
         adapter.handleConnect(wrap(player));
     }

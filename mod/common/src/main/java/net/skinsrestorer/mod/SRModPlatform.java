@@ -30,12 +30,23 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 
+import net.skinsrestorer.shared.info.PluginInfo;
+
+import java.nio.file.Path;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public interface SRModPlatform {
     SRModPlatform INSTANCE = ServiceLoader.load(SRModPlatform.class).findFirst().orElseThrow();
+
+    Path getConfigFolder();
+
+    List<PluginInfo> getPlugins();
+
+    void registerPlayerJoinListener(Consumer<ServerPlayer> listener);
 
     String getPlatformName();
 

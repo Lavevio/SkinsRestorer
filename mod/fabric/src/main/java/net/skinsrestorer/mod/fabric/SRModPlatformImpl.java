@@ -19,8 +19,12 @@ package net.skinsrestorer.mod.fabric;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.metadata.ContactInformation;
+import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.fabricmc.loader.api.metadata.Person;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -30,6 +34,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.skinsrestorer.mod.SRModPlatform;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.Tristate;
@@ -38,11 +43,47 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.fabric.FabricServerCommandManager;
 
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public class SRModPlatformImpl implements SRModPlatform {
     private static final boolean HAS_PERMISSIONS_API = FabricLoader.getInstance().isModLoaded("fabric-permissions-api-v0");
+
+    @Override
+    public Path getConfigFolder() {
+        return FabricLoader.getInstance().getConfigDir();
+    }
+
+    @Override
+    public List<PluginInfo> getPlugins() {
+        return FabricLoader.getInstance().getAllMods().stream()
+                .map(mod -> {
+                    ModMetadata meta = mod.getMetadata();
+                    ContactInformation contact = meta.getContact();
+                    return new PluginInfo(
+                            true,
+                            meta.getId(),
+                            meta.getName(),
+                            meta.getVersion().getFriendlyString(),
+                            "N/A",
+                            Map.of(
+                                    "homepage", contact.get("homepage").orElse("N/A"),
+                                    "sources", contact.get("sources").orElse("N/A"),
+                                    "issueTracker", contact.get("issues").orElse("N/A")
+                            ),
+                            meta.getAuthors().stream().map(Person::getName).toList()
+                    );
+                }).toList();
+    }
+
+    @Override
+    public void registerPlayerJoinListener(Consumer<ServerPlayer> listener) {
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> listener.accept(handler.getPlayer()));
+    }
 
     @Override
     public String getPlatformName() {

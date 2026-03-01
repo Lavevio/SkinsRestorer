@@ -52,10 +52,6 @@ dependencies {
 
     neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
-    // Architectury API - needed for modImplementations to load
-    modImplementation("dev.architectury:architectury-neoforge:${rootProject.property("architectury_version")}")
-    include("dev.architectury:architectury-neoforge:${rootProject.property("architectury_version")}")
-
     // Cloud command framework for NeoForge
     modImplementation("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
     include("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
