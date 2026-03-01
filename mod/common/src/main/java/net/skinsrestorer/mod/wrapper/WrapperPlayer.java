@@ -17,11 +17,11 @@
  */
 package net.skinsrestorer.mod.wrapper;
 
-import dev.architectury.networking.NetworkManager;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.mod.SRModInit;
+import net.skinsrestorer.mod.SRModPlatform;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
@@ -79,6 +79,6 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
 
     @Override
     public void sendToMessageChannel(byte[] data) {
-        NetworkManager.sendToPlayer(player, new SRModInit.RawBytePayload(data));
+        SRModPlatform.INSTANCE.sendPluginMessage(player, new SRModInit.RawBytePayload(data));
     }
 }

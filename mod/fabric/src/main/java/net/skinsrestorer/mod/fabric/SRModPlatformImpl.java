@@ -18,9 +18,15 @@
 package net.skinsrestorer.mod.fabric;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.skinsrestorer.mod.SRModPlatform;
@@ -31,6 +37,8 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.fabric.FabricServerCommandManager;
+
+import java.util.function.BiConsumer;
 
 @SuppressWarnings("unused")
 public class SRModPlatformImpl implements SRModPlatform {
@@ -68,5 +76,21 @@ public class SRModPlatformImpl implements SRModPlatform {
     @Override
     public void registerPermission(Permission permission, Component description) {
         // NO-OP
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void initMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            BiConsumer<T, ServerPlayer> receiver) {
+        PayloadTypeRegistry.playC2S().register(type, codec);
+        PayloadTypeRegistry.playS2C().register(type, codec);
+        ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) ->
+                receiver.accept(payload, context.player()));
+    }
+
+    @Override
+    public void sendPluginMessage(ServerPlayer player, CustomPacketPayload payload) {
+        ServerPlayNetworking.send(player, payload);
     }
 }

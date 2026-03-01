@@ -18,7 +18,11 @@
 package net.skinsrestorer.mod;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.Tristate;
@@ -27,6 +31,7 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 
 import java.util.ServiceLoader;
+import java.util.function.BiConsumer;
 
 @SuppressWarnings("unused")
 public interface SRModPlatform {
@@ -40,4 +45,20 @@ public interface SRModPlatform {
     Tristate test(CommandSourceStack stack, Permission permission);
 
     void registerPermission(Permission permission, Component description);
+
+    /**
+     * Registers a raw message channel directly with the platform networking API,
+     * bypassing Architectury's codec wrapping which adds varint length prefixes
+     * incompatible with proxy plugin messages.
+     */
+    <T extends CustomPacketPayload> void initMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            BiConsumer<T, ServerPlayer> receiver);
+
+    /**
+     * Sends a payload to a player using the platform networking API directly,
+     * bypassing Architectury's codec wrapping.
+     */
+    void sendPluginMessage(ServerPlayer player, CustomPacketPayload payload);
 }

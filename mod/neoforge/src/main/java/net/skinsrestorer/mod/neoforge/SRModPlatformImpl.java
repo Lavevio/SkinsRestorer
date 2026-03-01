@@ -18,10 +18,18 @@
 package net.skinsrestorer.mod.neoforge;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.minecraft.server.permissions.PermissionLevel;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
@@ -38,6 +46,7 @@ import org.incendo.cloud.neoforge.NeoForgeServerCommandManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 @SuppressWarnings("unused")
 public class SRModPlatformImpl implements SRModPlatform {
@@ -78,5 +87,24 @@ public class SRModPlatformImpl implements SRModPlatform {
 
         PERMISSIONS.put(permission.getPermissionString(), node);
         NeoForge.EVENT_BUS.addListener(PermissionGatherEvent.Nodes.class, event -> event.addNodes(node));
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void initMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            BiConsumer<T, ServerPlayer> receiver) {
+        ModLoadingContext.get().getActiveContainer().getEventBus()
+                .addListener(RegisterPayloadHandlersEvent.class, event -> {
+                    PayloadRegistrar registrar = event.registrar("1").optional();
+                    registrar.playToServer(type, codec, (payload, context) ->
+                            receiver.accept(payload, (ServerPlayer) context.player()));
+                    registrar.playToClient(type, codec);
+                });
+    }
+
+    @Override
+    public void sendPluginMessage(ServerPlayer player, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayer(player, payload);
     }
 }

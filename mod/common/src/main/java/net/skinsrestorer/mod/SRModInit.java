@@ -19,7 +19,6 @@ package net.skinsrestorer.mod;
 
 import ch.jalu.injector.Injector;
 import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -32,14 +31,16 @@ import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
 import net.skinsrestorer.mod.listener.AdminInfoListener;
 import net.skinsrestorer.mod.listener.PlayerJoinListener;
-import net.skinsrestorer.mod.listener.ServerMessageListener;
 import net.skinsrestorer.mod.wrapper.ModComponentHelper;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
+import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
@@ -139,11 +140,24 @@ public class SRModInit implements SRServerPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, SR_MESSAGE_CHANNEL, RawBytePayload.STREAM_CODEC, injector.getSingleton(ServerMessageListener.class));
-        NetworkManager.registerS2CPayloadType(
-                SR_MESSAGE_CHANNEL,
-                RawBytePayload.STREAM_CODEC
-        );
+        SRServerMessageAdapter messageAdapter = injector.getSingleton(SRServerMessageAdapter.class);
+        SRModPlatform.INSTANCE.initMessageChannel(SR_MESSAGE_CHANNEL, RawBytePayload.STREAM_CODEC,
+                (payload, player) -> messageAdapter.handlePluginMessage(new SRServerMessageEvent() {
+                    @Override
+                    public SRServerPlayer getPlayer() {
+                        return wrapper.player(player);
+                    }
+
+                    @Override
+                    public byte[] getData() {
+                        return payload.data();
+                    }
+
+                    @Override
+                    public String getChannel() {
+                        return SR_MESSAGE_CHANNEL.id().toString();
+                    }
+                }));
     }
 
     public record RawBytePayload(byte[] data) implements CustomPacketPayload {
