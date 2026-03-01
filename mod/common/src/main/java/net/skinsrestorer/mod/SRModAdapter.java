@@ -57,13 +57,17 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class SRModAdapter implements SRServerAdapter {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final List<Object> REFERENCES_TO_PREVENT_GC = new ArrayList<>();
     private final Injector injector;
-    private final ScheduledExecutorService asyncScheduler = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService asyncScheduler = Executors.newSingleThreadScheduledExecutor(Thread.ofPlatform()
+            .daemon()
+            .name("SkinsRestorer-Async")
+            .factory());
 
     @Inject
     public SRModAdapter(Injector injector) {

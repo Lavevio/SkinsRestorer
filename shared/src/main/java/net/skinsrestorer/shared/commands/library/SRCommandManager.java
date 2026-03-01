@@ -95,11 +95,10 @@ public class SRCommandManager {
                     throw new IllegalArgumentException("Only SRPlayer is supported");
                 },
                 storageRepository);
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "SRCooldownCleanupThread");
-            t.setDaemon(true);
-            return t;
-        });
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(Thread.ofPlatform()
+                .daemon()
+                .name("SkinsRestorer-Cooldown-Cleanup")
+                .factory());
         this.cooldownManager = CooldownManager.cooldownManager(CooldownConfiguration.<SRCommandSender>builder()
                 .repository(cooldownRepository)
                 .addCreationListener((sender, command, instance) ->
