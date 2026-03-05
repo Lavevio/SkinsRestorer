@@ -29,6 +29,7 @@ import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.RateLimitBackoff;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
@@ -52,12 +53,13 @@ public class MojangBatchAPI {
     private final SettingsManager settings;
     private final String batchEndpoint;
     private final String userAgent;
+    private final RateLimitBackoff rateLimitBackoff;
     private final ConcurrentHashMap<String, CompletableFuture<Optional<UUID>>> pendingRequests = new ConcurrentHashMap<>();
     private final List<String> batchQueue = Collections.synchronizedList(new ArrayList<>());
     private final AtomicLong lastBatchTime = new AtomicLong(System.currentTimeMillis());
     private final AtomicBoolean batchInProgress = new AtomicBoolean(false);
 
-    public MojangBatchAPI(MetricsCounter metricsCounter, SRLogger logger, SRPlatformAdapter adapter, HttpClient httpClient, SettingsManager settings, String batchEndpoint, String userAgent) {
+    public MojangBatchAPI(MetricsCounter metricsCounter, SRLogger logger, SRPlatformAdapter adapter, HttpClient httpClient, SettingsManager settings, String batchEndpoint, String userAgent, RateLimitBackoff rateLimitBackoff) {
         this.metricsCounter = metricsCounter;
         this.logger = logger;
         this.adapter = adapter;
@@ -65,6 +67,7 @@ public class MojangBatchAPI {
         this.settings = settings;
         this.batchEndpoint = batchEndpoint;
         this.userAgent = userAgent;
+        this.rateLimitBackoff = rateLimitBackoff;
     }
 
     public CompletableFuture<Optional<UUID>> getUUID(String playerName) {
@@ -148,6 +151,12 @@ public class MojangBatchAPI {
             return Collections.emptyList();
         }
 
+        if (rateLimitBackoff.isRateLimited(batchEndpoint)) {
+            long remainingMs = rateLimitBackoff.getRemainingMs(batchEndpoint);
+            throw new DataRequestExceptionShared("Rate limited, retrying in %d seconds. (Rate Limited)".formatted(
+                    TimeUnit.MILLISECONDS.toSeconds(remainingMs)));
+        }
+
         // Limit to 10 names as per API
         List<String> batchNames = names.size() > DEFAULT_BATCH_SIZE ? names.subList(0, DEFAULT_BATCH_SIZE) : names;
 
@@ -174,6 +183,7 @@ public class MojangBatchAPI {
                 );
                 return processBatchResponse(entries, batchNames);
             } else if (httpResponse.statusCode() == 429) {
+                rateLimitBackoff.markRateLimited(batchEndpoint, httpResponse);
                 throw new DataRequestExceptionShared("Please wait a minute before requesting that skin again. (Rate Limited)");
             } else {
                 logger.debug("Batch request failed with status: " + httpResponse.statusCode());

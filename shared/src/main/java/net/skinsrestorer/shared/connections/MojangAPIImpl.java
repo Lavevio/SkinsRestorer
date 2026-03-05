@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.RateLimitBackoff;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
@@ -65,6 +66,8 @@ public class MojangAPIImpl implements MojangAPI {
         this.plugin = plugin;
         this.httpClient = httpClient;
 
+        RateLimitBackoff rateLimitBackoff = new RateLimitBackoff();
+
         // Create batch API instances with different endpoints
         this.newBatchAPI = new MojangBatchAPI(
                 metricsCounter,
@@ -73,7 +76,8 @@ public class MojangAPIImpl implements MojangAPI {
                 httpClient,
                 settings,
                 BATCH_UUID_NEW_ENDPOINT,
-                plugin.getUserAgent()
+                plugin.getUserAgent(),
+                rateLimitBackoff
         );
 
         this.legacyBatchAPI = new MojangBatchAPI(
@@ -83,7 +87,8 @@ public class MojangAPIImpl implements MojangAPI {
                 httpClient,
                 settings,
                 BATCH_UUID_LEGACY_ENDPOINT,
-                plugin.getUserAgent()
+                plugin.getUserAgent(),
+                rateLimitBackoff
         );
     }
 
