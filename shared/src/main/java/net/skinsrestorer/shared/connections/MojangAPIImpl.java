@@ -22,12 +22,14 @@ import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.profile.EclipseProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.MojangProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.PropertyResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.EclipseUUIDResponse;
+import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
@@ -46,8 +48,10 @@ import java.util.concurrent.TimeoutException;
 
 public class MojangAPIImpl implements MojangAPI {
     private static final String UUID_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%";
+    private static final String UUID_ELYBY = "https://account.ely.by/api/mojang/profiles/%playerName%";
     private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
+    private static final String PROFILE_ELYBY = "https://account.ely.by/api/minecraft/session/profile/%uuid%?unsigned=false";
     private static final String BATCH_UUID_NEW_ENDPOINT = "https://api.minecraftservices.com/minecraft/profile/lookup/bulk/byname";
     private static final String BATCH_UUID_LEGACY_ENDPOINT = "https://api.mojang.com/profiles/minecraft";
 
@@ -55,6 +59,7 @@ public class MojangAPIImpl implements MojangAPI {
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final HttpClient httpClient;
+    private final SettingsManager settings;
 
     private final MojangBatchAPI newBatchAPI;
     private final MojangBatchAPI legacyBatchAPI;
@@ -65,6 +70,7 @@ public class MojangAPIImpl implements MojangAPI {
         this.logger = logger;
         this.plugin = plugin;
         this.httpClient = httpClient;
+        this.settings = settings;
 
         RateLimitBackoff rateLimitBackoff = new RateLimitBackoff();
 
@@ -123,6 +129,18 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         List<Throwable> suppressedExceptions = new ArrayList<>();
+        if (settings.getProperty(APIConfig.ELYBY_ENABLED)) {
+            try {
+                Optional<UUID> uuid = getUUIDElyBy(playerName);
+                if (uuid.isPresent()) {
+                    return uuid;
+                }
+            } catch (DataRequestException e) {
+                logger.debug(e);
+                suppressedExceptions.add(e);
+            }
+        }
+
         try {
             return getUUIDMojang(playerName, newBatchAPI);
         } catch (DataRequestException e) {
@@ -176,7 +194,35 @@ public class MojangAPIImpl implements MojangAPI {
         return Optional.ofNullable(response.uuid());
     }
 
+    public Optional<UUID> getUUIDElyBy(String playerName) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(UUID_ELYBY.replace("%playerName%", playerName)), MetricsCounter.Service.ELYBY_UUID);
+        if (httpResponse.statusCode() == 204) {
+            return Optional.empty();
+        }
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Ely.by error: %d".formatted(httpResponse.statusCode()));
+        }
+
+        MojangUUIDResponse response = httpResponse.getBodyAs(MojangUUIDResponse.class);
+        if (response.getId() == null || response.getId().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return UUIDUtils.tryParseUniqueId(response.getId());
+    }
+
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
+        if (settings.getProperty(APIConfig.ELYBY_ENABLED)) {
+            try {
+                Optional<SkinProperty> elyByProfile = getProfileElyBy(uuid);
+                if (elyByProfile.isPresent()) {
+                    return elyByProfile;
+                }
+            } catch (DataRequestException e) {
+                logger.debug(e);
+            }
+        }
+
         try {
             return getProfileMojang(uuid);
         } catch (DataRequestException e) {
@@ -191,6 +237,22 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         throw new DataRequestExceptionShared("Failed to get profile for player: %s".formatted(uuid));
+    }
+
+    /**
+     * Get a fresh profile directly from the source, bypassing caching.
+     * When Ely.by is enabled, prefer Ely.by and fall back to Mojang when needed.
+     * Used by /skin update.
+     */
+    public Optional<SkinProperty> getProfileFresh(UUID uuid) throws DataRequestException {
+        if (settings.getProperty(APIConfig.ELYBY_ENABLED)) {
+            Optional<SkinProperty> elyByProfile = getProfileElyBy(uuid);
+            if (elyByProfile.isPresent()) {
+                return elyByProfile;
+            }
+        }
+
+        return getProfileMojang(uuid);
     }
 
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
@@ -220,6 +282,41 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         return Optional.of(SkinProperty.of(response.skinProperty().value(), response.skinProperty().signature()));
+    }
+
+    public Optional<SkinProperty> getProfileElyBy(UUID uuid) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(PROFILE_ELYBY.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.ELYBY_PROFILE);
+        if (httpResponse.statusCode() == 204) {
+            return Optional.empty();
+        }
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Ely.by error: %d".formatted(httpResponse.statusCode()));
+        }
+
+        MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
+        if (response.getProperties() == null) {
+            return Optional.empty();
+        }
+
+        for (PropertyResponse property : response.getProperties()) {
+            if ("textures".equals(property.getName())) {
+                if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
+                    return Optional.empty();
+                }
+                return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<SkinProperty> getProfileElyByName(String playerName) throws DataRequestException {
+        Optional<UUID> uuid = getUUIDElyBy(playerName);
+        if (uuid.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return getProfileElyBy(uuid.get());
     }
 
     private HttpResponse readURL(URI uri, MetricsCounter.Service service) throws DataRequestException {

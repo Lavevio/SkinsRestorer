@@ -143,7 +143,9 @@ public class MetricsCounter {
         MINESKIN_CALLS,
         MOJANG_UUID,
         MOJANG_PROFILE,
+        ELYBY_UUID,
         ECLIPSE_UUID,
-        ECLIPSE_PROFILE
+        ECLIPSE_PROFILE,
+        ELYBY_PROFILE
     }
 }
