@@ -52,6 +52,7 @@ public class MojangAPIImpl implements MojangAPI {
     private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String PROFILE_ELYBY = "https://account.ely.by/api/minecraft/session/profile/%uuid%?unsigned=false";
+    private static final String PROFILE_ELYBY_SIGNED = "https://skinsystem.ely.by/textures/signed/%playerName%";
     private static final String BATCH_UUID_NEW_ENDPOINT = "https://api.minecraftservices.com/minecraft/profile/lookup/bulk/byname";
     private static final String BATCH_UUID_LEGACY_ENDPOINT = "https://api.mojang.com/profiles/minecraft";
 
@@ -294,29 +295,49 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
+        if (response.getName() == null || response.getName().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return getProfileElyBySigned(response.getName());
+    }
+
+    private Optional<SkinProperty> getProfileElyBySigned(String playerName) throws DataRequestException {
+        if (ValidationUtil.invalidMinecraftUsername(playerName)) {
+            return Optional.empty();
+        }
+
+        HttpResponse httpResponse = readURL(URI.create(PROFILE_ELYBY_SIGNED.replace("%playerName%", playerName)), MetricsCounter.Service.ELYBY_PROFILE);
+        if (httpResponse.statusCode() == 204) {
+            return Optional.empty();
+        }
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Ely.by error: %d".formatted(httpResponse.statusCode()));
+        }
+
+        MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
         if (response.getProperties() == null) {
             return Optional.empty();
         }
 
         for (PropertyResponse property : response.getProperties()) {
-            if ("textures".equals(property.getName())) {
-                if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
-                    return Optional.empty();
-                }
-                return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
+            if (!"textures".equals(property.getName())) {
+                continue;
             }
+
+            if (property.getValue() == null || property.getValue().isEmpty()
+                    || property.getSignature() == null || property.getSignature().isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
         }
 
         return Optional.empty();
     }
 
     public Optional<SkinProperty> getProfileElyByName(String playerName) throws DataRequestException {
-        Optional<UUID> uuid = getUUIDElyBy(playerName);
-        if (uuid.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return getProfileElyBy(uuid.get());
+        return getProfileElyBySigned(playerName);
     }
 
     private HttpResponse readURL(URI uri, MetricsCounter.Service service) throws DataRequestException {
