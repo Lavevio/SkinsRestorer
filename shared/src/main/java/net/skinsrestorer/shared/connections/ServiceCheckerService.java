@@ -17,10 +17,12 @@
  */
 package net.skinsrestorer.shared.connections;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
@@ -41,6 +43,7 @@ public class ServiceCheckerService {
     private static final String PROFILE_MESSAGE = "%s <green>✔ %s Profile: <aqua>%s";
     private final MojangAPIImpl mojangAPI;
     private final SRLogger logger;
+    private final SettingsManager settings;
 
     public ServiceCheckResponse checkServices() {
         ServiceCheckResponse response = new ServiceCheckResponse();
@@ -103,6 +106,21 @@ public class ServiceCheckerService {
         } catch (DataRequestException e) {
             logger.debug("Error getting Eclipse Profile", e);
             response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Eclipse", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+        }
+
+        // ely.by profile (only when enabled)
+        if (settings.getProperty(APIConfig.ELYBY_ENABLED)) {
+            try {
+                Optional<SkinProperty> elyby = mojangAPI.getProfileElyByName(selectedUsername);
+                if (elyby.isPresent()) {
+                    response.addResult(PROFILE_MESSAGE.formatted("Ely.by", selectedUsername, elyby.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                } else {
+                    response.addResult(MESSAGE_ERROR.formatted("Ely.by", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                }
+            } catch (DataRequestException e) {
+                logger.debug("Error getting Ely.by Profile", e);
+                response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Ely.by", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            }
         }
 
         return response;

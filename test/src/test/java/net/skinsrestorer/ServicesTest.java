@@ -67,6 +67,7 @@ class ServicesTest {
 
         when(settings.getProperty(APIConfig.MOJANG_BATCH_WINDOW_SECONDS)).thenReturn(1);
         when(settings.getProperty(AdvancedConfig.NO_CONNECTIONS)).thenReturn(false);
+        when(settings.getProperty(APIConfig.ELYBY_ENABLED)).thenReturn(false);
 
         injector.register(SettingsManager.class, settings);
 

@@ -52,4 +52,11 @@ public class APIConfig implements SettingsHolder {
             "Default is 1 second."
     })
     public static final Property<Integer> MOJANG_BATCH_WINDOW_SECONDS = newProperty("api.mojangBatchWindowSeconds", 1);
+    @Comment({
+            "Enable Ely.by as a skin data provider.",
+            "When enabled, SkinsRestorer will use Ely.by to fetch player skins instead of Mojang.",
+            "This is useful for servers that support non-premium players using Ely.by accounts.",
+            "Disabled by default. Enable only if your server uses Ely.by."
+    })
+    public static final Property<Boolean> ELYBY_ENABLED = newProperty("api.elyByEnabled", false);
 }
