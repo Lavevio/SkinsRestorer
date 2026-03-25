@@ -35,3 +35,25 @@ class MappingPlugin : Plugin<Project> {
         }
     }
 }
+
+class UnobfMappingPlugin : Plugin<Project> {
+    override fun apply(project: Project) {
+        // Get existing extension or create new one
+        val extension = project.extensions.findByType<MappingExtension>()
+            ?: project.extensions.create("mapping", MappingExtension::class.java)
+
+        // Use dependency constraints with provider to avoid afterEvaluate
+        project.dependencies {
+            addProvider("compileOnly", extension.mcVersion.map { mcVersion ->
+                (project.dependencies.create("org.spigotmc:spigot:$mcVersion-R0.1-SNAPSHOT") as ExternalModuleDependency).apply {
+                    isTransitive = false
+                }
+            })
+            addProvider("compileOnly", extension.mcVersion.map { mcVersion ->
+                (project.dependencies.create("org.spigotmc:spigot-api:$mcVersion-R0.1-SNAPSHOT") as ExternalModuleDependency).apply {
+                    isTransitive = false
+                }
+            })
+        }
+    }
+}
