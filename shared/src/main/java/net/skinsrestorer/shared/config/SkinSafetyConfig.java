@@ -42,7 +42,7 @@ public class SkinSafetyConfig implements SettingsHolder {
     public static final Property<String> FALLBACK_SKIN = newProperty("skinSafety.fallbackSkin", "steve");
     @Comment("Players with this permission bypass command-side Skin Safety checks. Login-time safety checks still protect other players on the server.")
     public static final Property<String> BYPASS_PERMISSION = newProperty("skinSafety.bypassPermission", "skinsrestorer.skinsafety.bypass");
-    @Comment("Maximum Hamming distance for perceptual hash matches. Lower values are stricter; 0 means only exact perceptual matches are blocked.")
+    @Comment("Maximum Hamming distance for perceptual-v1 digest matches. Lower values are stricter; 0 means only exact perceptual matches are blocked.")
     public static final Property<Integer> PERCEPTUAL_HASH_MAX_DISTANCE = newCappedProperty("skinSafety.perceptualHashMaxDistance", 6, 0, 256);
 
     @Comment("Convenience denylist for obvious aliases, recommendation ids, or custom skin names. Exact texture hashes are still the stronger control.")
@@ -58,10 +58,12 @@ public class SkinSafetyConfig implements SettingsHolder {
     public static final Property<List<String>> LOCAL_BLOCKED_URL_PREFIXES = newListProperty("skinSafety.local.blockedUrlPrefixes", "https://badhost.example/");
     @Comment("Block entire image hosts by domain name. Subdomains are also matched.")
     public static final Property<List<String>> LOCAL_BLOCKED_DOMAINS = newListProperty("skinSafety.local.blockedDomains", "badhost.example");
-    @Comment("Exact hash of normalized PNG content. Admin-curated PNGs in skin-safety/blocked are added to this automatically at runtime.")
-    public static final Property<List<String>> LOCAL_BLOCKED_PNG_SHA256 = newListProperty("skinSafety.local.blockedPngSha256");
-    @Comment("Near-duplicate detector for normalized PNG content. Useful for lightly edited variants of the same unsafe skin.")
-    public static final Property<List<String>> LOCAL_BLOCKED_PERCEPTUAL_HASHES = newListProperty("skinSafety.local.blockedPerceptualHashes");
+    @Comment({
+            "Generic image digest rules in the form '<algorithm>:<digest>'.",
+            "Supported algorithms: 'sha256' for exact normalized PNG matches and 'perceptual-v1' for near-duplicate matching.",
+            "Admin-curated PNGs in skin-safety/blocked add both digest types automatically at runtime."
+    })
+    public static final Property<List<String>> LOCAL_BLOCKED_DIGESTS = newListProperty("skinSafety.local.blockedDigests");
     @Comment("Local allowlist that wins over the hosted or local texture blocklists.")
     public static final Property<List<String>> LOCAL_ALLOWED_TEXTURE_HASHES = newListProperty("skinSafety.local.allowedTextureHashes");
     @Comment("Local allowlist for player UUIDs that should never be blocked by Skin Safety.")

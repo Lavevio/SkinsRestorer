@@ -33,9 +33,14 @@ public class SkinSafetyBlocklistResponse {
     public static class Entry {
         private SkinSafetyMatchType matchType;
         private String value;
+        private String digest;
         private String[] categories;
         private Integer severity;
         private String reason;
+
+        public String getDigestOrValue() {
+            return digest != null ? digest : value;
+        }
     }
 
     @Getter

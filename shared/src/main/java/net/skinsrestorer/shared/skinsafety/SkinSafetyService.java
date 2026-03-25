@@ -54,7 +54,7 @@ public class SkinSafetyService {
     private final SettingsManager settings;
     private final SRLogger logger;
     private final SkinSafetyState state;
-    private final ConcurrentMap<String, Optional<SkinSafetyImageHashes>> imageHashCache = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Optional<SkinSafetyImageDigests>> imageDigestCache = new ConcurrentHashMap<>();
 
     @Inject
     public SkinSafetyService(SettingsManager settings, SRLogger logger, SkinSafetyState state) {
@@ -208,20 +208,25 @@ public class SkinSafetyService {
             }
         }
 
-        if (snapshot.hasImageHashRules() && imageUrl != null) {
-            Optional<SkinSafetyImageHashes> imageHashes = loadImageHashes(imageCacheKey == null ? imageUrl : imageCacheKey, imageUrl);
-            if (imageHashes.isPresent()) {
-                String sha256 = normalize(imageHashes.get().sha256());
-                if (snapshot.blockedPngSha256().contains(sha256)) {
-                    return new SkinSafetyDecision(mode, new SkinSafetyMatch(SkinSafetyMatchType.PNG_SHA256, sha256, imageUrl));
+        if (snapshot.hasDigestRules() && imageUrl != null) {
+            Optional<SkinSafetyImageDigests> imageDigests = loadImageDigests(imageCacheKey == null ? imageUrl : imageCacheKey, imageUrl);
+            if (imageDigests.isPresent()) {
+                String matchedDigest = findMatchingDigest(snapshot, imageDigests.get(), SkinSafetyDigestAlgorithm.SHA256);
+                if (matchedDigest != null) {
+                    return new SkinSafetyDecision(mode, new SkinSafetyMatch(
+                            SkinSafetyMatchType.DIGEST,
+                            SkinSafetyDigestAlgorithm.SHA256.encode(matchedDigest),
+                            imageUrl
+                    ));
                 }
 
-                String perceptualHash = normalize(imageHashes.get().perceptualHash());
-                for (String blockedHash : snapshot.blockedPerceptualHashes()) {
-                    int distance = SkinHashing.hammingDistance(perceptualHash, blockedHash);
-                    if (distance <= settings.getProperty(SkinSafetyConfig.PERCEPTUAL_HASH_MAX_DISTANCE)) {
-                        return new SkinSafetyDecision(mode, new SkinSafetyMatch(SkinSafetyMatchType.PERCEPTUAL_HASH, blockedHash, imageUrl));
-                    }
+                matchedDigest = findMatchingDigest(snapshot, imageDigests.get(), SkinSafetyDigestAlgorithm.PERCEPTUAL_V1);
+                if (matchedDigest != null) {
+                    return new SkinSafetyDecision(mode, new SkinSafetyMatch(
+                            SkinSafetyMatchType.DIGEST,
+                            SkinSafetyDigestAlgorithm.PERCEPTUAL_V1.encode(matchedDigest),
+                            imageUrl
+                    ));
                 }
             }
         }
@@ -229,8 +234,25 @@ public class SkinSafetyService {
         return SkinSafetyDecision.allow(mode);
     }
 
-    private Optional<SkinSafetyImageHashes> loadImageHashes(String cacheKey, String imageUrl) {
-        return imageHashCache.computeIfAbsent(cacheKey, ignored -> {
+    private String findMatchingDigest(SkinSafetyBlocklistSnapshot snapshot,
+                                      SkinSafetyImageDigests imageDigests,
+                                      SkinSafetyDigestAlgorithm algorithm) {
+        String candidateDigest = imageDigests.getDigest(algorithm);
+        if (candidateDigest == null) {
+            return null;
+        }
+
+        int perceptualHashMaxDistance = settings.getProperty(SkinSafetyConfig.PERCEPTUAL_HASH_MAX_DISTANCE);
+        for (String blockedDigest : snapshot.blockedDigests(algorithm)) {
+            if (algorithm.matches(candidateDigest, blockedDigest, perceptualHashMaxDistance)) {
+                return blockedDigest;
+            }
+        }
+        return null;
+    }
+
+    private Optional<SkinSafetyImageDigests> loadImageDigests(String cacheKey, String imageUrl) {
+        return imageDigestCache.computeIfAbsent(cacheKey, ignored -> {
             try {
                 byte[] bytes = readImageBytes(imageUrl);
                 if (bytes.length == 0) {
@@ -243,7 +265,7 @@ public class SkinSafetyService {
                 }
 
                 SkinHashing.SkinFingerprint fingerprint = SkinHashing.fingerprint(image);
-                return Optional.of(new SkinSafetyImageHashes(fingerprint.sha256(), fingerprint.perceptualHash()));
+                return Optional.of(SkinSafetyImageDigests.of(fingerprint.sha256(), fingerprint.perceptualHash()));
             } catch (Exception e) {
                 logger.debug("Failed to hash skin image from %s".formatted(imageUrl), e);
                 return Optional.empty();

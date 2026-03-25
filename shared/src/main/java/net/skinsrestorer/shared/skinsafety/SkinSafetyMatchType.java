@@ -24,6 +24,9 @@ public enum SkinSafetyMatchType {
     PLAYER_NAME,
     URL_PREFIX,
     DOMAIN,
+    DIGEST,
+    @Deprecated
     PNG_SHA256,
+    @Deprecated
     PERCEPTUAL_HASH
 }

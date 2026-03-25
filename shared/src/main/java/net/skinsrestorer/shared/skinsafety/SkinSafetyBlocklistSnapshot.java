@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.shared.skinsafety;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,8 +29,7 @@ public record SkinSafetyBlocklistSnapshot(
         Set<String> blockedPlayerNames,
         Set<String> blockedUrlPrefixes,
         Set<String> blockedDomains,
-        Set<String> blockedPngSha256,
-        Set<String> blockedPerceptualHashes,
+        Map<SkinSafetyDigestAlgorithm, Set<String>> blockedDigests,
         Set<String> allowTextureHashes,
         Set<UUID> allowPlayerUuids
 ) {
@@ -39,8 +40,9 @@ public record SkinSafetyBlocklistSnapshot(
         blockedPlayerNames = Set.copyOf(blockedPlayerNames);
         blockedUrlPrefixes = Set.copyOf(blockedUrlPrefixes);
         blockedDomains = Set.copyOf(blockedDomains);
-        blockedPngSha256 = Set.copyOf(blockedPngSha256);
-        blockedPerceptualHashes = Set.copyOf(blockedPerceptualHashes);
+        EnumMap<SkinSafetyDigestAlgorithm, Set<String>> normalizedBlockedDigests = new EnumMap<>(SkinSafetyDigestAlgorithm.class);
+        blockedDigests.forEach((algorithm, values) -> normalizedBlockedDigests.put(algorithm, Set.copyOf(values)));
+        blockedDigests = Map.copyOf(normalizedBlockedDigests);
         allowTextureHashes = Set.copyOf(allowTextureHashes);
         allowPlayerUuids = Set.copyOf(allowPlayerUuids);
     }
@@ -53,14 +55,17 @@ public record SkinSafetyBlocklistSnapshot(
                 Set.of(),
                 Set.of(),
                 Set.of(),
-                Set.of(),
-                Set.of(),
+                Map.of(),
                 Set.of(),
                 Set.of()
         );
     }
 
-    public boolean hasImageHashRules() {
-        return !blockedPngSha256.isEmpty() || !blockedPerceptualHashes.isEmpty();
+    public Set<String> blockedDigests(SkinSafetyDigestAlgorithm algorithm) {
+        return blockedDigests.getOrDefault(algorithm, Set.of());
+    }
+
+    public boolean hasDigestRules() {
+        return blockedDigests.values().stream().anyMatch(values -> !values.isEmpty());
     }
 }

@@ -209,8 +209,7 @@ public class SkinSafetyState {
         Set<String> blockedPlayerNames = normalizeStrings(settings.getProperty(SkinSafetyConfig.LOCAL_BLOCKED_PLAYER_NAMES));
         Set<String> blockedUrlPrefixes = normalizeStrings(settings.getProperty(SkinSafetyConfig.LOCAL_BLOCKED_URL_PREFIXES));
         Set<String> blockedDomains = normalizeStrings(settings.getProperty(SkinSafetyConfig.LOCAL_BLOCKED_DOMAINS));
-        Set<String> blockedPngSha256 = normalizeStrings(settings.getProperty(SkinSafetyConfig.LOCAL_BLOCKED_PNG_SHA256));
-        Set<String> blockedPerceptualHashes = normalizeStrings(settings.getProperty(SkinSafetyConfig.LOCAL_BLOCKED_PERCEPTUAL_HASHES));
+        Map<SkinSafetyDigestAlgorithm, Set<String>> blockedDigests = parseDigests(settings.getProperty(SkinSafetyConfig.LOCAL_BLOCKED_DIGESTS));
         Set<String> allowTextureHashes = normalizeStrings(settings.getProperty(SkinSafetyConfig.LOCAL_ALLOWED_TEXTURE_HASHES));
         Set<UUID> allowPlayerUuids = parseUuids(settings.getProperty(SkinSafetyConfig.LOCAL_ALLOWED_PLAYER_UUIDS));
 
@@ -218,11 +217,11 @@ public class SkinSafetyState {
             blockedNames.addAll(normalizeStrings(settings.getProperty(CommandConfig.DISABLED_SKINS)));
         }
 
-        loadBlockedPngFingerprints(blockedPngSha256, blockedPerceptualHashes);
+        loadBlockedPngFingerprints(blockedDigests);
 
         if (remote != null && remote.getEntries() != null) {
             for (SkinSafetyBlocklistResponse.Entry entry : remote.getEntries()) {
-                if (entry == null || entry.getMatchType() == null || entry.getValue() == null) {
+                if (entry == null || entry.getMatchType() == null) {
                     continue;
                 }
                 if (!isRemoteEntryEnabled(entry)) {
@@ -230,14 +229,17 @@ public class SkinSafetyState {
                 }
 
                 switch (entry.getMatchType()) {
-                    case NAME -> blockedNames.add(normalize(entry.getValue()));
-                    case TEXTURE_HASH -> blockedTextureHashes.add(normalize(entry.getValue()));
+                    case NAME -> addNormalizedValue(blockedNames, entry.getValue());
+                    case TEXTURE_HASH -> addNormalizedValue(blockedTextureHashes, entry.getValue());
                     case PLAYER_UUID -> parseUuid(entry.getValue()).ifPresent(blockedPlayerUuids::add);
-                    case PLAYER_NAME -> blockedPlayerNames.add(normalize(entry.getValue()));
-                    case URL_PREFIX -> blockedUrlPrefixes.add(normalize(entry.getValue()));
-                    case DOMAIN -> blockedDomains.add(normalize(entry.getValue()));
-                    case PNG_SHA256 -> blockedPngSha256.add(normalize(entry.getValue()));
-                    case PERCEPTUAL_HASH -> blockedPerceptualHashes.add(normalize(entry.getValue()));
+                    case PLAYER_NAME -> addNormalizedValue(blockedPlayerNames, entry.getValue());
+                    case URL_PREFIX -> addNormalizedValue(blockedUrlPrefixes, entry.getValue());
+                    case DOMAIN -> addNormalizedValue(blockedDomains, entry.getValue());
+                    case DIGEST -> parseRemoteDigest(entry.getDigestOrValue()).ifPresent(digest -> addDigest(blockedDigests, digest));
+                    case PNG_SHA256 -> parseLegacyDigest(entry.getValue(), SkinSafetyDigestAlgorithm.SHA256)
+                            .ifPresent(digest -> addDigest(blockedDigests, digest));
+                    case PERCEPTUAL_HASH -> parseLegacyDigest(entry.getValue(), SkinSafetyDigestAlgorithm.PERCEPTUAL_V1)
+                            .ifPresent(digest -> addDigest(blockedDigests, digest));
                 }
             }
         }
@@ -258,14 +260,13 @@ public class SkinSafetyState {
                 blockedPlayerNames,
                 blockedUrlPrefixes,
                 blockedDomains,
-                blockedPngSha256,
-                blockedPerceptualHashes,
+                blockedDigests,
                 allowTextureHashes,
                 allowPlayerUuids
         );
     }
 
-    private void loadBlockedPngFingerprints(Set<String> blockedPngSha256, Set<String> blockedPerceptualHashes) {
+    private void loadBlockedPngFingerprints(Map<SkinSafetyDigestAlgorithm, Set<String>> blockedDigests) {
         try (var files = Files.list(getBlockedPngFolder())) {
             files.filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".png"))
@@ -278,8 +279,8 @@ public class SkinSafetyState {
                             }
 
                             SkinHashing.SkinFingerprint fingerprint = SkinHashing.fingerprint(image);
-                            blockedPngSha256.add(fingerprint.sha256());
-                            blockedPerceptualHashes.add(fingerprint.perceptualHash());
+                            addDigest(blockedDigests, SkinSafetyDigest.sha256(fingerprint.sha256()));
+                            addDigest(blockedDigests, SkinSafetyDigest.perceptualV1(fingerprint.perceptualHash()));
                         } catch (Exception e) {
                             logger.warning("Failed to fingerprint blocked skin PNG '%s': %s".formatted(path.getFileName(), e.getMessage()));
                         }
@@ -308,6 +309,54 @@ public class SkinSafetyState {
             }
         }
         return false;
+    }
+
+    private Map<SkinSafetyDigestAlgorithm, Set<String>> parseDigests(Collection<String> values) {
+        Map<SkinSafetyDigestAlgorithm, Set<String>> parsedDigests = new EnumMap<>(SkinSafetyDigestAlgorithm.class);
+        for (String value : values) {
+            parseDigest(value).ifPresent(digest -> addDigest(parsedDigests, digest));
+        }
+        return parsedDigests;
+    }
+
+    private void addDigest(Map<SkinSafetyDigestAlgorithm, Set<String>> blockedDigests, SkinSafetyDigest digest) {
+        blockedDigests.computeIfAbsent(digest.algorithm(), ignored -> new HashSet<>()).add(digest.value());
+    }
+
+    private void addNormalizedValue(Set<String> values, @Nullable String value) {
+        String normalizedValue = normalize(value);
+        if (!normalizedValue.isEmpty()) {
+            values.add(normalizedValue);
+        }
+    }
+
+    private Optional<SkinSafetyDigest> parseDigest(@Nullable String value) {
+        if (value == null || value.isBlank()) {
+            return Optional.empty();
+        }
+
+        Optional<SkinSafetyDigest> digest = SkinSafetyDigest.parse(value);
+        if (digest.isEmpty()) {
+            logger.warning("Ignoring invalid skin safety digest '%s'".formatted(value));
+        }
+        return digest;
+    }
+
+    private Optional<SkinSafetyDigest> parseRemoteDigest(@Nullable String value) {
+        if (value == null || value.isBlank()) {
+            return Optional.empty();
+        }
+
+        return SkinSafetyDigest.parse(value);
+    }
+
+    private Optional<SkinSafetyDigest> parseLegacyDigest(@Nullable String value, SkinSafetyDigestAlgorithm algorithm) {
+        String normalizedValue = normalize(value);
+        if (normalizedValue.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new SkinSafetyDigest(algorithm, normalizedValue));
     }
 
     private Set<String> normalizeStrings(Collection<String> values) {
