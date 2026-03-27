@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.13-SNAPSHOT"
+    id("dev.architectury.loom-no-remap") version "1.14-SNAPSHOT"
     id("sr.base-logic")
     id("com.gradleup.shadow")
 }
@@ -48,19 +48,18 @@ repositories {
 
 dependencies {
     minecraft("net.minecraft:minecraft:${rootProject.property("modMcVersion")}")
-    mappings(loom.officialMojangMappings())
 
     neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
     // Cloud command framework for NeoForge
-    modImplementation("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
+    implementation("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
     include("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
 
-    common(project(path = ":skinsrestorer-mod-common", configuration = "namedElements")) { isTransitive = false }
+    common(project(path = ":skinsrestorer-mod-common")) { isTransitive = false }
     shadowBundle(
         project(
             path = ":skinsrestorer-mod-common",
-            configuration = "namedElements"
+            configuration = "transformProductionNeoForge"
         )
     ) { isTransitive = false }
 
@@ -92,10 +91,4 @@ tasks.processResources {
 tasks.shadowJar {
     configurations = listOf(shadowBundle)
     archiveClassifier.set("dev-shadow")
-}
-
-tasks.remapJar {
-    atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
-    inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
-    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
 }
