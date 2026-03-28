@@ -1,7 +1,7 @@
 plugins {
-    id("dev.architectury.loom-no-remap") version "1.14-SNAPSHOT"
     id("sr.base-logic")
     id("com.gradleup.shadow")
+    id("dev.architectury.loom-no-remap") version "1.14-SNAPSHOT"
 }
 
 base {
@@ -60,7 +60,6 @@ dependencies {
     shadowBundle(
         project(
             path = ":skinsrestorer-mod-common",
-            configuration = "transformProductionFabric"
         )
     ) { isTransitive = false }
 
