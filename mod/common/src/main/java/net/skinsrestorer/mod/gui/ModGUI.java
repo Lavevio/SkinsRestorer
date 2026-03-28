@@ -33,10 +33,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -51,6 +48,7 @@ import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -147,19 +145,19 @@ public class ModGUI implements GUIManager<MenuProvider> {
         }
 
         @Override
-        public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player clickingPlayer) {
-            Map<ClickEventType, SRInventory.ClickEventAction> slotHandlers = handlers.get(slotId);
+        public void clicked(final int slotIndex, final int buttonNum, final @NonNull ContainerInput containerInput, final @NonNull Player player) {
+            Map<ClickEventType, SRInventory.ClickEventAction> slotHandlers = handlers.get(slotIndex);
             if (slotHandlers == null) {
                 return;
             }
 
-            SRInventory.ClickEventAction action = slotHandlers.get(switch (clickType) {
-                case PICKUP -> switch (button) {
+            SRInventory.ClickEventAction action = slotHandlers.get(switch (containerInput) {
+                case PICKUP -> switch (buttonNum) {
                     case 0 -> ClickEventType.LEFT;
                     case 1 -> ClickEventType.RIGHT;
                     default -> ClickEventType.OTHER;
                 };
-                case QUICK_MOVE -> button == 0
+                case QUICK_MOVE -> buttonNum == 0
                         ? ClickEventType.SHIFT_LEFT
                         : ClickEventType.OTHER;
                 default -> ClickEventType.OTHER;
@@ -169,7 +167,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
                 return;
             }
 
-            dataCallback.handle(wrapper.player((ServerPlayer) clickingPlayer), action);
+            dataCallback.handle(wrapper.player((ServerPlayer) player), action);
         }
     }
 }
