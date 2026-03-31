@@ -37,6 +37,7 @@ dependencies {
         isTransitive = false
     }
 
+    compileOnly(libs.spigot.api)
     compileOnly(libs.floodgate.api)
 
     api(libs.bundles.adventure.shared)

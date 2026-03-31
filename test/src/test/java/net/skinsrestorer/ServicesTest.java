@@ -73,8 +73,7 @@ class ServicesTest {
 
         new SRPlugin(injector, null);
 
-        @SuppressWarnings("unused")
-        MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
+        injector.getSingleton(MetricsCounter.class);
         ServiceCheckerService.ServiceCheckResponse serviceChecker = injector.getSingleton(ServiceCheckerService.class).checkServices();
 
         serviceChecker.getResults().forEach(System.out::println);
