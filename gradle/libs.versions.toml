@@ -15,7 +15,7 @@ slf4j = "2.0.17"
 gson = "2.13.2"
 spigot-api = "1.19.3-R0.1-SNAPSHOT"
 bstats-bukkit = "3.2.1"
-xseries = "13.6.0"
+xseries = "681b8d88df"
 multilib = "1.2.5"
 cloud-paper = "2.0.0-SNAPSHOT"
 placeholderapi = "2.12.2"
@@ -67,7 +67,7 @@ slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats-bukkit" }
-xseries = { module = "com.github.cryptomorin:XSeries", version.ref = "xseries" }
+xseries = { module = "com.github.SkinsRestorer:XSeries", version.ref = "xseries" }
 multilib = { module = "com.github.puregero:multilib", version.ref = "multilib" }
 cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud-paper" }
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
