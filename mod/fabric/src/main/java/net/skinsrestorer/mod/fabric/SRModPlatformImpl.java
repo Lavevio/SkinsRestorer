@@ -124,8 +124,8 @@ public class SRModPlatformImpl implements SRModPlatform {
             CustomPacketPayload.Type<T> type,
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             BiConsumer<T, ServerPlayer> receiver) {
-        PayloadTypeRegistry.playC2S().register(type, codec);
-        PayloadTypeRegistry.playS2C().register(type, codec);
+        PayloadTypeRegistry.serverboundPlay().register(type, codec);
+        PayloadTypeRegistry.clientboundPlay().register(type, codec);
         ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) ->
                 receiver.accept(payload, context.player()));
     }

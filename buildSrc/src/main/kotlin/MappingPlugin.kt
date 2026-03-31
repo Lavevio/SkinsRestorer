@@ -23,14 +23,10 @@ class MappingPlugin : Plugin<Project> {
         // Use dependency constraints with provider to avoid afterEvaluate
         project.dependencies {
             addProvider("compileOnly", extension.mcVersion.map { mcVersion ->
-                (project.dependencies.create("org.spigotmc:spigot:$mcVersion-R0.1-SNAPSHOT:remapped-mojang@jar") as ExternalModuleDependency).apply {
-                    isTransitive = false
-                }
+                project.dependencies.create("org.spigotmc:spigot:$mcVersion-R0.1-SNAPSHOT:remapped-mojang@jar") as ExternalModuleDependency
             })
             addProvider("compileOnly", extension.mcVersion.map { mcVersion ->
-                (project.dependencies.create("org.spigotmc:spigot-api:$mcVersion-R0.1-SNAPSHOT") as ExternalModuleDependency).apply {
-                    isTransitive = false
-                }
+                project.dependencies.create("org.spigotmc:spigot-api:$mcVersion-R0.1-SNAPSHOT") as ExternalModuleDependency
             })
         }
     }
@@ -48,9 +44,7 @@ class UnobfMappingPlugin : Plugin<Project> {
                 project.dependencies.create("org.spigotmc:spigot:$mcVersion-R0.1-SNAPSHOT") as ExternalModuleDependency
             })
             addProvider("compileOnly", extension.mcVersion.map { mcVersion ->
-                (project.dependencies.create("org.spigotmc:spigot-api:$mcVersion-R0.1-SNAPSHOT") as ExternalModuleDependency).apply {
-                    isTransitive = false
-                }
+                project.dependencies.create("org.spigotmc:spigot-api:$mcVersion-R0.1-SNAPSHOT") as ExternalModuleDependency
             })
         }
     }

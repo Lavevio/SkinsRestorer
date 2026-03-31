@@ -1,7 +1,7 @@
 plugins {
-    id("dev.architectury.loom") version "1.13-SNAPSHOT"
     id("sr.base-logic")
     id("com.gradleup.shadow")
+    id("dev.architectury.loom-no-remap") version "1.14-SNAPSHOT"
 }
 
 base {
@@ -41,27 +41,25 @@ configurations.configureEach {
 
 dependencies {
     minecraft("net.minecraft:minecraft:${rootProject.property("modMcVersion")}")
-    mappings(loom.officialMojangMappings())
 
-    modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
+    implementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
 
     // Fabric API
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
     include("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
 
     // Cloud command framework for Fabric
-    modImplementation("org.incendo:cloud-fabric:${rootProject.property("cloud_fabric_version")}")
+    implementation("org.incendo:cloud-fabric:${rootProject.property("cloud_fabric_version")}")
     include("org.incendo:cloud-fabric:${rootProject.property("cloud_fabric_version")}")
 
     // Fabric permissions API
-    modImplementation("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
+    implementation("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
     include("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
 
-    common(project(path = ":skinsrestorer-mod-common", configuration = "namedElements")) { isTransitive = false }
+    common(project(path = ":skinsrestorer-mod-common")) { isTransitive = false }
     shadowBundle(
         project(
             path = ":skinsrestorer-mod-common",
-            configuration = "namedElements"
         )
     ) { isTransitive = false }
 
@@ -97,9 +95,4 @@ tasks.processResources {
 tasks.shadowJar {
     configurations = listOf(shadowBundle)
     archiveClassifier.set("dev-shadow")
-}
-
-tasks.remapJar {
-    inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
-    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
 }

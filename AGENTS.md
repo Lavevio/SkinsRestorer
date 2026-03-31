@@ -24,7 +24,7 @@
 
 ### General
 
-- **Language**: Java 21
+- **Language**: Java 25
 - **Indentation**: 4 spaces (no tabs)
 - **Line length**: 120 characters maximum
 - **Encoding**: UTF-8
