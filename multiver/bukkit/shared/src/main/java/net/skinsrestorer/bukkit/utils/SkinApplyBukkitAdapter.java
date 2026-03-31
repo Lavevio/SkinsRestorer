@@ -34,7 +34,7 @@ public interface SkinApplyBukkitAdapter {
         return RStream.of(serverPlayer)
                 .withSuper()
                 .fields()
-                .filter(false)
+                .filterStatic(false)
                 .filter(f -> "GameProfile".equals(f.type().getSimpleName()))
                 .by(0);
     }
@@ -44,16 +44,21 @@ public interface SkinApplyBukkitAdapter {
 
         Object profile;
         try {
-            profile = ReflectionUtil.invokeObjectMethod(serverPlayer, "getProfile");
+            profile = ReflectionUtil.invokeObjectMethod(serverPlayer, "getGameProfile");
         } catch (ReflectiveOperationException e1) {
             try {
-                profile = getGameProfileField(serverPlayer).get();
-            } catch (RuntimeException e2) {
-                IllegalStateException ise = new IllegalStateException("Failed to get GameProfile from player");
-                ise.addSuppressed(e1);
-                ise.addSuppressed(e2);
+                profile = ReflectionUtil.invokeObjectMethod(serverPlayer, "getProfile");
+            } catch (ReflectiveOperationException e2) {
+                try {
+                    profile = getGameProfileField(serverPlayer).get();
+                } catch (RuntimeException e3) {
+                    IllegalStateException ise = new IllegalStateException("Failed to get GameProfile from player");
+                    ise.addSuppressed(e1);
+                    ise.addSuppressed(e2);
+                    ise.addSuppressed(e3);
 
-                throw ise;
+                    throw ise;
+                }
             }
         }
 
