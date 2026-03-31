@@ -91,3 +91,7 @@ tasks.shadowJar {
     configurations = listOf(shadowBundle)
     archiveClassifier.set("dev-shadow")
 }
+
+tasks.jar {
+    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
+}
