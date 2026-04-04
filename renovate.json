@@ -14,7 +14,7 @@
     "org.spigotmc:spigot-api",
     "net.fabricmc.fabric-api:fabric-api-bom",
     "net.fabricmc.fabric-api:fabric-api",
-    "dev.architectury.loom"
+    "dev.architectury.loom-no-remap"
   ],
   "labels": [
     "renovate"

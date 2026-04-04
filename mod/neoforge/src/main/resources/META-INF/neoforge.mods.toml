@@ -30,13 +30,6 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.skinsrestorer]]
-modId = "architectury"
-type = "required"
-versionRange = "[13.0.2,)"
-ordering = "AFTER"
-side = "BOTH"
-
-[[dependencies.skinsrestorer]]
 modId = "cloud"
 type = "required"
 versionRange = "[1.0,)"

@@ -14,12 +14,6 @@ allprojects {
     description = "Ability to restore/change skins on servers!"
 
     repositories {
-        maven("https://maven.architectury.dev/") {
-            name = "Architectury Repository"
-            content {
-                includeGroup("dev.architectury")
-            }
-        }
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
             content {
