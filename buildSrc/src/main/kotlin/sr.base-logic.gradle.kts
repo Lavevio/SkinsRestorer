@@ -33,7 +33,7 @@ dependencies {
     api("org.jetbrains:annotations:26.1.0")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.8")
 
-    errorprone("com.google.errorprone:error_prone_core:2.48.0")
+    errorprone("com.google.errorprone:error_prone_core:2.49.0")
     spotbugs("com.github.spotbugs:spotbugs:4.9.8")
 
     rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.31.0")
