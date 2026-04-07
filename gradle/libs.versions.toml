@@ -45,7 +45,7 @@ viabackwards = "5.8.1"
 miniplaceholders = "3.2.0"
 paper-api = "1.21.5-R0.1-SNAPSHOT"
 craftbukkit = "1.7.10-R0.1-SNAPSHOT"
-reflect = "1.6.2"
+reflect = "1.6.3"
 
 [libraries]
 
