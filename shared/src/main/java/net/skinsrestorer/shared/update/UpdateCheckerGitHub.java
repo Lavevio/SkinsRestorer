@@ -169,7 +169,7 @@ public class UpdateCheckerGitHub {
     private void printFooter() {
         logger.info(LOG_ROW);
         logger.info("§9Do you have issues? Read our troubleshooting guide: §ehttps://skinsrestorer.net/docs/troubleshooting");
-        logger.info("§9Want to support SkinsRestorer? Consider donating: §ehttps://skinsrestorer.net/donate");
+        logger.info("§9Want to support SkinsRestorer or receive priority support? Become a supporter: §ehttps://skinsrestorer.net/pricing");
     }
 
     public boolean isVersionNewer(String currentVersion, String newVersion) {
