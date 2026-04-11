@@ -31,10 +31,16 @@ public interface IMapping {
 
     /**
      * Format as in ServerBuildInfo#minecraftVersionId.
+     * Supports exact versions and selectors like {@code 26.1.*}, {@code 26.1+}, and {@code >=26.1 <26.2}.
      *
-     * @return The supported paper minecraft version ids versions of the mapping
+     * @return The supported paper minecraft version ids or selectors of the mapping
      */
     Set<String> getPaperMinecraftVersionIds();
+
+    default boolean supportsPaperMinecraftVersionId(String versionId) {
+        return getPaperMinecraftVersionIds().stream()
+                .anyMatch(selector -> PaperMinecraftVersionSelector.matches(selector, versionId));
+    }
 
     /**
      * Can be found at <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java">SpigotMC</a>

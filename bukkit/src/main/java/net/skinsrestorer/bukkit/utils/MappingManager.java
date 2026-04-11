@@ -61,7 +61,7 @@ public final class MappingManager {
                 .map(mapping.getSpigotMappingVersions()::contains)
                 .orElse(false);
         Predicate<IMapping> isSupportedPaperMapping = mapping -> paperMinecraftVersionId
-                .map(mapping.getPaperMinecraftVersionIds()::contains)
+                .map(mapping::supportsPaperMinecraftVersionId)
                 .orElse(false);
 
         return MAPPINGS.stream()

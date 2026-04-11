@@ -87,9 +87,7 @@ public class Mapping1_21_6 implements IMapping {
     @Override
     public Set<String> getPaperMinecraftVersionIds() {
         return Set.of(
-                "1.21.6",
-                "1.21.7",
-                "1.21.8"
+                ">=1.21.6 <1.21.9"
         );
     }
 
