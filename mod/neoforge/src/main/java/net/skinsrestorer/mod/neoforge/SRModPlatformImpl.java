@@ -18,7 +18,6 @@
 package net.skinsrestorer.mod.neoforge;
 
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -33,7 +32,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
@@ -146,18 +144,19 @@ public class SRModPlatformImpl implements SRModPlatform {
             CustomPacketPayload.Type<T> type,
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             BiConsumer<T, ServerPlayer> receiver) {
-        ModLoadingContext.get().getActiveContainer().getEventBus()
-                .addListener(RegisterPayloadHandlersEvent.class, event -> {
-                    PayloadRegistrar registrar = event.registrar("1").optional();
-                    registrar.playToServer(type, codec, (payload, context) ->
-                            receiver.accept(payload, (ServerPlayer) context.player()));
-                    registrar.playToClient(type, codec);
-                });
+        var container = Objects.requireNonNull(ModLoadingContext.get().getActiveContainer(), "Active NeoForge mod container");
+        var eventBus = Objects.requireNonNull(container.getEventBus(), "Active NeoForge mod event bus");
+        eventBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
+            PayloadRegistrar registrar = event.registrar("1").optional();
+            registrar.playToServer(type, codec, (payload, context) ->
+                    receiver.accept(payload, (ServerPlayer) context.player()));
+            registrar.playToClient(type, codec);
+        });
     }
 
     @Override
     public boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type) {
-        return NetworkRegistry.hasChannel(player.connection, ConnectionProtocol.PLAY, type.id());
+        return player.connection.hasChannel(type.id());
     }
 
     @Override
