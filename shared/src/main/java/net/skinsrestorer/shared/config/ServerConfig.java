@@ -62,6 +62,12 @@ public class ServerConfig implements SettingsHolder {
             "Proxy mode API will make server-side plugin calls to SkinsRestorer API possible. Only works if a database is set up instead of file storage.",
     })
     public static final Property<Boolean> PROXY_MODE_API = newProperty("server.proxyMode.api", true);
+    @Comment({
+            "Enables compatibility with the SkinShuffle mod.",
+            "When enabled, SkinShuffle clients can hot-swap skins through SkinsRestorer without reconnecting.",
+            "On proxy setups, install SkinsRestorer on both the proxy and backend servers for full support."
+    })
+    public static final Property<Boolean> SKINSHUFFLE_SUPPORT = newProperty("server.skinShuffleSupport", true);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

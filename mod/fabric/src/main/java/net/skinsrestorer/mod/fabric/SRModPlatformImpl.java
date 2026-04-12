@@ -137,6 +137,11 @@ public class SRModPlatformImpl implements SRModPlatform {
     }
 
     @Override
+    public boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type) {
+        return ServerPlayNetworking.canSend(player, type);
+    }
+
+    @Override
     public void sendPluginMessage(ServerPlayer player, CustomPacketPayload payload) {
         ServerPlayNetworking.send(player, payload);
     }

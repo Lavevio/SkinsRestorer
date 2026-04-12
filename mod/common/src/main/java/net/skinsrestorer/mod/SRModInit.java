@@ -30,9 +30,13 @@ import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
 import net.skinsrestorer.mod.listener.AdminInfoListener;
 import net.skinsrestorer.mod.listener.PlayerJoinListener;
+import net.skinsrestorer.mod.skinshuffle.SkinShuffleHandshakePayload;
+import net.skinsrestorer.mod.skinshuffle.SkinShuffleRefreshPlayerListEntryPayload;
+import net.skinsrestorer.mod.skinshuffle.SkinShuffleSkinRefreshPayload;
 import net.skinsrestorer.mod.wrapper.ModComponentHelper;
 import net.skinsrestorer.mod.wrapper.WrapperMod;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleSupport;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.log.SRChatColor;
@@ -65,6 +69,31 @@ public class SRModInit implements SRServerPlatformInit {
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierMod.class), ServerPlayer.class, wrapper);
         // Log information about the platform
         logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + SharedConstants.getCurrentVersion().name() + SRChatColor.GREEN + ".");
+    }
+
+    @Override
+    public void initClientCompatibility() {
+        SkinShuffleSupport skinShuffleSupport = injector.getSingleton(SkinShuffleSupport.class);
+        SRModPlatform.INSTANCE.initMessageChannel(SkinShuffleHandshakePayload.TYPE, SkinShuffleHandshakePayload.STREAM_CODEC,
+                (payload, player) -> {
+                });
+        SRModPlatform.INSTANCE.initMessageChannel(SkinShuffleRefreshPlayerListEntryPayload.TYPE, SkinShuffleRefreshPlayerListEntryPayload.STREAM_CODEC,
+                (payload, player) -> {
+                });
+        SRModPlatform.INSTANCE.initMessageChannel(SkinShuffleSkinRefreshPayload.TYPE, SkinShuffleSkinRefreshPayload.STREAM_CODEC,
+                (payload, player) -> payload.toSkinProperty().ifPresentOrElse(
+                        property -> skinShuffleSupport.handleSkinRefresh(wrapper.player(player), property),
+                        () -> logger.warning("Ignoring invalid SkinShuffle skin refresh payload from %s (%s)."
+                                .formatted(player.getGameProfile().name(), player.getGameProfile().id()))
+                ));
+
+        SRModPlatform.INSTANCE.registerPlayerJoinListener(player -> {
+            if (!skinShuffleSupport.isEnabled() || !SRModPlatform.INSTANCE.canSend(player, SkinShuffleHandshakePayload.TYPE)) {
+                return;
+            }
+
+            SRModPlatform.INSTANCE.sendPluginMessage(player, SkinShuffleHandshakePayload.INSTANCE);
+        });
     }
 
     @Override

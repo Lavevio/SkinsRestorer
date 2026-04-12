@@ -70,6 +70,8 @@ public interface SRModPlatform {
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             BiConsumer<T, ServerPlayer> receiver);
 
+    boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type);
+
     /**
      * Sends a payload to a player using the platform networking API directly,
      * bypassing Architectury's codec wrapping.
