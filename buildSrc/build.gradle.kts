@@ -26,7 +26,7 @@ dependencies {
     implementation("net.ltgt.errorprone:net.ltgt.errorprone.gradle.plugin:5.1.0")
     implementation("org.openrewrite:plugin:7.31.0")
 
-    implementation("commons-io:commons-io:2.21.0")
+    implementation("commons-io:commons-io:2.22.0")
     implementation("org.apache.ant:ant:1.10.17")
     implementation("org.codehaus.plexus:plexus-utils:4.0.3")
 
