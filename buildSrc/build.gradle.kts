@@ -24,7 +24,7 @@ dependencies {
     implementation("io.freefair.gradle:lombok-plugin:9.5.0")
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.3.6")
     implementation("net.ltgt.errorprone:net.ltgt.errorprone.gradle.plugin:5.1.0")
-    implementation("org.openrewrite:plugin:7.32.0")
+    implementation("org.openrewrite:plugin:7.32.1")
 
     implementation("commons-io:commons-io:2.22.0")
     implementation("org.apache.ant:ant:1.10.17")
