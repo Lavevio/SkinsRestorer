@@ -83,13 +83,18 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             PaperSkinApplier.applySkin(player, property);
             return;
         }
-        // Otherwise we use the SkinsRestorer adapter to apply the skin
-        applyAdapter.applyProperty(player, property);
 
-        if (settingsManager.getProperty(AdvancedConfig.TELEPORT_REFRESH)) {
-            teleportOtherRefresh(player);
-        } else {
-            normalOtherRefresh(player);
+        if (refresh.needsManualPropertyApply()) {
+            // Otherwise we use the SkinsRestorer adapter to apply the skin
+            applyAdapter.applyProperty(player, property);
+        }
+
+        if (refresh.needsManualOtherRefresh()) {
+            if (settingsManager.getProperty(AdvancedConfig.TELEPORT_REFRESH)) {
+                teleportOtherRefresh(player);
+            } else {
+                normalOtherRefresh(player);
+            }
         }
 
         // Refresh the players own skin

@@ -74,6 +74,16 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         mapping.resendInfoPackets(toResend, toSendTo);
     }
 
+    @Override
+    public boolean needsManualOtherRefresh() {
+        return true;
+    }
+
+    @Override
+    public boolean needsManualPropertyApply() {
+        return true;
+    }
+
     private record UnsupportedMapping(WrapperBukkit wrapper) implements IMapping {
         @Inject
         private UnsupportedMapping {

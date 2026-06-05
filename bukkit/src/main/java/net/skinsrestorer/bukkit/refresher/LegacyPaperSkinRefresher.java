@@ -28,13 +28,13 @@ import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 // TODO: Rethink how necessary this class this since we already have native API support for this
-public final class PaperSkinRefresher implements SkinRefresher {
+public final class LegacyPaperSkinRefresher implements SkinRefresher {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
     @SuppressWarnings("deprecation")
     @Inject
-    public PaperSkinRefresher() {
+    public LegacyPaperSkinRefresher() {
         try {
             refreshPlayerMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
@@ -64,5 +64,15 @@ public final class PaperSkinRefresher implements SkinRefresher {
     @Override
     public void resendInfoPackets(Player toResend, Player toSendTo) {
         throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public boolean needsManualOtherRefresh() {
+        return true;
+    }
+
+    @Override
+    public boolean needsManualPropertyApply() {
+        return true;
     }
 }

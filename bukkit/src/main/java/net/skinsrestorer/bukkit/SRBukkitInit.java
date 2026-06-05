@@ -25,9 +25,9 @@ import net.skinsrestorer.bukkit.hooks.SRPlaceholderAPIExpansion;
 import net.skinsrestorer.bukkit.listener.*;
 import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.bukkit.refresher.MappingSpigotSkinRefresher;
-import net.skinsrestorer.bukkit.refresher.PaperSkinRefresher;
+import net.skinsrestorer.bukkit.refresher.LegacyPaperSkinRefresher;
 import net.skinsrestorer.bukkit.refresher.SkinRefresher;
-import net.skinsrestorer.bukkit.refresher.SpigotSkinRefresher;
+import net.skinsrestorer.bukkit.refresher.LegacySpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
@@ -109,7 +109,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 logger.debug("Using PaperSkinRefresher");
-                return injector.getSingleton(PaperSkinRefresher.class);
+                return injector.getSingleton(LegacyPaperSkinRefresher.class);
             } catch (Exception e) {
                 logger.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.", e);
             }
@@ -138,7 +138,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
             return injector.getSingleton(MappingSpigotSkinRefresher.class);
         } else {
             logger.debug("Using SpigotSkinRefresher");
-            return injector.getSingleton(SpigotSkinRefresher.class);
+            return injector.getSingleton(LegacySpigotSkinRefresher.class);
         }
     }
 

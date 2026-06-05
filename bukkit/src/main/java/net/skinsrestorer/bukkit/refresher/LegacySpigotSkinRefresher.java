@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 
-public final class SpigotSkinRefresher implements SkinRefresher {
+public final class LegacySpigotSkinRefresher implements SkinRefresher {
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final ViaRefreshProvider viaProvider;
@@ -49,7 +49,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
     private final Enum<?> addPlayerEnum;
 
     @Inject
-    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, ViaRefreshProvider viaProvider) {
+    public LegacySpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, ViaRefreshProvider viaProvider) {
         this.adapter = adapter;
         this.logger = logger;
         this.viaProvider = viaProvider;
@@ -311,5 +311,15 @@ public final class SpigotSkinRefresher implements SkinRefresher {
         }
 
         throw new ReflectiveOperationException("Could not get DimensionManager from %s".formatted(worldObject.getClass().getSimpleName()));
+    }
+
+    @Override
+    public boolean needsManualOtherRefresh() {
+        return true;
+    }
+
+    @Override
+    public boolean needsManualPropertyApply() {
+        return true;
     }
 }

@@ -30,9 +30,23 @@ public interface SkinRefresher {
         public void resendInfoPackets(Player toResend, Player toSendTo) {
             // No-op
         }
+
+        @Override
+        public boolean needsManualOtherRefresh() {
+            return true;
+        }
+
+        @Override
+        public boolean needsManualPropertyApply() {
+            return true;
+        }
     };
 
     void refresh(Player player);
 
     void resendInfoPackets(Player toResend, Player toSendTo);
+
+    boolean needsManualOtherRefresh();
+
+    boolean needsManualPropertyApply();
 }
