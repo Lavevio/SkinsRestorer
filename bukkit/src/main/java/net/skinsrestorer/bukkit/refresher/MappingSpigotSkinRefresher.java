@@ -18,6 +18,7 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import ch.jalu.injector.Injector;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.mappings.IMapping;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
@@ -65,7 +66,7 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
     }
 
     @Override
-    public void refresh(Player player) {
+    public void refresh(Player player, SkinProperty property) {
         mapping.accept(player, viaProvider);
     }
 

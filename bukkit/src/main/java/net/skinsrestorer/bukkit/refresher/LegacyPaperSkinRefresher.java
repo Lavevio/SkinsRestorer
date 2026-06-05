@@ -18,6 +18,7 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import lombok.SneakyThrows;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -27,7 +28,6 @@ import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
-// TODO: Rethink how necessary this class this since we already have native API support for this
 public final class LegacyPaperSkinRefresher implements SkinRefresher {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
@@ -56,7 +56,7 @@ public final class LegacyPaperSkinRefresher implements SkinRefresher {
 
     @Override
     @SneakyThrows
-    public void refresh(Player player) {
+    public void refresh(Player player, SkinProperty property) {
         refreshPlayerMethod.invoke(player);
         triggerHealthUpdate.accept(player);
     }

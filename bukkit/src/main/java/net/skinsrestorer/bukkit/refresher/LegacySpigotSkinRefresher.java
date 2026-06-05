@@ -18,6 +18,7 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import lombok.SneakyThrows;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.mappings.IMapping;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
@@ -113,7 +114,7 @@ public final class LegacySpigotSkinRefresher implements SkinRefresher {
     }
 
     @Override
-    public void refresh(Player player) {
+    public void refresh(Player player, SkinProperty property) {
         try {
             final Object entityPlayer = HandleReflection.getHandle(player, Object.class);
 

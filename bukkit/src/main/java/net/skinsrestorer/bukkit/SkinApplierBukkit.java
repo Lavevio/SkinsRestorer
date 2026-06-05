@@ -77,13 +77,6 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             passengerUtil.ejectPassengers(player);
         }
 
-        // If the Paper API is available, we use it to apply the skin
-        if (ReflectionUtil.classExists("com.destroystokyo.paper.profile.PlayerProfile")
-                && PaperSkinApplier.hasProfileMethod()) {
-            PaperSkinApplier.applySkin(player, property);
-            return;
-        }
-
         if (refresh.needsManualPropertyApply()) {
             // Otherwise we use the SkinsRestorer adapter to apply the skin
             applyAdapter.applyProperty(player, property);
@@ -98,7 +91,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         }
 
         // Refresh the players own skin
-        refresh.refresh(player);
+        refresh.refresh(player, property);
     }
 
     private void normalOtherRefresh(Player player) {

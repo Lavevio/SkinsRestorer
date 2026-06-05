@@ -17,37 +17,34 @@
  */
 package net.skinsrestorer.bukkit.refresher;
 
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bukkit.paper.PaperSkinApplier;
 import org.bukkit.entity.Player;
 
-public interface SkinRefresher {
-    SkinRefresher NO_OP = new SkinRefresher() {
-        @Override
-        public void refresh(Player player, SkinProperty property) {
-            // No-op
-        }
+import javax.inject.Inject;
 
-        @Override
-        public void resendInfoPackets(Player toResend, Player toSendTo) {
-            // No-op
-        }
+@NoArgsConstructor(onConstructor_ = @Inject)
+public final class ModernPaperSkinRefresher implements SkinRefresher {
+    @Override
+    @SneakyThrows
+    public void refresh(Player player, SkinProperty property) {
+        PaperSkinApplier.applySkin(player, property);
+    }
 
-        @Override
-        public boolean needsManualOtherRefresh() {
-            return true;
-        }
+    @Override
+    public void resendInfoPackets(Player toResend, Player toSendTo) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
-        @Override
-        public boolean needsManualPropertyApply() {
-            return true;
-        }
-    };
+    @Override
+    public boolean needsManualOtherRefresh() {
+        return false;
+    }
 
-    void refresh(Player player, SkinProperty property);
-
-    void resendInfoPackets(Player toResend, Player toSendTo);
-
-    boolean needsManualOtherRefresh();
-
-    boolean needsManualPropertyApply();
+    @Override
+    public boolean needsManualPropertyApply() {
+        return false;
+    }
 }
