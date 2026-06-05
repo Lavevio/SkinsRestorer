@@ -27,6 +27,7 @@ import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
+import net.skinsrestorer.shared.plugin.SRProxyPluginSupportChecker;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.velocity.listener.AdminInfoListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
@@ -42,6 +43,7 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     private final SRLogger logger;
     private final SRVelocityAdapter adapter;
     private final SRPlugin plugin;
+    private final SRProxyPluginSupportChecker pluginSupportChecker;
     private final ProxyServer proxy;
     private final WrapperVelocity wrapper;
 
@@ -58,6 +60,11 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     @Override
     public void initAdminInfoListener() {
         proxy.getEventManager().register(adapter.pluginInstance(), injector.newInstance(AdminInfoListener.class));
+    }
+
+    @Override
+    public void checkPluginSupport() {
+        pluginSupportChecker.checkViaVersionProxyInstall();
     }
 
     @Override

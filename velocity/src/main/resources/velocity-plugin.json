@@ -18,6 +18,10 @@
     {
       "id": "miniplaceholders",
       "optional": true
+    },
+    {
+      "id": "viaversion",
+      "optional": true
     }
   ],
   "main": "net.skinsrestorer.velocity.SRVelocityBootstrap"

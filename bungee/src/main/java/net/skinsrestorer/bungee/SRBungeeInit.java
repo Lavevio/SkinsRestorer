@@ -27,6 +27,7 @@ import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
+import net.skinsrestorer.shared.plugin.SRProxyPluginSupportChecker;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ public class SRBungeeInit implements SRProxyPlatformInit {
     private final Injector injector;
     private final SRBungeeAdapter adapter;
     private final SRPlugin plugin;
+    private final SRProxyPluginSupportChecker pluginSupportChecker;
     private final ProxyServer proxy;
     private final WrapperBungee wrapper;
 
@@ -53,6 +55,11 @@ public class SRBungeeInit implements SRProxyPlatformInit {
     public void prePlatformInit() {
         // Shutdown kyori adventure
         plugin.getShutdownHooks().add(() -> adapter.getAdventure().get().close());
+    }
+
+    @Override
+    public void checkPluginSupport() {
+        pluginSupportChecker.checkViaVersionProxyInstall();
     }
 
     @Override
