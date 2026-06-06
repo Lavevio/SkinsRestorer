@@ -81,9 +81,7 @@ public class SpigotMapping26_1 implements IMapping {
 
     @Override
     public Set<String> getPaperMinecraftVersionIds() {
-        return Set.of(
-                "26.1+"
-        );
+        return Set.of();
     }
 
     @Override
