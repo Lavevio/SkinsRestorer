@@ -78,7 +78,7 @@ public class Mapping1_19_1 implements IMapping {
 
         entityPlayer.resetSentInfo();
 
-        PlayerList playerList = entityPlayer.server.getPlayerList();
+        PlayerList playerList = world.getServer().getPlayerList();
         playerList.sendPlayerPermissionLevel(entityPlayer);
         playerList.sendLevelInfo(entityPlayer, world);
         playerList.sendAllPlayerInfo(entityPlayer);

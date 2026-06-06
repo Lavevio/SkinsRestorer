@@ -71,7 +71,7 @@ public class Mapping1_19_4 implements IMapping {
         // Send health, food, experience (food is sent together with health)
         entityPlayer.resetSentInfo();
 
-        PlayerList playerList = entityPlayer.server.getPlayerList();
+        PlayerList playerList = world.getServer().getPlayerList();
         playerList.sendPlayerPermissionLevel(entityPlayer);
         playerList.sendLevelInfo(entityPlayer, world);
         playerList.sendAllPlayerInfo(entityPlayer);
