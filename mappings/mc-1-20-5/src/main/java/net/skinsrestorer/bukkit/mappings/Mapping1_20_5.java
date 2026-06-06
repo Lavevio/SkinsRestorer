@@ -22,7 +22,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.viaversion.ViaRefreshProvider;
 import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -71,8 +70,8 @@ public class Mapping1_20_5 implements IMapping {
 
     @Override
     public void resendInfoPackets(Player toResend, Player toSendTo) {
-        ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
-        ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
+        ServerPlayer toResendInternal = ((CraftPlayer) toResend).getHandle();
+        ServerPlayer toSendToInternal = ((CraftPlayer) toSendTo).getHandle();
 
         toSendToInternal.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
         toSendToInternal.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));

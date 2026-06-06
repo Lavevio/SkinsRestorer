@@ -71,8 +71,8 @@ public class PaperMapping1_21_11 implements IMapping {
 
     @Override
     public void resendInfoPackets(Player toResend, Player toSendTo) {
-        ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
-        ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
+        ServerPlayer toResendInternal = ((CraftPlayer) toResend).getHandle();
+        ServerPlayer toSendToInternal = ((CraftPlayer) toSendTo).getHandle();
 
         toSendToInternal.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
         toSendToInternal.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));

@@ -81,8 +81,8 @@ public class Mapping1_18 implements IMapping {
 
     @Override
     public void resendInfoPackets(Player toResend, Player toSendTo) {
-        ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
-        ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
+        ServerPlayer toResendInternal = ((CraftPlayer) toResend).getHandle();
+        ServerPlayer toSendToInternal = ((CraftPlayer) toSendTo).getHandle();
 
         toSendToInternal.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(toResendInternal)));
         toSendToInternal.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(toResendInternal)));
