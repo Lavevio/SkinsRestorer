@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.bukkit.mappings;
 
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
