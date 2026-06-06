@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.bukkit.mappings;
 
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,11 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class Mapping26_1 implements IMapping {
-    private static void sendPacket(ServerPlayer player, Packet<?> packet) {
-        player.connection.send(packet);
-    }
-
+public class PaperMapping26_1 implements IMapping {
     @Override
     public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
         ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
@@ -54,24 +49,24 @@ public class Mapping26_1 implements IMapping {
         resendInfoPackets(player, player);
 
         if (viaFunction.test(() -> IMapping.newViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
-            sendPacket(entityPlayer, respawn);
+            entityPlayer.connection.send(respawn);
         }
 
         entityPlayer.onUpdateAbilities();
 
-        entityPlayer.connection.teleport(player.getLocation());
+        entityPlayer.connection.internalTeleport(player.getLocation());
 
         // Send health, food, experience (food is sent together with health)
         entityPlayer.resetSentInfo();
 
-        PlayerList playerList = entityPlayer.server.getPlayerList();
+        PlayerList playerList = entityPlayer.level().getServer().getPlayerList();
         playerList.sendPlayerPermissionLevel(entityPlayer);
         playerList.sendLevelInfo(entityPlayer, world);
         playerList.sendAllPlayerInfo(entityPlayer);
 
         // Resend their effects
         for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
-            sendPacket(entityPlayer, new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect, false));
+            entityPlayer.connection.send(new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect, false));
         }
     }
 
@@ -80,8 +75,8 @@ public class Mapping26_1 implements IMapping {
         ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
         ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
 
-        sendPacket(toSendToInternal, new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
-        sendPacket(toSendToInternal, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));
+        toSendToInternal.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
+        toSendToInternal.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));
     }
 
     @Override
@@ -93,8 +88,6 @@ public class Mapping26_1 implements IMapping {
 
     @Override
     public Set<String> getSpigotMappingVersions() {
-        return Set.of(
-                "e8ece90188c951d866bd2fffc52c803e" // 26.1
-        );
+        return Set.of();
     }
 }

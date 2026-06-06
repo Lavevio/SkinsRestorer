@@ -18,65 +18,46 @@
 package net.skinsrestorer.bukkit.mappings;
 
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
-import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
-import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.viaversion.ExceptionSupplier;
 import net.skinsrestorer.viaversion.ViaPacketData;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class Mapping1_19_1 implements IMapping {
+public class SpigotMapping26_1 implements IMapping {
     @Override
     public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
         ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
-        ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer));
-        ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer));
-
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
-        ServerLevel world = entityPlayer.getLevel();
-        ServerPlayerGameMode gamemode = entityPlayer.gameMode;
+        ServerLevel world = entityPlayer.level();
 
+        CommonPlayerSpawnInfo spawnInfo = entityPlayer.createCommonSpawnInfo(world);
         ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                world.dimensionTypeId(),
-                world.dimension(),
-                BiomeManager.obfuscateSeed(world.getSeed()),
-                gamemode.getGameModeForPlayer(),
-                gamemode.getPreviousGameModeForPlayer(),
-                world.isDebug(),
-                world.isFlat(),
-                true,
-                entityPlayer.getLastDeathLocation()
+                spawnInfo,
+                ClientboundRespawnPacket.KEEP_ALL_DATA
         );
 
-        Location l = player.getLocation();
+        resendInfoPackets(player, player);
 
-        entityPlayer.connection.send(removePlayer);
-        entityPlayer.connection.send(addPlayer);
-
-        if (viaFunction.test(() -> IMapping.newViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
+        if (viaFunction.test(() -> IMapping.newViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
             entityPlayer.connection.send(respawn);
         }
 
         entityPlayer.onUpdateAbilities();
 
-        entityPlayer.connection.send(new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false));
+        entityPlayer.connection.teleport(player.getLocation());
 
+        // Send health, food, experience (food is sent together with health)
         entityPlayer.resetSentInfo();
 
         PlayerList playerList = entityPlayer.server.getPlayerList();
@@ -86,7 +67,7 @@ public class Mapping1_19_1 implements IMapping {
 
         // Resend their effects
         for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
-            entityPlayer.connection.send(new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect));
+            entityPlayer.connection.send(new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect, false));
         }
     }
 
@@ -95,19 +76,21 @@ public class Mapping1_19_1 implements IMapping {
         ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
         ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
 
-        toSendToInternal.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(toResendInternal)));
-        toSendToInternal.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(toResendInternal)));
+        toSendToInternal.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
+        toSendToInternal.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));
     }
 
     @Override
     public Set<String> getPaperMinecraftVersionIds() {
-        return Set.of();
+        return Set.of(
+                "26.1+"
+        );
     }
 
     @Override
     public Set<String> getSpigotMappingVersions() {
         return Set.of(
-                "4cc0cc97cac491651bff3af8b124a214" // 1.19.1
+                "e8ece90188c951d866bd2fffc52c803e" // 26.1
         );
     }
 }

@@ -33,10 +33,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public class Mapping1_21_11 implements IMapping {
-    private static void sendPacket(ServerPlayer player, Packet<?> packet) {
-        player.connection.send(packet);
-    }
-
     @Override
     public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
         ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
@@ -54,7 +50,7 @@ public class Mapping1_21_11 implements IMapping {
         resendInfoPackets(player, player);
 
         if (viaFunction.test(() -> IMapping.newViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
-            sendPacket(entityPlayer, respawn);
+            entityPlayer.connection.send(respawn);
         }
 
         entityPlayer.onUpdateAbilities();
@@ -71,7 +67,7 @@ public class Mapping1_21_11 implements IMapping {
 
         // Resend their effects
         for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
-            sendPacket(entityPlayer, new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect, false));
+            entityPlayer.connection.send(new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect, false));
         }
     }
 
@@ -80,8 +76,8 @@ public class Mapping1_21_11 implements IMapping {
         ServerPlayer toResendInternal = HandleReflection.getHandle(toResend, ServerPlayer.class);
         ServerPlayer toSendToInternal = HandleReflection.getHandle(toSendTo, ServerPlayer.class);
 
-        sendPacket(toSendToInternal, new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
-        sendPacket(toSendToInternal, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));
+        toSendToInternal.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(toResendInternal.getUUID())));
+        toSendToInternal.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(toResendInternal)));
     }
 
     @Override

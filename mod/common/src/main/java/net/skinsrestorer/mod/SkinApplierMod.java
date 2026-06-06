@@ -164,10 +164,6 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         }
     }
 
-    private static void sendPacket(ServerPlayer player, Packet<?> packet) {
-        player.connection.send(packet);
-    }
-
     @SuppressWarnings("resource")
     public void refresh(ServerPlayer player) {
         // Slowly getting from object to object till we get what is needed for
@@ -180,8 +176,8 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
                 ClientboundRespawnPacket.KEEP_ALL_DATA
         );
 
-        sendPacket(player, new ClientboundPlayerInfoRemovePacket(List.of(player.getGameProfile().id())));
-        sendPacket(player, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(player)));
+        player.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(player.getGameProfile().id())));
+        player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(player)));
 
         ViaRefreshProvider refreshProvider;
         if (adapter.getPluginInfo("viabackwards").isPresent() && ViaWorkaround.shouldApplyWorkaround()) {
@@ -205,7 +201,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
                 spawnInfo.gameType().getId(),
                 spawnInfo.isFlat()
         ))) {
-            sendPacket(player, respawn);
+            player.connection.send(respawn);
         }
 
         player.onUpdateAbilities();
@@ -222,7 +218,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
         // Resend their effects
         for (MobEffectInstance effect : player.getActiveEffects()) {
-            sendPacket(player, new ClientboundUpdateMobEffectPacket(player.getId(), effect, false));
+            player.connection.send(new ClientboundUpdateMobEffectPacket(player.getId(), effect, false));
         }
     }
 }

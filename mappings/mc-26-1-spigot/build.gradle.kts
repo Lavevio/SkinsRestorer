@@ -1,5 +1,5 @@
 plugins {
-    id("sr.unobf-mapping-logic")
+    id("sr.unobf-spigot-mapping-logic")
 }
 
 mapping {

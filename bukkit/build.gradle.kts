@@ -22,7 +22,7 @@ dependencies {
         "mc-1-19", "mc-1-19-1", "mc-1-19-2", "mc-1-19-3", "mc-1-19-4",
         "mc-1-20", "mc-1-20-2", "mc-1-20-4", "mc-1-20-5",
         "mc-1-21", "mc-1-21-2", "mc-1-21-4", "mc-1-21-5", "mc-1-21-6", "mc-1-21-9", "mc-1-21-11",
-        "mc-26-1"
+        "mc-26-1-spigot", "mc-26-1-paper"
     ).forEach { mapping ->
         compileOnly(project(":mappings:$mapping"))
         runtimeOnly(project(":mappings:$mapping", "remapped"))
