@@ -42,9 +42,9 @@ public final class LegacyPaperSkinRefresher implements SkinRefresher {
             // XP won't get updated on unsupported Paper builds
             this.triggerHealthUpdate = player -> {
                 try {
-                    Object entityPlayer = HandleReflection.getHandle(player, Object.class);
+                    Object serverPlayer = HandleReflection.getHandle(player, Object.class);
 
-                    ReflectionUtil.invokeObjectMethod(entityPlayer, "triggerHealthUpdate");
+                    ReflectionUtil.invokeObjectMethod(serverPlayer, "triggerHealthUpdate");
                 } catch (ReflectiveOperationException e) {
                     player.resetMaxHealth();
                 }

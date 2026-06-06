@@ -103,8 +103,8 @@ public final class LegacySpigotSkinRefresher implements SkinRefresher {
     }
 
     private void sendPacket(Player player, Object packet) throws ReflectiveOperationException {
-        Object entityPlayer = HandleReflection.getHandle(player, Object.class);
-        Object playerCon = ReflectionUtil.getFieldByType(entityPlayer, "PlayerConnection");
+        Object serverPlayer = HandleReflection.getHandle(player, Object.class);
+        Object playerCon = ReflectionUtil.getFieldByType(serverPlayer, "PlayerConnection");
 
         ReflectionUtil.invokeObjectMethod(
                 playerCon,
@@ -116,11 +116,11 @@ public final class LegacySpigotSkinRefresher implements SkinRefresher {
     @Override
     public void refresh(Player player, SkinProperty property) {
         try {
-            final Object entityPlayer = HandleReflection.getHandle(player, Object.class);
+            final Object serverPlayer = HandleReflection.getHandle(player, Object.class);
 
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet
-            Object world = ReflectionUtil.invokeObjectMethod(entityPlayer, "getWorld");
+            Object world = ReflectionUtil.invokeObjectMethod(serverPlayer, "getWorld");
             Object difficulty;
             try {
                 difficulty = ReflectionUtil.invokeObjectMethod(world, "getDifficulty");
@@ -142,7 +142,7 @@ public final class LegacySpigotSkinRefresher implements SkinRefresher {
                 worldType = ReflectionUtil.invokeObjectMethod(worldData, "getGameType");
             }
 
-            Object playerIntManager = ReflectionUtil.getFieldByType(entityPlayer, "PlayerInteractManager");
+            Object playerIntManager = ReflectionUtil.getFieldByType(serverPlayer, "PlayerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeObjectMethod(playerIntManager, "getGameMode");
 
             @SuppressWarnings("deprecation")
@@ -155,7 +155,7 @@ public final class LegacySpigotSkinRefresher implements SkinRefresher {
                 respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, dimension, difficulty, worldType, enumGamemode);
             } catch (Exception ignored) {
                 // 1.13.x needs the dimensionManager instead of dimension id
-                Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
+                Object worldObject = ReflectionUtil.getFieldByType(serverPlayer, "World");
                 Object dimensionManager = getDimensionManager(worldObject, dimension);
 
                 try {
@@ -229,14 +229,14 @@ public final class LegacySpigotSkinRefresher implements SkinRefresher {
                 sendPacket(player, respawn);
             }
 
-            ReflectionUtil.invokeObjectMethod(entityPlayer, "updateAbilities");
+            ReflectionUtil.invokeObjectMethod(serverPlayer, "updateAbilities");
 
             sendPacket(player, pos);
             sendPacket(player, slot);
 
             ReflectionUtil.invokeObjectMethod(player, "updateScaledHealth");
             player.updateInventory();
-            ReflectionUtil.invokeObjectMethod(entityPlayer, "triggerHealthUpdate");
+            ReflectionUtil.invokeObjectMethod(serverPlayer, "triggerHealthUpdate");
 
             // TODO: Resend potion effects
 
@@ -256,22 +256,22 @@ public final class LegacySpigotSkinRefresher implements SkinRefresher {
     @Override
     @SneakyThrows
     public void resendInfoPackets(Player toResend, Player toSendTo) {
-        Object entityPlayer = HandleReflection.getHandle(toResend, Object.class);
+        Object serverPlayer = HandleReflection.getHandle(toResend, Object.class);
 
         Object removePlayer;
         Object addPlayer;
         try {
-            removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, removePlayerEnum, List.of(entityPlayer));
-            addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, addPlayerEnum, List.of(entityPlayer));
+            removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, removePlayerEnum, List.of(serverPlayer));
+            addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, addPlayerEnum, List.of(serverPlayer));
         } catch (ReflectiveOperationException e) {
             try {
-                int ping = ReflectionUtil.getObject(entityPlayer, "ping");
+                int ping = ReflectionUtil.getObject(serverPlayer, "ping");
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, toResend.getPlayerListName(), false, 9999);
                 addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, toResend.getPlayerListName(), true, ping);
             } catch (ReflectiveOperationException e2) {
                 // 1.7.10 and below | pre-netty
-                removePlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "removePlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
-                addPlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "addPlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
+                removePlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "removePlayer", new ReflectionUtil.ParameterPair<>(serverPlayer));
+                addPlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "addPlayer", new ReflectionUtil.ParameterPair<>(serverPlayer));
             }
         }
 

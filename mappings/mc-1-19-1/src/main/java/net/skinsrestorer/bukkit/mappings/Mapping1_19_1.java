@@ -41,51 +41,51 @@ import java.util.function.Predicate;
 public class Mapping1_19_1 implements IMapping {
     @Override
     public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
-        ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
+        ServerPlayer serverPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
-        ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer));
-        ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer));
+        ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(serverPlayer));
+        ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(serverPlayer));
 
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
-        ServerLevel world = entityPlayer.getLevel();
-        ServerPlayerGameMode gamemode = entityPlayer.gameMode;
+        ServerLevel serverLevel = serverPlayer.getLevel();
+        ServerPlayerGameMode gamemode = serverPlayer.gameMode;
 
         ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                world.dimensionTypeId(),
-                world.dimension(),
-                BiomeManager.obfuscateSeed(world.getSeed()),
+                serverLevel.dimensionTypeId(),
+                serverLevel.dimension(),
+                BiomeManager.obfuscateSeed(serverLevel.getSeed()),
                 gamemode.getGameModeForPlayer(),
                 gamemode.getPreviousGameModeForPlayer(),
-                world.isDebug(),
-                world.isFlat(),
+                serverLevel.isDebug(),
+                serverLevel.isFlat(),
                 true,
-                entityPlayer.getLastDeathLocation()
+                serverPlayer.getLastDeathLocation()
         );
 
         Location l = player.getLocation();
 
-        entityPlayer.connection.send(removePlayer);
-        entityPlayer.connection.send(addPlayer);
+        serverPlayer.connection.send(removePlayer);
+        serverPlayer.connection.send(addPlayer);
 
         if (viaFunction.test(() -> IMapping.newViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
-            entityPlayer.connection.send(respawn);
+            serverPlayer.connection.send(respawn);
         }
 
-        entityPlayer.onUpdateAbilities();
+        serverPlayer.onUpdateAbilities();
 
-        entityPlayer.connection.send(new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false));
+        serverPlayer.connection.send(new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false));
 
-        entityPlayer.resetSentInfo();
+        serverPlayer.resetSentInfo();
 
-        PlayerList playerList = world.getServer().getPlayerList();
-        playerList.sendPlayerPermissionLevel(entityPlayer);
-        playerList.sendLevelInfo(entityPlayer, world);
-        playerList.sendAllPlayerInfo(entityPlayer);
+        PlayerList playerList = serverLevel.getServer().getPlayerList();
+        playerList.sendPlayerPermissionLevel(serverPlayer);
+        playerList.sendLevelInfo(serverPlayer, serverLevel);
+        playerList.sendAllPlayerInfo(serverPlayer);
 
         // Resend their effects
-        for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
-            entityPlayer.connection.send(new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect));
+        for (MobEffectInstance effect : serverPlayer.getActiveEffects()) {
+            serverPlayer.connection.send(new ClientboundUpdateMobEffectPacket(serverPlayer.getId(), effect));
         }
     }
 

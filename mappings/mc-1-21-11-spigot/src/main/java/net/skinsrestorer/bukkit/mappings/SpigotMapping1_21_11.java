@@ -34,13 +34,13 @@ import java.util.function.Predicate;
 public class SpigotMapping1_21_11 implements IMapping {
     @Override
     public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
-        ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
+        ServerPlayer serverPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
-        ServerLevel world = entityPlayer.level();
+        ServerLevel serverLevel = serverPlayer.level();
 
-        CommonPlayerSpawnInfo spawnInfo = entityPlayer.createCommonSpawnInfo(world);
+        CommonPlayerSpawnInfo spawnInfo = serverPlayer.createCommonSpawnInfo(serverLevel);
         ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
                 spawnInfo,
                 ClientboundRespawnPacket.KEEP_ALL_DATA
@@ -49,24 +49,24 @@ public class SpigotMapping1_21_11 implements IMapping {
         resendInfoPackets(player, player);
 
         if (viaFunction.test(() -> IMapping.newViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
-            entityPlayer.connection.send(respawn);
+            serverPlayer.connection.send(respawn);
         }
 
-        entityPlayer.onUpdateAbilities();
+        serverPlayer.onUpdateAbilities();
 
-        entityPlayer.connection.teleport(player.getLocation());
+        serverPlayer.connection.teleport(player.getLocation());
 
         // Send health, food, experience (food is sent together with health)
-        entityPlayer.resetSentInfo();
+        serverPlayer.resetSentInfo();
 
-        PlayerList playerList = world.getServer().getPlayerList();
-        playerList.sendPlayerPermissionLevel(entityPlayer);
-        playerList.sendLevelInfo(entityPlayer, world);
-        playerList.sendAllPlayerInfo(entityPlayer);
+        PlayerList playerList = serverLevel.getServer().getPlayerList();
+        playerList.sendPlayerPermissionLevel(serverPlayer);
+        playerList.sendLevelInfo(serverPlayer, serverLevel);
+        playerList.sendAllPlayerInfo(serverPlayer);
 
         // Resend their effects
-        for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
-            entityPlayer.connection.send(new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect, false));
+        for (MobEffectInstance effect : serverPlayer.getActiveEffects()) {
+            serverPlayer.connection.send(new ClientboundUpdateMobEffectPacket(serverPlayer.getId(), effect, false));
         }
     }
 

@@ -39,47 +39,47 @@ import java.util.function.Predicate;
 public class Mapping1_20 implements IMapping {
     @Override
     public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
-        ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
+        ServerPlayer serverPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
-        ServerLevel world = entityPlayer.serverLevel();
-        ServerPlayerGameMode gamemode = entityPlayer.gameMode;
+        ServerLevel serverLevel = serverPlayer.serverLevel();
+        ServerPlayerGameMode gamemode = serverPlayer.gameMode;
 
         ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                world.dimensionTypeId(),
-                world.dimension(),
-                BiomeManager.obfuscateSeed(world.getSeed()),
+                serverLevel.dimensionTypeId(),
+                serverLevel.dimension(),
+                BiomeManager.obfuscateSeed(serverLevel.getSeed()),
                 gamemode.getGameModeForPlayer(),
                 gamemode.getPreviousGameModeForPlayer(),
-                world.isDebug(),
-                world.isFlat(),
+                serverLevel.isDebug(),
+                serverLevel.isFlat(),
                 ClientboundRespawnPacket.KEEP_ALL_DATA,
-                entityPlayer.getLastDeathLocation(),
-                entityPlayer.getPortalCooldown()
+                serverPlayer.getLastDeathLocation(),
+                serverPlayer.getPortalCooldown()
         );
 
         resendInfoPackets(player, player);
 
         if (viaFunction.test(() -> IMapping.newViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
-            entityPlayer.connection.send(respawn);
+            serverPlayer.connection.send(respawn);
         }
 
-        entityPlayer.onUpdateAbilities();
+        serverPlayer.onUpdateAbilities();
 
-        entityPlayer.connection.teleport(player.getLocation());
+        serverPlayer.connection.teleport(player.getLocation());
 
         // Send health, food, experience (food is sent together with health)
-        entityPlayer.resetSentInfo();
+        serverPlayer.resetSentInfo();
 
-        PlayerList playerList = world.getServer().getPlayerList();
-        playerList.sendPlayerPermissionLevel(entityPlayer);
-        playerList.sendLevelInfo(entityPlayer, world);
-        playerList.sendAllPlayerInfo(entityPlayer);
+        PlayerList playerList = serverLevel.getServer().getPlayerList();
+        playerList.sendPlayerPermissionLevel(serverPlayer);
+        playerList.sendLevelInfo(serverPlayer, serverLevel);
+        playerList.sendAllPlayerInfo(serverPlayer);
 
         // Resend their effects
-        for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
-            entityPlayer.connection.send(new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect));
+        for (MobEffectInstance effect : serverPlayer.getActiveEffects()) {
+            serverPlayer.connection.send(new ClientboundUpdateMobEffectPacket(serverPlayer.getId(), effect));
         }
     }
 
