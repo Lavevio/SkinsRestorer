@@ -33,12 +33,12 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.Set;
 
-public class MappingSpigotSkinRefresher implements SkinRefresher {
+public class MappingSkinRefresher implements SkinRefresher {
     private final IMapping mapping;
     private final ViaRefreshProvider viaProvider;
 
     @Inject
-    public MappingSpigotSkinRefresher(Injector injector, Server server, SRLogger logger, ViaRefreshProvider viaProvider) {
+    public MappingSkinRefresher(Injector injector, Server server, SRLogger logger, ViaRefreshProvider viaProvider) {
         this.viaProvider = viaProvider;
 
         Optional<IMapping> mapping = MappingManager.getMapping(server);

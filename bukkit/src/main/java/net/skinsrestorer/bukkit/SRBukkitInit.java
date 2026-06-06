@@ -138,8 +138,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
         }
 
         if (BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
-            logger.debug("Using MappingSpigotSkinRefresher");
-            return injector.getSingleton(MappingSpigotSkinRefresher.class);
+            logger.debug("Using MappingSkinRefresher");
+            return injector.getSingleton(MappingSkinRefresher.class);
         } else {
             logger.debug("Using LegacySpigotSkinRefresher");
             return injector.getSingleton(LegacySpigotSkinRefresher.class);
