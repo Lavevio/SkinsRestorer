@@ -17,15 +17,14 @@
  */
 package net.skinsrestorer.bukkit.mappings;
 
-import net.skinsrestorer.viaversion.ExceptionSupplier;
 import net.skinsrestorer.viaversion.ViaPacketData;
+import net.skinsrestorer.viaversion.ViaRefreshProvider;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
-import java.util.function.Predicate;
 
 public interface IMapping {
-    void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction);
+    void accept(Player player, ViaRefreshProvider viaFunction);
 
     void resendInfoPackets(Player toResend, Player toSendTo);
 

@@ -25,8 +25,6 @@ import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.utils.SRHelpers;
-import net.skinsrestorer.viaversion.ExceptionSupplier;
-import net.skinsrestorer.viaversion.ViaPacketData;
 import net.skinsrestorer.viaversion.ViaRefreshProvider;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -34,7 +32,6 @@ import org.bukkit.entity.Player;
 import javax.inject.Inject;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements SkinRefresher {
     private final IMapping mapping;
@@ -91,7 +88,7 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         }
 
         @Override
-        public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
+        public void accept(Player player, ViaRefreshProvider viaFunction) {
             wrapper.player(player).sendMessage(Message.ERROR_PLAYER_REFRESH_NO_MAPPING);
         }
 

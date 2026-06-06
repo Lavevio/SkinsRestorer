@@ -23,18 +23,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
-import net.skinsrestorer.viaversion.ExceptionSupplier;
-import net.skinsrestorer.viaversion.ViaPacketData;
+import net.skinsrestorer.viaversion.ViaRefreshProvider;
+import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class Mapping1_21 implements IMapping {
     @Override
-    public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
-        ServerPlayer serverPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
+    public void accept(Player player, ViaRefreshProvider viaFunction) {
+        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
 
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet

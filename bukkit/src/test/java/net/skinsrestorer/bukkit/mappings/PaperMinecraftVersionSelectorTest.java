@@ -17,17 +17,13 @@
  */
 package net.skinsrestorer.bukkit.mappings;
 
-import net.skinsrestorer.viaversion.ExceptionSupplier;
-import net.skinsrestorer.viaversion.ViaPacketData;
+import net.skinsrestorer.viaversion.ViaRefreshProvider;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
-import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PaperMinecraftVersionSelectorTest {
     @Test
@@ -78,7 +74,7 @@ class PaperMinecraftVersionSelectorTest {
 
     private record TestMapping(Set<String> selectors) implements IMapping {
         @Override
-        public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
+        public void accept(Player player, ViaRefreshProvider viaFunction) {
             throw new UnsupportedOperationException();
         }
 
