@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class Mapping1_21_11 implements IMapping {
+public class SpigotMapping1_21_11 implements IMapping {
     @Override
     public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
         ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
@@ -81,9 +81,7 @@ public class Mapping1_21_11 implements IMapping {
 
     @Override
     public Set<String> getPaperMinecraftVersionIds() {
-        return Set.of(
-                "1.21.11"
-        );
+        return Set.of();
     }
 
     @Override

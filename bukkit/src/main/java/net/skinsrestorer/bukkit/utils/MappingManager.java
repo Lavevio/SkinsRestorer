@@ -45,7 +45,8 @@ public final class MappingManager {
             new Mapping1_21_5(),
             new Mapping1_21_6(),
             new Mapping1_21_9(),
-            new Mapping1_21_11(),
+            new PaperMapping1_21_11(),
+            new SpigotMapping1_21_11(),
             new PaperMapping26_1(),
             new SpigotMapping26_1()
     );
