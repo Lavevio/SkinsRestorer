@@ -12,6 +12,10 @@ loom {
     silentMojangMappingsLicense()
 
     accessWidenerPath = project(":skinsrestorer-mod-common").file("src/main/resources/skinsrestorer.accesswidener")
+
+    neoForge {
+        accessTransformer(project.file("src/main/resources/META-INF/accesstransformer.cfg"))
+    }
 }
 
 val common: Configuration by configurations.creating {
