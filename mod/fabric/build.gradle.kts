@@ -1,6 +1,5 @@
 plugins {
-    id("sr.base-logic")
-    id("com.gradleup.shadow")
+    id("sr.shadow-logic")
     id("dev.architectury.loom-no-remap") version "1.14.476"
 }
 
@@ -70,10 +69,12 @@ dependencies {
         projects.multiver.viaversion
     ).forEach {
         common(it) {
+            exclude("org.slf4j")
             exclude("com.google.code.gson")
             exclude("com.google.errorprone")
         }
         shadowBundle(it) {
+            exclude("org.slf4j")
             exclude("com.google.code.gson")
             exclude("com.google.errorprone")
         }
