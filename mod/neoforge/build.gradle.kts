@@ -88,30 +88,23 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
+    val mainOutputDirectories = sourceSets.main.get().output.files.map { it.toPath().toAbsolutePath().normalize() }
+
+    dependsOn(tasks.jar)
+    from(zipTree(tasks.jar.flatMap { it.archiveFile }))
+    from(rootProject.layout.projectDirectory.file("LICENSE"))
+    eachFile {
+        val sourcePath = file.toPath().toAbsolutePath().normalize()
+        if (mainOutputDirectories.any(sourcePath::startsWith)) {
+            exclude()
+        }
+    }
+
     configurations = listOf(shadowBundle)
-    archiveClassifier.set("dev-shadow")
-}
-
-val projectVersion = version.toString()
-
-val bundleModJar by tasks.registering(Jar::class) {
-    group = "build"
-    description = "Assembles the distributable NeoForge mod jar."
-
-    dependsOn(tasks.jar, tasks.shadowJar)
-
-    archiveFileName.set(base.archivesName.map { "$it-$projectVersion.jar" })
+    archiveClassifier.set("")
     destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    from(zipTree(tasks.shadowJar.flatMap { it.archiveFile })) {
-        exclude("META-INF/jarjar/**", "META-INF/jars/**")
-    }
-    from(zipTree(tasks.jar.flatMap { it.archiveFile })) {
-        include("META-INF/jarjar/**", "META-INF/jars/**")
-    }
 }
 
-tasks.assemble {
-    dependsOn(bundleModJar)
+tasks.jar {
+    archiveClassifier.set("raw")
 }
