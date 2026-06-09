@@ -1,5 +1,6 @@
 plugins {
-    id("sr.shadow-logic")
+    id("sr.base-logic")
+    id("com.gradleup.shadow")
     id("dev.architectury.loom-no-remap") version "1.14.476"
 }
 
