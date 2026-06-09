@@ -97,6 +97,26 @@ tasks.shadowJar {
     archiveClassifier.set("dev-shadow")
 }
 
-tasks.jar {
+val projectVersion = version.toString()
+
+val bundleModJar by tasks.registering(Jar::class) {
+    group = "build"
+    description = "Assembles the distributable Fabric mod jar."
+
+    dependsOn(tasks.jar, tasks.shadowJar)
+
+    archiveFileName.set(base.archivesName.map { "$it-$projectVersion.jar" })
     destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(zipTree(tasks.shadowJar.flatMap { it.archiveFile })) {
+        exclude("fabric.mod.json", "META-INF/jars/**")
+    }
+    from(zipTree(tasks.jar.flatMap { it.archiveFile })) {
+        include("fabric.mod.json", "META-INF/jars/**")
+    }
+}
+
+tasks.assemble {
+    dependsOn(bundleModJar)
 }
