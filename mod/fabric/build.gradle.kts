@@ -14,29 +14,9 @@ loom {
     accessWidenerPath = project(":skinsrestorer-mod-common").file("src/main/resources/skinsrestorer.accesswidener")
 }
 
-val common: Configuration by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-}
-
 val shadowBundle: Configuration by configurations.creating {
     isCanBeResolved = true
     isCanBeConsumed = false
-}
-
-configurations {
-    compileClasspath {
-        extendsFrom(common)
-    }
-    runtimeClasspath {
-        extendsFrom(common)
-    }
-}
-
-configurations.configureEach {
-    if (name == "developmentFabric") {
-        extendsFrom(common)
-    }
 }
 
 dependencies {
@@ -56,7 +36,7 @@ dependencies {
     implementation("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
     include("me.lucko:fabric-permissions-api:${rootProject.property("fabric_permissions_api_version")}")
 
-    common(project(path = ":skinsrestorer-mod-common")) { isTransitive = false }
+    implementation(project(path = ":skinsrestorer-mod-common")) { isTransitive = false }
     shadowBundle(
         project(
             path = ":skinsrestorer-mod-common",
@@ -69,7 +49,7 @@ dependencies {
         projects.multiver.miniplaceholders,
         projects.multiver.viaversion
     ).forEach {
-        common(it) {
+        implementation(it) {
             exclude("org.slf4j")
             exclude("com.google.code.gson")
             exclude("com.google.errorprone")

@@ -18,29 +18,9 @@ loom {
     }
 }
 
-val common: Configuration by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-}
-
 val shadowBundle: Configuration by configurations.creating {
     isCanBeResolved = true
     isCanBeConsumed = false
-}
-
-configurations {
-    compileClasspath {
-        extendsFrom(common)
-    }
-    runtimeClasspath {
-        extendsFrom(common)
-    }
-}
-
-configurations.configureEach {
-    if (name == "developmentNeoForge") {
-        extendsFrom(common)
-    }
 }
 
 repositories {
@@ -59,7 +39,7 @@ dependencies {
     implementation("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
     include("org.incendo:cloud-neoforge:${rootProject.property("cloud_neoforge_version")}")
 
-    common(project(path = ":skinsrestorer-mod-common")) { isTransitive = false }
+    implementation(project(path = ":skinsrestorer-mod-common")) { isTransitive = false }
     shadowBundle(
         project(
             path = ":skinsrestorer-mod-common",
@@ -72,7 +52,7 @@ dependencies {
         projects.multiver.miniplaceholders,
         projects.multiver.viaversion
     ).forEach {
-        common(it) {
+        implementation(it) {
             exclude("org.slf4j")
             exclude("com.google.code.gson")
             exclude("com.google.errorprone")
