@@ -14,7 +14,8 @@ loom {
     accessWidenerPath = project(":skinsrestorer-mod-common").file("src/main/resources/skinsrestorer.accesswidener")
 
     neoForge {
-        accessTransformer(project.file("src/main/resources/META-INF/accesstransformer.cfg"))
+        @Suppress("UnstableApiUsage")
+        convertAccessWideners(tasks.jar, "skinsrestorer.accesswidener")
     }
 }
 
@@ -70,6 +71,10 @@ tasks.processResources {
 
     filesMatching("META-INF/neoforge.mods.toml") {
         expand(mapOf("version" to inputs.properties["version"]))
+    }
+
+    from(loom.accessWidenerPath) {
+        into("/")
     }
 }
 
