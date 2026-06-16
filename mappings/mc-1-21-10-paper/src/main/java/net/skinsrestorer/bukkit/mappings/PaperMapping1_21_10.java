@@ -85,8 +85,4 @@ public class PaperMapping1_21_10 implements IMapping {
         );
     }
 
-    @Override
-    public Set<String> getSpigotMappingVersions() {
-        return Set.of();
-    }
 }

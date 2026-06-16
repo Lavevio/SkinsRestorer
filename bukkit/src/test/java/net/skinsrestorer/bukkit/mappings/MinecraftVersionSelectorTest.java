@@ -88,9 +88,5 @@ class MinecraftVersionSelectorTest {
             return selectors;
         }
 
-        @Override
-        public Set<String> getSpigotMappingVersions() {
-            return Set.of();
-        }
     }
 }

@@ -105,7 +105,7 @@ public interface ARGBPixelProcessor extends IntUnaryOperator {
     static ARGBPixelProcessor adjustSaturation(float saturationFactor) {
         return pixel -> {
             HSBA hsba = new HSBA(pixel);
-            float newSaturation = Math.min(Math.max(hsba.saturation * saturationFactor, 0), 1);
+            float newSaturation = Math.clamp(hsba.saturation * saturationFactor, 0, 1);
             return new HSBA(hsba.hue, newSaturation, hsba.brightness, hsba.alpha).toARGB();
         };
     }
@@ -113,7 +113,7 @@ public interface ARGBPixelProcessor extends IntUnaryOperator {
     static ARGBPixelProcessor adjustBrightness(float brightnessFactor) {
         return pixel -> {
             HSBA hsba = new HSBA(pixel);
-            float newBrightness = Math.min(Math.max(hsba.brightness * brightnessFactor, 0), 1);
+            float newBrightness = Math.clamp(hsba.brightness * brightnessFactor, 0, 1);
             return new HSBA(hsba.hue, hsba.saturation, newBrightness, hsba.alpha).toARGB();
         };
     }

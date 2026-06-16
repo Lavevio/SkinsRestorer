@@ -78,11 +78,6 @@ public class Mapping1_20_5 implements IMapping {
     }
 
     @Override
-    public Set<String> getPaperMinecraftVersionIds() {
-        return Set.of();
-    }
-
-    @Override
     public Set<String> getSpigotMappingVersions() {
         return Set.of(
                 "ad1a88fd7eaf2277f2507bf34d7b994c", // 1.20.5
