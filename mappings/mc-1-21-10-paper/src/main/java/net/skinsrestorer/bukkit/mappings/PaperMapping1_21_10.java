@@ -23,13 +23,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.skinsrestorer.viaversion.ViaRefreshProvider;
-import org.bukkit.craftbukkit.v1_21_R6.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Set;
 
-public class Mapping1_21_9 implements IMapping {
+/// This paper-specific version is needed because this is the version paper changed to #internalTeleport
+public class PaperMapping1_21_10 implements IMapping {
     @Override
     public void accept(Player player, ViaRefreshProvider viaFunction) {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
@@ -52,7 +53,7 @@ public class Mapping1_21_9 implements IMapping {
 
         serverPlayer.onUpdateAbilities();
 
-        serverPlayer.connection.teleport(player.getLocation());
+        serverPlayer.connection.internalTeleport(player.getLocation());
 
         // Send health, food, experience (food is sent together with health)
         serverPlayer.resetSentInfo();
@@ -80,14 +81,12 @@ public class Mapping1_21_9 implements IMapping {
     @Override
     public Set<String> getPaperMinecraftVersionIds() {
         return Set.of(
-                "1.21.9"
+                "1.21.10"
         );
     }
 
     @Override
     public Set<String> getSpigotMappingVersions() {
-        return Set.of(
-                "614efe5192cd0510bc2ddc5feefa155d" // 1.21.9 and 1.21.10
-        );
+        return Set.of();
     }
 }
