@@ -83,4 +83,11 @@ public class SpigotMapping26_1 implements IMapping {
                 "e8ece90188c951d866bd2fffc52c803e" // 26.1
         );
     }
+
+    @Override
+    public Set<String> getSpigotApiVersions() {
+        return Set.of(
+                "26.2+"
+        );
+    }
 }
