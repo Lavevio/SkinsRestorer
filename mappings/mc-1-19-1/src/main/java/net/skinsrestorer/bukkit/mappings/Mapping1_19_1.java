@@ -27,7 +27,6 @@ import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
-import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.viaversion.ViaRefreshProvider;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
