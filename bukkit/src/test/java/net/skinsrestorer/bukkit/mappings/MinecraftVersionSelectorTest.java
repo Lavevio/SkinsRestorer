@@ -25,36 +25,36 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PaperMinecraftVersionSelectorTest {
+class MinecraftVersionSelectorTest {
     @Test
     void exactSelectorMatchesOnlyExactVersion() {
-        assertTrue(PaperMinecraftVersionSelector.matches("26.1", "26.1"));
-        assertFalse(PaperMinecraftVersionSelector.matches("26.1", "26.1.1"));
+        assertTrue(MinecraftVersionSelector.matches("26.1", "26.1"));
+        assertFalse(MinecraftVersionSelector.matches("26.1", "26.1.1"));
     }
 
     @Test
     void wildcardSelectorMatchesOnlyChildren() {
-        assertFalse(PaperMinecraftVersionSelector.matches("26.1.*", "26.1"));
-        assertTrue(PaperMinecraftVersionSelector.matches("26.1.*", "26.1.1"));
-        assertTrue(PaperMinecraftVersionSelector.matches("26.1.*", "26.1.2"));
-        assertFalse(PaperMinecraftVersionSelector.matches("26.1.*", "26.2"));
+        assertFalse(MinecraftVersionSelector.matches("26.1.*", "26.1"));
+        assertTrue(MinecraftVersionSelector.matches("26.1.*", "26.1.1"));
+        assertTrue(MinecraftVersionSelector.matches("26.1.*", "26.1.2"));
+        assertFalse(MinecraftVersionSelector.matches("26.1.*", "26.2"));
     }
 
     @Test
     void plusSelectorMatchesBaseAndChildren() {
-        assertTrue(PaperMinecraftVersionSelector.matches("26.1+", "26.1"));
-        assertTrue(PaperMinecraftVersionSelector.matches("26.1+", "26.1.1"));
-        assertTrue(PaperMinecraftVersionSelector.matches("26.1+", "26.1.2"));
-        assertFalse(PaperMinecraftVersionSelector.matches("26.1+", "26.10"));
-        assertFalse(PaperMinecraftVersionSelector.matches("26.1+", "26.11"));
-        assertFalse(PaperMinecraftVersionSelector.matches("26.1+", "26.2"));
+        assertTrue(MinecraftVersionSelector.matches("26.1+", "26.1"));
+        assertTrue(MinecraftVersionSelector.matches("26.1+", "26.1.1"));
+        assertTrue(MinecraftVersionSelector.matches("26.1+", "26.1.2"));
+        assertFalse(MinecraftVersionSelector.matches("26.1+", "26.10"));
+        assertFalse(MinecraftVersionSelector.matches("26.1+", "26.11"));
+        assertFalse(MinecraftVersionSelector.matches("26.1+", "26.2"));
     }
 
     @Test
     void rangeSelectorMatchesBoundedVersions() {
-        assertTrue(PaperMinecraftVersionSelector.matches(">=1.21.6 <1.21.9", "1.21.6"));
-        assertTrue(PaperMinecraftVersionSelector.matches(">=1.21.6 <1.21.9", "1.21.8"));
-        assertFalse(PaperMinecraftVersionSelector.matches(">=1.21.6 <1.21.9", "1.21.9"));
+        assertTrue(MinecraftVersionSelector.matches(">=1.21.6 <1.21.9", "1.21.6"));
+        assertTrue(MinecraftVersionSelector.matches(">=1.21.6 <1.21.9", "1.21.8"));
+        assertFalse(MinecraftVersionSelector.matches(">=1.21.6 <1.21.9", "1.21.9"));
     }
 
     @Test
@@ -68,8 +68,8 @@ class PaperMinecraftVersionSelectorTest {
 
     @Test
     void invalidSelectorsFailFast() {
-        assertThrows(IllegalArgumentException.class, () -> PaperMinecraftVersionSelector.matches("26.1..*", "26.1.1"));
-        assertThrows(IllegalArgumentException.class, () -> PaperMinecraftVersionSelector.matches(">=1.21.6 1.21.9", "1.21.8"));
+        assertThrows(IllegalArgumentException.class, () -> MinecraftVersionSelector.matches("26.1..*", "26.1.1"));
+        assertThrows(IllegalArgumentException.class, () -> MinecraftVersionSelector.matches(">=1.21.6 1.21.9", "1.21.8"));
     }
 
     private record TestMapping(Set<String> selectors) implements IMapping {

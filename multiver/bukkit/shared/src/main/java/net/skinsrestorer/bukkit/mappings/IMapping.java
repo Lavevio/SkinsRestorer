@@ -34,11 +34,13 @@ public interface IMapping {
      *
      * @return The supported paper minecraft version ids or selectors of the mapping
      */
-    Set<String> getPaperMinecraftVersionIds();
+    default Set<String> getPaperMinecraftVersionIds() {
+        return Set.of();
+    }
 
     default boolean supportsPaperMinecraftVersionId(String versionId) {
         return getPaperMinecraftVersionIds().stream()
-                .anyMatch(selector -> PaperMinecraftVersionSelector.matches(selector, versionId));
+                .anyMatch(selector -> MinecraftVersionSelector.matches(selector, versionId));
     }
 
     /**
@@ -46,7 +48,24 @@ public interface IMapping {
      *
      * @return The supported spigot mapping versions of the mapping
      */
-    Set<String> getSpigotMappingVersions();
+    default Set<String> getSpigotMappingVersions() {
+        return Set.of();
+    }
+
+    /**
+     * Format as in ApiVersion#getVersionString.
+     * Supports exact versions and selectors like {@code 26.1.*}, {@code 26.1+}, and {@code >=26.1 <26.2}.
+     *
+     * @return The supported spigot api versions
+     */
+    default Set<String> getSpigotApiVersions() {
+        return Set.of();
+    }
+
+    default boolean supportsSpigotApiVersion(String versionId) {
+        return getSpigotApiVersions().stream()
+                .anyMatch(selector -> MinecraftVersionSelector.matches(selector, versionId));
+    }
 
     @SuppressWarnings("deprecation")
     static ViaPacketData newViaPacketData(Player player, long seed, int gamemodeId, boolean isFlat) {

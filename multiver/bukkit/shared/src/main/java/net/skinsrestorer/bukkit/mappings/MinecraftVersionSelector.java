@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-final class PaperMinecraftVersionSelector {
+final class MinecraftVersionSelector {
     private static final Pattern VERSION_PATTERN = Pattern.compile("\\d+(?:\\.\\d+)*");
     private static final Pattern RANGE_TOKEN_PATTERN = Pattern.compile("(<=|>=|<|>|=)(\\d+(?:\\.\\d+)*)");
 
@@ -108,10 +108,10 @@ final class PaperMinecraftVersionSelector {
     }
 
     private static IllegalArgumentException invalidSelector(String selector) {
-        return new IllegalArgumentException("Invalid Paper Minecraft version selector: " + selector);
+        return new IllegalArgumentException("Invalid Minecraft version selector: " + selector);
     }
 
-    private PaperMinecraftVersionSelector() {
+    private MinecraftVersionSelector() {
     }
 
     private record ParsedVersion(int[] parts) {

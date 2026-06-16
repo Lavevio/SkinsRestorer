@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
+import net.lenni0451.reflect.stream.RStream;
 import net.skinsrestorer.bukkit.mappings.*;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import org.bukkit.Server;
@@ -53,13 +54,17 @@ public final class MappingManager {
     );
 
     public static Optional<IMapping> getMapping(Server server) {
+        Optional<String> spigotApiVersion = getSpigotApiVersion();
         Optional<String> spigotMappingVersion = getSpigotMappingVersion(server);
         Optional<String> paperMinecraftVersionId = getPaperMinecraftVersionId();
 
-        if (spigotMappingVersion.isEmpty() && paperMinecraftVersionId.isEmpty()) {
+        if (spigotApiVersion.isEmpty() && spigotMappingVersion.isEmpty() && paperMinecraftVersionId.isEmpty()) {
             return Optional.empty();
         }
 
+        Predicate<IMapping> isSupportedSpigotApiVersion = mapping -> spigotApiVersion
+                .map(mapping::supportsSpigotApiVersion)
+                .orElse(false);
         Predicate<IMapping> isSupportedSpigotMapping = mapping -> spigotMappingVersion
                 .map(mapping.getSpigotMappingVersions()::contains)
                 .orElse(false);
@@ -68,7 +73,9 @@ public final class MappingManager {
                 .orElse(false);
 
         return MAPPINGS.stream()
-                .filter(mapping -> isSupportedSpigotMapping.test(mapping) || isSupportedPaperMapping.test(mapping))
+                .filter(mapping -> isSupportedSpigotApiVersion.test(mapping) // Needs to be before mapping because mapping for 26.1 & 26.2 is the same
+                        || isSupportedSpigotMapping.test(mapping)
+                        || isSupportedPaperMapping.test(mapping))
                 .findFirst();
     }
 
@@ -80,6 +87,22 @@ public final class MappingManager {
             return ((String) method.invoke(craftMagicNumbers, new Object[0])).describeConstable();
         } catch (ReflectiveOperationException e) {
             // Happens on paper >= 1.21.6
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<String> getSpigotApiVersion() {
+        try {
+            return Optional.of(RStream.of("org.bukkit.craftbukkit.util.ApiVersion")
+                    .fields()
+                    .filterStatic(true)
+                    .by("CURRENT")
+                    .stream()
+                    .methods()
+                    .by("getVersionString")
+                    .invoke());
+        } catch (Throwable t) {
+            // Happens on older spigot
             return Optional.empty();
         }
     }
