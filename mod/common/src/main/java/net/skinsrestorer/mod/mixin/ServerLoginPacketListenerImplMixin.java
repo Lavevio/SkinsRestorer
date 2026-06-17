@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServerLoginPacketListenerImplMixin {
     @Final
     @Shadow
-    static Logger LOGGER;
+    private static Logger LOGGER;
     @Final
     @Shadow
     private static AtomicInteger UNIQUE_THREAD_ID;

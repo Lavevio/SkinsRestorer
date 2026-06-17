@@ -18,15 +18,15 @@
 package net.skinsrestorer.mod.mixin;
 
 import net.minecraft.client.gui.components.PlayerTabOverlay;
-import net.minecraft.network.Connection;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PlayerTabOverlay.class)
 public class PlayerTabOverlayMixin {
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;isEncrypted()Z"))
-    private boolean isEncryptedRedirect(Connection instance) {
+    @Redirect(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;onlineMode()Z"))
+    private boolean onlineModeRedirect(ClientPacketListener instance) {
         return true;
     }
 }
