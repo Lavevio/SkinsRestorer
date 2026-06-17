@@ -28,7 +28,7 @@ dependencies {
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.3.6")
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:2.0.0-beta.21")
     implementation("net.ltgt.errorprone:net.ltgt.errorprone.gradle.plugin:5.1.0")
-    implementation("org.openrewrite:plugin:7.34.0")
+    implementation("org.openrewrite:plugin:7.35.0")
 
     implementation("commons-io:commons-io:2.22.0")
     implementation("org.apache.ant:ant:1.10.17")
