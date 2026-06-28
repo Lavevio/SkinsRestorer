@@ -41,7 +41,7 @@ dependencies {
     rewrite("org.openrewrite.recipe:rewrite-rewrite:0.26.1")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testFixturesApi("org.junit.jupiter:junit-jupiter:6.1.0")
+    testFixturesApi("org.junit.jupiter:junit-jupiter:6.1.1")
     testFixturesApi("org.mockito:mockito-core:5.23.0")
     testFixturesApi("org.mockito:mockito-junit-jupiter:5.23.0")
 }
