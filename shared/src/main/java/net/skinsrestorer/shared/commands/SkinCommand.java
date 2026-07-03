@@ -545,6 +545,13 @@ public final class SkinCommand {
         commandManager.execute(player, "skins");
     }
 
+    @Command("ignore-cracked-client")
+    @CommandPermission(PermissionRegistry.SKIN)
+    private void onIgnoreCrackedClient(SRPlayer player) {
+        playerStorage.setOfflineModeWarningDismissed(player.getUniqueId(), true);
+        player.sendMessage(Message.SUCCESS_OFFLINE_MODE_SKIN_WARNING_IGNORED);
+    }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private Optional<SkinProperty> setSkin(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant, boolean insertHistory) {
         Optional<Message> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);

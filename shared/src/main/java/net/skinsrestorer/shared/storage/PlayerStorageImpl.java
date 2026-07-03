@@ -69,7 +69,9 @@ public class PlayerStorageImpl implements PlayerStorage {
 
     @Override
     public void setSkinIdOfPlayer(UUID uuid, SkinIdentifier identifier) {
-        adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier));
+        PlayerData playerData = getPlayerDataOrDefault(uuid);
+        playerData.setSkinIdentifier(identifier);
+        adapterReference.get().setPlayerData(uuid, playerData);
     }
 
     public Optional<HistoryData> getTopOfHistory(UUID uuid, int skip) {
@@ -197,7 +199,19 @@ public class PlayerStorageImpl implements PlayerStorage {
 
     @Override
     public void removeSkinIdOfPlayer(UUID uuid) {
-        adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null));
+        PlayerData playerData = getPlayerDataOrDefault(uuid);
+        playerData.setSkinIdentifier(null);
+        adapterReference.get().setPlayerData(uuid, playerData);
+    }
+
+    public boolean isOfflineModeWarningDismissed(UUID uuid) {
+        return getPlayerDataOrDefault(uuid).isOfflineModeWarningDismissed();
+    }
+
+    public void setOfflineModeWarningDismissed(UUID uuid, boolean dismissed) {
+        PlayerData playerData = getPlayerDataOrDefault(uuid);
+        playerData.setOfflineModeWarningDismissed(dismissed);
+        adapterReference.get().setPlayerData(uuid, playerData);
     }
 
     @Override
@@ -280,6 +294,15 @@ public class PlayerStorageImpl implements PlayerStorage {
         } catch (DataRequestException | MineSkinException e) {
             logger.warning("Failed to get default skin data for %s".formatted(selectedSkin), e);
             return Optional.empty();
+        }
+    }
+
+    private PlayerData getPlayerDataOrDefault(UUID uuid) {
+        try {
+            return adapterReference.get().getPlayerData(uuid).orElseGet(() -> PlayerData.of(uuid, null));
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to get player data of player %s".formatted(uuid), e);
+            return PlayerData.of(uuid, null);
         }
     }
 

@@ -33,9 +33,10 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 public class PlayerFile {
-    private static final int CURRENT_DATA_VERSION = 1;
+    private static final int CURRENT_DATA_VERSION = 2;
     private UUID uniqueId;
     private IdentifierFile skinIdentifier;
+    private boolean offlineModeWarningDismissed;
     private List<HistoryFile> history;
     private List<FavouritesFile> favourites;
     private int dataVersion;
@@ -50,12 +51,18 @@ public class PlayerFile {
     public PlayerData toPlayerData() {
         return PlayerData.of(
                 uniqueId,
-                skinIdentifier == null ? null : skinIdentifier.toIdentifier()
+                skinIdentifier == null ? null : skinIdentifier.toIdentifier(),
+                offlineModeWarningDismissed
         );
     }
 
     public void setSkinIdentifier(SkinIdentifier identifier) {
         this.skinIdentifier = IdentifierFile.of(identifier);
+    }
+
+    public void setOfflineModeWarningDismissed(boolean offlineModeWarningDismissed) {
+        this.offlineModeWarningDismissed = offlineModeWarningDismissed;
+        this.dataVersion = CURRENT_DATA_VERSION;
     }
 
     public List<HistoryData> getHistoryData() {

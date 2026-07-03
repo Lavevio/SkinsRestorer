@@ -30,4 +30,9 @@ public class PlayerData {
     private final UUID uniqueId;
     @Nullable
     private SkinIdentifier skinIdentifier;
+    private boolean offlineModeWarningDismissed;
+
+    public static PlayerData of(UUID uniqueId, @Nullable SkinIdentifier skinIdentifier) {
+        return of(uniqueId, skinIdentifier, false);
+    }
 }

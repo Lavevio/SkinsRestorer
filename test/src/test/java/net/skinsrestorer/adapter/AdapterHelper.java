@@ -47,7 +47,7 @@ public final class AdapterHelper {
 
     public static void testAdapter(StorageAdapter adapter) {
         UUID playerId = UUID.randomUUID();
-        PlayerData playerData = PlayerData.of(playerId, null);
+        PlayerData playerData = PlayerData.of(playerId, null, true);
         HistoryData historyEntry = HistoryData.of(0, SkinIdentifier.ofCustom("abc"));
         FavouriteData favouriteEntry = FavouriteData.of(0, SkinIdentifier.ofCustom("abc"));
 

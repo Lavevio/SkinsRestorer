@@ -78,6 +78,7 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`skin_identifier` VARCHAR(2083),"
                 + "`skin_variant` VARCHAR(20),"
                 + "`skin_type` VARCHAR(20),"
+                + "`offline_mode_warning_dismissed` BOOLEAN NOT NULL DEFAULT FALSE,"
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.update("CREATE TABLE IF NOT EXISTS `" + resolvePlayerHistoryTable() + "` ("
@@ -134,8 +135,17 @@ public class MySQLAdapter implements StorageAdapter {
 
             // v15.9.4
             migrateURLSkinTable();
+
+            // v15.13
+            migratePlayerTable();
         } catch (IOException e) {
             logger.severe("Failed to migrate tables", e);
+        }
+    }
+
+    private void migratePlayerTable() {
+        if (!columnExists(resolvePlayerTable(), "offline_mode_warning_dismissed")) {
+            mysql.update("ALTER TABLE `" + resolvePlayerTable() + "` ADD COLUMN `offline_mode_warning_dismissed` BOOLEAN NOT NULL DEFAULT FALSE");
         }
     }
 
@@ -290,7 +300,7 @@ public class MySQLAdapter implements StorageAdapter {
                     ? SkinIdentifier.of(skinIdentifier,
                             skinVariant == null ? null : SkinVariant.valueOf(skinVariant), SkinType.valueOf(skinType)) : null;
 
-            return Optional.of(PlayerData.of(uuid, identifier));
+            return Optional.of(PlayerData.of(uuid, identifier, crs.getBoolean("offline_mode_warning_dismissed")));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -305,14 +315,18 @@ public class MySQLAdapter implements StorageAdapter {
 
         // Variant is only present on url skins
         String skinVariant = hasSkin && identifier.getSkinVariant() != null ? identifier.getSkinVariant().name() : null;
-        mysql.update("INSERT INTO " + resolvePlayerTable() + " (uuid, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
+        mysql.update("INSERT INTO " + resolvePlayerTable()
+                        + " (uuid, skin_identifier, skin_type, skin_variant, offline_mode_warning_dismissed) VALUES (?, ?, ?, ?, ?)"
+                        + " ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?, offline_mode_warning_dismissed=?",
                 uuid.toString(),
                 skinIdentifierString,
                 skinType,
                 skinVariant,
+                data.isOfflineModeWarningDismissed(),
                 skinIdentifierString,
                 skinType,
-                skinVariant);
+                skinVariant,
+                data.isOfflineModeWarningDismissed());
     }
 
     @Override

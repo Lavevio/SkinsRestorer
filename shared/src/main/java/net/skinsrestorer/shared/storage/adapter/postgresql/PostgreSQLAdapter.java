@@ -73,6 +73,7 @@ public class PostgreSQLAdapter implements StorageAdapter {
                 + "skin_identifier VARCHAR(2083),"
                 + "skin_variant VARCHAR(20),"
                 + "skin_type VARCHAR(20),"
+                + "offline_mode_warning_dismissed BOOLEAN NOT NULL DEFAULT FALSE,"
                 + "PRIMARY KEY (uuid))");
 
         postgres.update("CREATE TABLE IF NOT EXISTS " + resolvePlayerHistoryTable() + " ("
@@ -120,6 +121,13 @@ public class PostgreSQLAdapter implements StorageAdapter {
                 + "PRIMARY KEY (name))");
 
         migrateURLSkinTable();
+        migratePlayerTable();
+    }
+
+    private void migratePlayerTable() {
+        if (!columnExists(resolvePlayerTable(), "offline_mode_warning_dismissed")) {
+            postgres.update("ALTER TABLE " + resolvePlayerTable() + " ADD COLUMN offline_mode_warning_dismissed BOOLEAN NOT NULL DEFAULT FALSE");
+        }
     }
 
     private void migrateURLSkinTable() {
@@ -150,6 +158,18 @@ public class PostgreSQLAdapter implements StorageAdapter {
         }
     }
 
+    private boolean columnExists(String table, String column) {
+        try (ResultSet rs = postgres.query(
+                "SELECT 1 FROM information_schema.columns WHERE table_name = ? AND column_name = ?",
+                table,
+                column)) {
+            return rs.next();
+        } catch (SQLException e) {
+            logger.severe("Failed to check if column exists", e);
+            return false;
+        }
+    }
+
     @Override
     public Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException {
         try (ResultSet crs = postgres.query("SELECT * FROM " + resolvePlayerTable() + " WHERE uuid=?", uuid.toString())) {
@@ -165,7 +185,7 @@ public class PostgreSQLAdapter implements StorageAdapter {
                     ? SkinIdentifier.of(skinIdentifier,
                             skinVariant == null ? null : SkinVariant.valueOf(skinVariant), SkinType.valueOf(skinType)) : null;
 
-            return Optional.of(PlayerData.of(uuid, identifier));
+            return Optional.of(PlayerData.of(uuid, identifier, crs.getBoolean("offline_mode_warning_dismissed")));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -180,12 +200,15 @@ public class PostgreSQLAdapter implements StorageAdapter {
 
         // Variant is only present on url skins
         String skinVariant = hasSkin && identifier.getSkinVariant() != null ? identifier.getSkinVariant().name() : null;
-        postgres.update("INSERT INTO " + resolvePlayerTable() + " (uuid, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?) "
-                        + "ON CONFLICT (uuid) DO UPDATE SET skin_identifier=EXCLUDED.skin_identifier, skin_type=EXCLUDED.skin_type, skin_variant=EXCLUDED.skin_variant",
+        postgres.update("INSERT INTO " + resolvePlayerTable()
+                        + " (uuid, skin_identifier, skin_type, skin_variant, offline_mode_warning_dismissed) VALUES (?, ?, ?, ?, ?) "
+                        + "ON CONFLICT (uuid) DO UPDATE SET skin_identifier=EXCLUDED.skin_identifier, skin_type=EXCLUDED.skin_type, "
+                        + "skin_variant=EXCLUDED.skin_variant, offline_mode_warning_dismissed=EXCLUDED.offline_mode_warning_dismissed",
                 uuid.toString(),
                 skinIdentifierString,
                 skinType,
-                skinVariant);
+                skinVariant,
+                data.isOfflineModeWarningDismissed());
     }
 
     @Override

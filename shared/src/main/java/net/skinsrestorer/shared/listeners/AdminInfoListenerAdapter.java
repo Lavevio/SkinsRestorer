@@ -35,6 +35,7 @@ public final class AdminInfoListenerAdapter {
     private final SRPlugin plugin;
     private final SRPlatformAdapter adapter;
     private final UpdateCheckInit updateCheckInit;
+    private final OfflineModeWarningService offlineModeWarningService;
 
     public void handleConnect(SRServerConnectedEvent event) {
         SRPlayer player = event.getPlayer();
@@ -48,6 +49,8 @@ public final class AdminInfoListenerAdapter {
             if (version < 17 && player.hasPermission(PermissionRegistry.SR)) {
                 player.sendMessage(Message.UNSUPPORTED_JAVA, Placeholder.parsed("version", String.valueOf(version)), Placeholder.parsed("platform", adapter.getPlatform().getPlatformDescription()));
             }
+
+            offlineModeWarningService.handleConnect(player);
         });
     }
 }

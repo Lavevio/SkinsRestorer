@@ -232,6 +232,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             PlayerFile file = loadPlayerFile(uuid).orElseGet(() -> PlayerFile.create(uuid));
             file.setSkinIdentifier(data.getSkinIdentifier());
+            file.setOfflineModeWarningDismissed(data.isOfflineModeWarningDismissed());
 
             SRHelpers.writeIfNeeded(playerFilePath, gson.toJson(file));
         } catch (IOException e) {

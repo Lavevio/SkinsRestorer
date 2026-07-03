@@ -38,9 +38,14 @@ public final class LoginProfileListenerAdapter<R> {
     private final PlayerStorage playerStorage;
     private final SRLogger logger;
     private final AdapterReference adapterReference;
+    private final OfflineModeWarningService offlineModeWarningService;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
         logger.debug("Handling login for %s (%s)".formatted(event.getPlayerName(), event.getPlayerUniqueId()));
+        if (!event.isCancelled()) {
+            offlineModeWarningService.recordLogin(event.getPlayerUniqueId(), event.hasOnlineProperties());
+        }
+
         if (handleSync(event)) {
             return null;
         }
