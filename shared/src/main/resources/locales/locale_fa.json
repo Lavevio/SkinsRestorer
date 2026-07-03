@@ -56,6 +56,7 @@
   "skinsrestorer.success_admin_setcustomname": "نام اسکین <yellow><skin></yellow> به <yellow><display_name></yellow> تنظیم شد.",
   "skinsrestorer.success_admin_drop": "داده <type> برای <target> حذف شد.",
   "skinsrestorer.success_admin_reload": "پیکربندی و محلی‌سازی مجددا بارگذاری شد!",
+  "skinsrestorer.success_offline_mode_skin_warning_ignored": "شما دیگر هشدار لانچر آفلاین را مشاهده نخواهید کرد.",
   "skinsrestorer.success_history_line": "<dark_green>- <hover:show_text:'<dark_green>برای استفاده از <yellow><skin></yellow> کلیک کنید'><click:run_command:/skin set \"<skin_id>\"><yellow><skin></yellow></click></hover> از <yellow><timestamp></yellow> <white><skin_head></white>",
   "skinsrestorer.success_favourites_line": "<dark_green>- <hover:show_text:'<dark_green>برای استفاده از <yellow><skin></yellow> کلیک کنید'><click:run_command:/skin set \"<skin_id>\"><yellow><skin></yellow></click></hover> از <yellow><timestamp></yellow> <white><skin_head></white>",
   "skinsrestorer.error_generic": "<dark_red>خطا<dark_gray>: <red><message>",
