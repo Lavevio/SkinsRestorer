@@ -36,9 +36,9 @@ dependencies {
     errorprone("com.google.errorprone:error_prone_core:2.50.0")
     spotbugs("com.github.spotbugs:spotbugs:4.10.2")
 
-    rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.37.0")
-    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.38.0")
-    rewrite("org.openrewrite.recipe:rewrite-rewrite:0.26.1")
+    rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.38.0")
+    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.39.0")
+    rewrite("org.openrewrite.recipe:rewrite-rewrite:0.27.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testFixturesApi("org.junit.jupiter:junit-jupiter:6.1.1")
