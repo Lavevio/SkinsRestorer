@@ -23,7 +23,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
-import net.lenni0451.reflect.stream.RStream;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -34,6 +33,7 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.mod.mixin.GameProfileAccessor;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
@@ -56,7 +56,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
     public static void setGameProfileTextures(GameProfile gameProfile, SkinProperty property) {
         PropertyMap properties = gameProfile.properties();
-        var newProperties = ImmutableMultimap.<String, Object>builder();
+        var newProperties = ImmutableMultimap.<String, Property>builder();
         for (var entry : properties.entries()) {
             if (SkinProperty.TEXTURES_NAME.equals(entry.getKey())) {
                 continue;
@@ -66,11 +66,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         }
         newProperties.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
-        RStream.of(properties)
-                .withSuper()
-                .fields()
-                .by("properties")
-                .set(newProperties.build());
+        ((GameProfileAccessor) (Object) gameProfile).skinsrestorer$setProperties(new PropertyMap(newProperties.build()));
     }
 
     @Override
