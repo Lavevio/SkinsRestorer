@@ -24,6 +24,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.json.JSONOptions;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.skinsrestorer.shared.exception.TranslatableException;
@@ -35,6 +36,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public final class ComponentHelper {
+    private static final GsonComponentSerializer COMPATIBILITY_GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.builder()
+            .options(JSONOptions.compatibility())
+            .build();
     private static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     private static final MiniMessage MINI_MESSAGE_COMPONENT_SERIALIZER = MiniMessage.miniMessage();
@@ -51,6 +55,11 @@ public final class ComponentHelper {
     // Only used on platforms that don't support adventure
     public static String convertJsonToLegacy(ComponentString messageJson) {
         return LEGACY_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson.jsonString()));
+    }
+
+    public static String convertJsonToCompatibilityJson(ComponentString messageJson) {
+        return COMPATIBILITY_GSON_COMPONENT_SERIALIZER.serialize(
+                GSON_COMPONENT_SERIALIZER.deserialize(messageJson.jsonString()));
     }
 
     public static ComponentString convertComponentToJson(Component component) {

@@ -19,11 +19,12 @@ package net.skinsrestorer.bungee.wrapper;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public final class BungeeComponentHelper {
     public static BaseComponent[] deserialize(ComponentString messageJson) {
-        return ComponentSerializer.parse(messageJson.jsonString());
+        return ComponentSerializer.parse(ComponentHelper.convertJsonToCompatibilityJson(messageJson));
     }
 
     private BungeeComponentHelper() {

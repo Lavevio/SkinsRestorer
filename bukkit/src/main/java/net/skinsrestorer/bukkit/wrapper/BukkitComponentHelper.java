@@ -21,6 +21,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import org.bukkit.Material;
 
@@ -29,7 +30,7 @@ public final class BukkitComponentHelper {
     private static final LegacyComponentSerializer LEGACY_SERIALIZER = createLegacySerializer();
 
     public static BaseComponent[] deserialize(ComponentString messageJson) {
-        return ComponentSerializer.parse(messageJson.jsonString());
+        return ComponentSerializer.parse(ComponentHelper.convertJsonToCompatibilityJson(messageJson));
     }
 
     public static String toLegacy(ComponentString messageJson) {
