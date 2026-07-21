@@ -37,6 +37,7 @@ import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
 import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.commands.library.annotations.SRCooldownGroup;
+import net.skinsrestorer.shared.commands.library.annotations.UndismissedOfflineModeWarning;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
@@ -545,8 +546,8 @@ public final class SkinCommand {
         commandManager.execute(player, "skins");
     }
 
-    @Command("ignore-cracked-client")
-    @CommandPermission(PermissionRegistry.SKIN)
+    @Command("notification ignore-cracked-client")
+    @UndismissedOfflineModeWarning(PermissionRegistry.SKIN)
     private void onIgnoreCrackedClient(SRPlayer player) {
         playerStorage.setOfflineModeWarningDismissed(player.getUniqueId(), true);
         player.sendMessage(Message.SUCCESS_OFFLINE_MODE_SKIN_WARNING_IGNORED);

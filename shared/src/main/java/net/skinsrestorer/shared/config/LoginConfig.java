@@ -33,7 +33,8 @@ public class LoginConfig implements SettingsHolder {
     public static final Property<Boolean> ALWAYS_APPLY_PREMIUM = newProperty("login.alwaysApplyPremium", false);
     @Comment({
             "Sends a one-time warning to offline-mode players that some third-party launchers can override SkinsRestorer skins.",
-            "SkinsRestorer cannot detect the exact launcher. Players can dismiss the warning with /skin ignore-cracked-client."
+            "SkinsRestorer cannot detect the exact launcher. Players can dismiss the warning with "
+                    + "/skin notification ignore-cracked-client."
     })
     public static final Property<Boolean> OFFLINE_MODE_WARNING_ENABLED = newProperty("login.offlineModeWarning.enabled", true);
 }

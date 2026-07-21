@@ -27,6 +27,7 @@ import net.skinsrestorer.shared.commands.library.types.PlayerSelectorArgumentPar
 import net.skinsrestorer.shared.config.ProxyConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -75,6 +76,8 @@ import java.util.concurrent.TimeUnit;
 
 public class SRCommandManager {
     public static final CloudKey<String> BUKKIT_DESCRIPTION = CloudKey.of("bukkit_description", String.class);
+    private static final CloudKey<Void> UNDISMISSED_OFFLINE_MODE_WARNING_PERMISSION = CloudKey.of(
+            "undismissed_offline_mode_warning");
     @Getter
     private final CommandManager<SRCommandSender> commandManager;
     private final AnnotationParser<SRCommandSender> annotationParser;
@@ -82,7 +85,8 @@ public class SRCommandManager {
 
     @SuppressWarnings({"unchecked", "resource"})
     @Inject
-    public SRCommandManager(SRPlatformAdapter platform, SRLogger logger, SkinsRestorerLocale locale, SettingsManager settingsManager, AdapterReference reference) {
+    public SRCommandManager(SRPlatformAdapter platform, SRLogger logger, SkinsRestorerLocale locale, SettingsManager settingsManager,
+                            AdapterReference reference, PlayerStorageImpl playerStorage) {
         this.commandManager = platform.createCommandManager();
         this.annotationParser = new AnnotationParser<>(commandManager, SRCommandSender.class);
         StorageBackendRepository storageRepository = new StorageBackendRepository(reference);
@@ -180,6 +184,15 @@ public class SRCommandManager {
                 (commandPermission, builder) -> builder.permission(PredicatePermission.of(
                         CloudKey.of(commandPermission.value().getPermission().getPermissionString()),
                         c -> c.hasPermission(commandPermission.value())
+                ))
+        );
+        annotationParser.registerBuilderModifier(
+                UndismissedOfflineModeWarning.class,
+                (annotation, builder) -> builder.permission(PredicatePermission.of(
+                        UNDISMISSED_OFFLINE_MODE_WARNING_PERMISSION,
+                        sender -> sender instanceof SRPlayer player
+                                && sender.hasPermission(annotation.value())
+                                && !playerStorage.isOfflineModeWarningDismissed(player.getUniqueId())
                 ))
         );
         annotationParser.registerBuilderModifier(
