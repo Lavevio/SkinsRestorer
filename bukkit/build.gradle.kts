@@ -34,6 +34,10 @@ dependencies {
     compileOnly(libs.spigot.api) {
         isTransitive = false
     }
+    compileOnly(libs.bungeecord.chat)
+    compileOnly(libs.bungeecord.serializer) {
+        isTransitive = false
+    }
 
     implementation(libs.bstats.bukkit)
     implementation(libs.xseries)
@@ -50,7 +54,6 @@ dependencies {
 
     compileOnly(libs.authlib)
 
-    testImplementation(libs.adventure.bukkit)
     testImplementation(libs.spigot.api) {
         isTransitive = false
     }

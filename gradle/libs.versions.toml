@@ -6,7 +6,6 @@ runtask = "3.0.2"
 runpaperversion = "26.1.2"
 runwaterfallversion = "1.19"
 runvelocityversion = "3.5.0-SNAPSHOT"
-adventure-platform = "4.4.1"
 adventure = "5.2.0"
 mixin = "0.8.7"
 bstats = "3.2.1"
@@ -49,8 +48,6 @@ reflect = "1.6.4"
 
 [libraries]
 
-adventure-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
-adventure-bungeecord = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 adventure-text-serializer-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
@@ -73,6 +70,8 @@ cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud-paper" 
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
 authlib = { module = "com.mojang:authlib", version.ref = "authlib" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord-api" }
+bungeecord-chat = { module = "net.md-5:bungeecord-chat", version.ref = "bungeecord-api" }
+bungeecord-serializer = { module = "net.md-5:bungeecord-serializer", version.ref = "bungeecord-api" }
 bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats-bungeecord" }
 cloud-bungee = { module = "org.incendo:cloud-bungee", version.ref = "cloud-bungee" }
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity-api" }
@@ -113,7 +112,5 @@ adventure-shared = [
     "adventure-text-serializer-legacy",
     "adventure-text-serializer-ansi",
     "adventure-text-serializer-plain",
-    "adventure-text-minimessage",
-    "adventure-bukkit",
-    "adventure-bungeecord"
+    "adventure-text-minimessage"
 ]

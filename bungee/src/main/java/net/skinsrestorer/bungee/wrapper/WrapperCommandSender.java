@@ -20,7 +20,6 @@ package net.skinsrestorer.bungee.wrapper;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.CommandSender;
-import net.skinsrestorer.bungee.SRBungeeAdapter;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
@@ -30,7 +29,6 @@ import net.skinsrestorer.shared.utils.Tristate;
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
     private final @NonNull CommandSender sender;
-    private final @NonNull SRBungeeAdapter adapter;
 
     @Override
     public <S> S getAs(Class<S> senderClass) {
@@ -39,7 +37,7 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public void sendMessage(ComponentString messageJson) {
-        adapter.getAdventure().get().sender(sender).sendMessage(BungeeComponentHelper.deserialize(messageJson));
+        sender.sendMessage(BungeeComponentHelper.deserialize(messageJson));
     }
 
     @Override

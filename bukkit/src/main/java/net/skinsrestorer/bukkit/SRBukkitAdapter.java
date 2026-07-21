@@ -67,16 +67,13 @@ public class SRBukkitAdapter implements SRServerAdapter {
     @Getter
     private final JavaPlugin pluginInstance; // Only for platform API use
     @Getter
-    private final LazyBukkitAudiences adventure;
-    @Getter
     private final SchedulerProvider schedulerProvider;
 
     @Inject
-    public SRBukkitAdapter(Injector injector, Server server, JavaPlugin pluginInstance, LazyBukkitAudiences adventure) {
+    public SRBukkitAdapter(Injector injector, Server server, JavaPlugin pluginInstance) {
         this.injector = injector;
         this.server = server;
         this.pluginInstance = pluginInstance;
-        this.adventure = adventure;
         this.schedulerProvider = ProviderSelector.<SchedulerProvider>selector()
                 .add(FoliaSchedulerProvider::isAvailable,
                         () -> injector.getSingleton(FoliaSchedulerProvider.class))
@@ -144,7 +141,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
         SkullUtil.setSkull(itemStack, server, giveSkullPayload.textureHash());
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
-        skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(giveSkullPayload.displayName()));
+        skullMeta.setDisplayName(BukkitComponentHelper.toLegacy(giveSkullPayload.displayName()));
         itemStack.setItemMeta(skullMeta);
 
         bukkitPlayer.getInventory().addItem(itemStack);

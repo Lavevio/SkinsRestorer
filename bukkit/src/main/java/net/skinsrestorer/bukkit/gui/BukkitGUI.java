@@ -54,8 +54,8 @@ public class BukkitGUI implements GUIManager<Inventory> {
         entry.textureHash().ifPresent(hash -> SkullUtil.setSkull(itemStack, server, hash));
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
-        skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(entry.displayName()));
-        skullMeta.setLore(entry.lore().stream().map(BukkitComponentHelper::toStupidHex).toList());
+        skullMeta.setDisplayName(BukkitComponentHelper.toLegacy(entry.displayName()));
+        skullMeta.setLore(entry.lore().stream().map(BukkitComponentHelper::toLegacy).toList());
         if (entry.enchantmentGlow()) {
             skullMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             skullMeta.addEnchant(Objects.requireNonNull(XEnchantment.LURE.get()), 1, true);
@@ -69,7 +69,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
     public Inventory createGUI(SRInventory srInventory) {
         BukkitGUIHolder instance = injector.newInstance(BukkitGUIHolder.class);
         Inventory inventory = server.createInventory(instance, srInventory.rows() * 9,
-                BukkitComponentHelper.toStupidHex(srInventory.title()));
+                BukkitComponentHelper.toLegacy(srInventory.title()));
         instance.setInventory(inventory);
 
         for (Map.Entry<Integer, SRInventory.Item> entry : srInventory.items().entrySet()) {

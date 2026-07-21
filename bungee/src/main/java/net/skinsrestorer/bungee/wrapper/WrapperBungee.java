@@ -21,7 +21,6 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.bungee.SRBungeeAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
@@ -33,7 +32,6 @@ import javax.inject.Inject;
 public class WrapperBungee implements SRSubjectWrapper<CommandSender, ProxiedPlayer, SRProxyPlayer> {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
-    private final SRBungeeAdapter adapter;
 
     @Override
     public SRCommandSender commandSender(CommandSender sender) {
@@ -41,12 +39,12 @@ public class WrapperBungee implements SRSubjectWrapper<CommandSender, ProxiedPla
             return player(player);
         }
 
-        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).adapter(adapter).build();
+        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
     @Override
     public SRProxyPlayer player(ProxiedPlayer player) {
-        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).adapter(adapter).build();
+        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
 
     @Override

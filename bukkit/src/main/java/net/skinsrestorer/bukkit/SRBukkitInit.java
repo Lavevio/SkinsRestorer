@@ -188,12 +188,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     @Override
-    public void prePlatformInit() {
-        // Shutdown kyori adventure
-        plugin.getShutdownHooks().add(() -> adapter.getAdventure().get().close());
-    }
-
-    @Override
     public void checkPluginSupport() {
         checkViaVersion();
 

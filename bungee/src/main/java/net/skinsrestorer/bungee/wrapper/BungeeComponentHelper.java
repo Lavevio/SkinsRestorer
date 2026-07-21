@@ -17,13 +17,13 @@
  */
 package net.skinsrestorer.bungee.wrapper;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public final class BungeeComponentHelper {
-    public static Component deserialize(ComponentString messageJson) {
-        return GsonComponentSerializer.gson().deserialize(messageJson.jsonString());
+    public static BaseComponent[] deserialize(ComponentString messageJson) {
+        return ComponentSerializer.parse(messageJson.jsonString());
     }
 
     private BungeeComponentHelper() {

@@ -17,17 +17,33 @@
  */
 package net.skinsrestorer.bukkit.wrapper;
 
-import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
+import org.bukkit.Material;
 
 public final class BukkitComponentHelper {
-    public static Component deserialize(ComponentString messageJson) {
-        return BukkitComponentSerializer.gson().deserialize(messageJson.jsonString());
+    private static final GsonComponentSerializer GSON_SERIALIZER = GsonComponentSerializer.gson();
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = createLegacySerializer();
+
+    public static BaseComponent[] deserialize(ComponentString messageJson) {
+        return ComponentSerializer.parse(messageJson.jsonString());
     }
 
-    public static String toStupidHex(ComponentString messageJson) {
-        return BukkitComponentSerializer.legacy().serialize(deserialize(messageJson));
+    public static String toLegacy(ComponentString messageJson) {
+        return LEGACY_SERIALIZER.serialize(GSON_SERIALIZER.deserialize(messageJson.jsonString()));
+    }
+
+    private static LegacyComponentSerializer createLegacySerializer() {
+        LegacyComponentSerializer.Builder builder = LegacyComponentSerializer.builder()
+                .character(LegacyComponentSerializer.SECTION_CHAR);
+        if (Material.getMaterial("NETHERITE_PICKAXE") != null) {
+            builder.hexColors().useUnusualXRepeatedCharacterHexFormat();
+        }
+
+        return builder.build();
     }
 
     private BukkitComponentHelper() {

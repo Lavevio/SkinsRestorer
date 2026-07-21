@@ -50,8 +50,6 @@ public class SRBungeeAdapter implements SRProxyAdapter {
     private final ProxyServer proxy;
     @Getter
     private final Plugin pluginInstance; // Only for platform API use
-    @Getter
-    private final LazyBungeeAudiences adventure;
 
     @Override
     public Object createMetricsInstance() {

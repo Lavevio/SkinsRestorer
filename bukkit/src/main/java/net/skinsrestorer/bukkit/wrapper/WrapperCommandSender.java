@@ -19,7 +19,7 @@ package net.skinsrestorer.bukkit.wrapper;
 
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
@@ -40,9 +40,9 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public void sendMessage(ComponentString messageJson) {
-        Component message = BukkitComponentHelper.deserialize(messageJson);
+        BaseComponent[] message = BukkitComponentHelper.deserialize(messageJson);
 
-        Runnable runnable = () -> adapter.getAdventure().get().sender(sender).sendMessage(message);
+        Runnable runnable = () -> sender.spigot().sendMessage(message);
         if (sender instanceof BlockCommandSender) {
             // Command blocks require messages to be sent synchronously in Bukkit
             adapter.runSync(this, runnable);
