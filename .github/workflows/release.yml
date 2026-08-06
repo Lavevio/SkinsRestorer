@@ -189,7 +189,7 @@ jobs:
         modrinth-id: skinsrestorer
         modrinth-featured: true
         # Unfeature all previous releases for this loader
-        modrinth-unfeature-mode: loader-any
+        modrinth-unfeature-mode: loader-intersection
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
@@ -219,7 +219,7 @@ jobs:
         modrinth-id: skinsrestorer
         modrinth-featured: true
         # Unfeature all previous releases for this loader
-        modrinth-unfeature-mode: loader-any
+        modrinth-unfeature-mode: loader-intersection
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
@@ -242,6 +242,41 @@ jobs:
         retry-attempts: 2
         retry-delay: 10000
         fail-mode: fail
+
+    - name: Archive unsupported mod versions on Modrinth
+      env:
+        MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        MOD_MC_VERSION: ${{ steps.modMcVersion.outputs.modMcVersion }}
+      run: |
+        modrinth_curl=(
+          --fail-with-body
+          --silent
+          --show-error
+          --header "Authorization: $MODRINTH_TOKEN"
+          --header "User-Agent: SkinsRestorer/SkinsRestorer (https://github.com/SkinsRestorer/SkinsRestorer)"
+        )
+
+        versions=$(curl "${modrinth_curl[@]}" https://api.modrinth.com/v2/project/skinsrestorer/version)
+        unsupported_version_ids=$(jq --compact-output --arg game_version "$MOD_MC_VERSION" '
+          [
+            .[]
+            | select(
+                .status == "listed"
+                and (.loaders | any(. == "fabric" or . == "neoforge"))
+                and (.game_versions | index($game_version) == null)
+              )
+            | .id
+          ]
+        ' <<< "$versions")
+
+        echo "Archiving $(jq 'length' <<< "$unsupported_version_ids") unsupported Modrinth versions"
+        while IFS= read -r version_id; do
+          curl "${modrinth_curl[@]}" \
+            --request PATCH \
+            --header "Content-Type: application/json" \
+            --data '{"status":"archived"}' \
+            "https://api.modrinth.com/v2/version/$version_id"
+        done < <(jq --raw-output '.[]' <<< "$unsupported_version_ids")
 
     - name: Publish to Hangar
       run: ./gradlew publishPluginPublicationToHangar --stacktrace
