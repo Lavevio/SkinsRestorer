@@ -120,6 +120,9 @@ public final class SkinShuffleWire {
             if (currentByte == -1) {
                 throw new IllegalArgumentException("Unexpected end of SkinShuffle varint");
             }
+            if (position == 4 && (currentByte & 0xF0) != 0) {
+                throw new IllegalArgumentException("SkinShuffle varint is too large");
+            }
 
             value |= (currentByte & 0x7F) << (position * 7);
             if ((currentByte & 0x80) == 0) {

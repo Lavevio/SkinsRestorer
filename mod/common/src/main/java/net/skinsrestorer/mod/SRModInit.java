@@ -72,28 +72,29 @@ public class SRModInit implements SRServerPlatformInit {
     }
 
     @Override
-    public void initClientCompatibility() {
+    public void initClientCompatibility(boolean proxyMode) {
         SkinShuffleSupport skinShuffleSupport = injector.getSingleton(SkinShuffleSupport.class);
-        SRModPlatform.INSTANCE.initMessageChannel(SkinShuffleHandshakePayload.TYPE, SkinShuffleHandshakePayload.STREAM_CODEC,
-                (payload, player) -> {
-                });
-        SRModPlatform.INSTANCE.initMessageChannel(SkinShuffleRefreshPlayerListEntryPayload.TYPE, SkinShuffleRefreshPlayerListEntryPayload.STREAM_CODEC,
-                (payload, player) -> {
-                });
-        SRModPlatform.INSTANCE.initMessageChannel(SkinShuffleSkinRefreshPayload.TYPE, SkinShuffleSkinRefreshPayload.STREAM_CODEC,
+        SRModPlatform.INSTANCE.initClientboundMessageChannel(
+                SkinShuffleHandshakePayload.TYPE, SkinShuffleHandshakePayload.STREAM_CODEC);
+        SRModPlatform.INSTANCE.initClientboundMessageChannel(
+                SkinShuffleRefreshPlayerListEntryPayload.TYPE, SkinShuffleRefreshPlayerListEntryPayload.STREAM_CODEC);
+        SRModPlatform.INSTANCE.initServerboundMessageChannel(
+                SkinShuffleSkinRefreshPayload.TYPE, SkinShuffleSkinRefreshPayload.STREAM_CODEC,
                 (payload, player) -> payload.toSkinProperty().ifPresentOrElse(
                         property -> skinShuffleSupport.handleSkinRefresh(wrapper.player(player), property),
                         () -> logger.warning("Ignoring invalid SkinShuffle skin refresh payload from %s (%s)."
                                 .formatted(player.getGameProfile().name(), player.getGameProfile().id()))
                 ));
 
-        SRModPlatform.INSTANCE.registerPlayerJoinListener(player -> {
-            if (!skinShuffleSupport.isEnabled() || !SRModPlatform.INSTANCE.canSend(player, SkinShuffleHandshakePayload.TYPE)) {
-                return;
-            }
+        if (!proxyMode) {
+            SRModPlatform.INSTANCE.registerPlayerJoinListener(player -> {
+                if (!skinShuffleSupport.isEnabled() || !SRModPlatform.INSTANCE.canSend(player, SkinShuffleHandshakePayload.TYPE)) {
+                    return;
+                }
 
-            SRModPlatform.INSTANCE.sendPluginMessage(player, SkinShuffleHandshakePayload.INSTANCE);
-        });
+                SRModPlatform.INSTANCE.sendPluginMessage(player, SkinShuffleHandshakePayload.INSTANCE);
+            });
+        }
     }
 
     @Override
@@ -169,7 +170,7 @@ public class SRModInit implements SRServerPlatformInit {
     @Override
     public void initMessageChannel() {
         SRServerMessageAdapter messageAdapter = injector.getSingleton(SRServerMessageAdapter.class);
-        SRModPlatform.INSTANCE.initMessageChannel(SR_MESSAGE_CHANNEL, RawBytePayload.STREAM_CODEC,
+        SRModPlatform.INSTANCE.initBidirectionalMessageChannel(SR_MESSAGE_CHANNEL, RawBytePayload.STREAM_CODEC,
                 (payload, player) -> messageAdapter.handlePluginMessage(new SRServerMessageEvent() {
                     @Override
                     public SRServerPlayer getPlayer() {

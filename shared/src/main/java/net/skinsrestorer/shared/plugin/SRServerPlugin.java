@@ -87,7 +87,7 @@ public class SRServerPlugin {
 
     public void startupPlatform(SRServerPlatformInit init) throws InitializeException {
         init.initMetricsJoinListener();
-        init.initClientCompatibility();
+        init.initClientCompatibility(proxyMode);
 
         init.initPermissions();
 

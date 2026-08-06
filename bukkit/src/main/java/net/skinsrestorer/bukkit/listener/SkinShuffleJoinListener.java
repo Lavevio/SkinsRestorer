@@ -20,6 +20,7 @@ package net.skinsrestorer.bukkit.listener;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
+import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleChannels;
 import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleWire;
@@ -31,7 +32,9 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinShuffleJoinListener implements Listener {
+    private static final long HANDSHAKE_DELAY_TICKS = 20L;
     private final SRBukkitAdapter adapter;
+    private final SchedulerProvider scheduler;
     private final SettingsManager settings;
 
     @EventHandler
@@ -40,8 +43,14 @@ public class SkinShuffleJoinListener implements Listener {
             return;
         }
 
-        event.getPlayer().sendPluginMessage(adapter.getPluginInstance(),
-                SkinShuffleChannels.HANDSHAKE,
-                SkinShuffleWire.createHandshakePayload());
+        scheduler.runSyncToEntityDelayed(event.getPlayer(), () -> {
+            if (!event.getPlayer().isOnline()) {
+                return;
+            }
+
+            event.getPlayer().sendPluginMessage(adapter.getPluginInstance(),
+                    SkinShuffleChannels.HANDSHAKE,
+                    SkinShuffleWire.createHandshakePayload());
+        }, HANDSHAKE_DELAY_TICKS);
     }
 }

@@ -27,6 +27,7 @@ import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
@@ -42,6 +43,7 @@ public class SkinShuffleSupport {
     private final Injector injector;
     private final SkinStorage skinStorage;
     private final PlayerStorage playerStorage;
+    private final SRPlatformAdapter adapter;
     private final SRLogger logger;
 
     public boolean isEnabled() {
@@ -73,10 +75,14 @@ public class SkinShuffleSupport {
             return;
         }
 
-        String skinId = getSkinIdentifier(player.getUniqueId());
-        skinStorage.setCustomSkinData(skinId, property);
-        playerStorage.setSkinIdOfPlayer(player.getUniqueId(), SkinIdentifier.ofCustom(skinId));
-        getSkinApplier().applySkin(player.getAs(Object.class), property);
+        UUID playerUniqueId = player.getUniqueId();
+        Object platformPlayer = player.getAs(Object.class);
+        adapter.runAsync(() -> {
+            String skinId = getSkinIdentifier(playerUniqueId);
+            skinStorage.setCustomSkinData(skinId, property);
+            playerStorage.setSkinIdOfPlayer(playerUniqueId, SkinIdentifier.ofCustom(skinId));
+            getSkinApplier().applySkin(platformPlayer, property);
+        });
     }
 
     public String getSkinIdentifier(UUID playerUniqueId) {

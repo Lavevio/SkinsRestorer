@@ -51,4 +51,11 @@ class SkinShuffleWireTest {
         assertArrayEquals(new byte[]{(byte) 0xAC, 0x02}, encoded);
         assertEquals(300, SkinShuffleWire.decodeRefreshPlayerListEntryPayload(encoded).orElseThrow());
     }
+
+    @Test
+    void shouldRejectRefreshPlayerListEntryVarIntLargerThan32Bits() {
+        byte[] encoded = {(byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, 0x10};
+
+        assertTrue(SkinShuffleWire.decodeRefreshPlayerListEntryPayload(encoded).isEmpty());
+    }
 }

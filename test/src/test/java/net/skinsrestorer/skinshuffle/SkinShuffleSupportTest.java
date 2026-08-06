@@ -27,10 +27,12 @@ import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleSupport;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -50,6 +52,8 @@ class SkinShuffleSupportTest {
     @Mock
     private PlayerStorage playerStorage;
     @Mock
+    private SRPlatformAdapter adapter;
+    @Mock
     private SRLogger logger;
     @Mock
     private SharedSkinApplier<Object> skinApplier;
@@ -58,7 +62,7 @@ class SkinShuffleSupportTest {
 
     @Test
     void shouldPersistAndApplySkinRefresh() {
-        SkinShuffleSupport support = new SkinShuffleSupport(settings, injector, skinStorage, playerStorage, logger);
+        SkinShuffleSupport support = new SkinShuffleSupport(settings, injector, skinStorage, playerStorage, adapter, logger);
         UUID uniqueId = UUID.fromString("11111111-2222-3333-4444-555555555555");
         Object platformPlayer = new Object();
         SkinProperty property = SkinProperty.of("value", "signature");
@@ -72,6 +76,12 @@ class SkinShuffleSupportTest {
 
         support.handleSkinRefresh(player, property);
 
+        ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(adapter).runAsync(taskCaptor.capture());
+        verifyNoInteractions(skinStorage, playerStorage, skinApplier);
+
+        taskCaptor.getValue().run();
+
         verify(skinStorage).setCustomSkinData(expectedSkinId, property);
         verify(playerStorage).setSkinIdOfPlayer(uniqueId, SkinIdentifier.ofCustom(expectedSkinId));
         verify(skinApplier).applySkin(platformPlayer, property);
@@ -79,7 +89,7 @@ class SkinShuffleSupportTest {
 
     @Test
     void shouldRejectSkinRefreshWithoutPermission() {
-        SkinShuffleSupport support = new SkinShuffleSupport(settings, injector, skinStorage, playerStorage, logger);
+        SkinShuffleSupport support = new SkinShuffleSupport(settings, injector, skinStorage, playerStorage, adapter, logger);
         SkinProperty property = SkinProperty.of("value", "signature");
 
         when(settings.getProperty(ServerConfig.SKINSHUFFLE_SUPPORT)).thenReturn(true);
@@ -87,12 +97,12 @@ class SkinShuffleSupportTest {
 
         support.handleSkinRefresh(player, property);
 
-        verifyNoInteractions(skinStorage, playerStorage, injector);
+        verifyNoInteractions(skinStorage, playerStorage, injector, adapter);
     }
 
     @Test
     void shouldIgnoreInvalidWirePayload() {
-        SkinShuffleSupport support = new SkinShuffleSupport(settings, injector, skinStorage, playerStorage, logger);
+        SkinShuffleSupport support = new SkinShuffleSupport(settings, injector, skinStorage, playerStorage, adapter, logger);
 
         when(settings.getProperty(ServerConfig.SKINSHUFFLE_SUPPORT)).thenReturn(true);
         when(player.getName()).thenReturn("TestPlayer");
@@ -101,6 +111,6 @@ class SkinShuffleSupportTest {
         support.handleSkinRefresh(player, new byte[]{1, 0});
 
         verify(logger).warning(contains("Ignoring invalid SkinShuffle skin refresh payload"));
-        verifyNoInteractions(skinStorage, playerStorage, injector);
+        verifyNoInteractions(skinStorage, playerStorage, injector, adapter);
     }
 }

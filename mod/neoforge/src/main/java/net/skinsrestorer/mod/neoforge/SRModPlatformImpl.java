@@ -140,17 +140,36 @@ public class SRModPlatformImpl implements SRModPlatform {
     }
 
     @Override
-    public <T extends CustomPacketPayload> void initMessageChannel(
+    public <T extends CustomPacketPayload> void initBidirectionalMessageChannel(
             CustomPacketPayload.Type<T> type,
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             BiConsumer<T, ServerPlayer> receiver) {
+        registerPayload(registrar -> registrar.playBidirectional(type, codec, (payload, context) ->
+                receiver.accept(payload, (ServerPlayer) context.player())));
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void initServerboundMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            BiConsumer<T, ServerPlayer> receiver) {
+        registerPayload(registrar -> registrar.playToServer(type, codec, (payload, context) ->
+                receiver.accept(payload, (ServerPlayer) context.player())));
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void initClientboundMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
+        registerPayload(registrar -> registrar.playToClient(type, codec));
+    }
+
+    private void registerPayload(Consumer<PayloadRegistrar> registration) {
         var container = Objects.requireNonNull(ModLoadingContext.get().getActiveContainer(), "Active NeoForge mod container");
         var eventBus = Objects.requireNonNull(container.getEventBus(), "Active NeoForge mod event bus");
         eventBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
             PayloadRegistrar registrar = event.registrar("1").optional();
-            registrar.playToServer(type, codec, (payload, context) ->
-                    receiver.accept(payload, (ServerPlayer) context.player()));
-            registrar.playToClient(type, codec);
+            registration.accept(registrar);
         });
     }
 

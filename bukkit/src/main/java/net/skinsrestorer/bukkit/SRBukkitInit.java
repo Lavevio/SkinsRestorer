@@ -189,8 +189,11 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     @Override
-    public void initClientCompatibility() {
-        server.getPluginManager().registerEvents(injector.getSingleton(SkinShuffleJoinListener.class), adapter.getPluginInstance());
+    public void initClientCompatibility(boolean proxyMode) {
+        if (!proxyMode) {
+            server.getPluginManager().registerEvents(injector.getSingleton(SkinShuffleJoinListener.class), adapter.getPluginInstance());
+        }
+
         server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL);
         server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SkinShuffleChannels.HANDSHAKE);
         server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SkinShuffleChannels.REFRESH_PLAYER_LIST_ENTRY);

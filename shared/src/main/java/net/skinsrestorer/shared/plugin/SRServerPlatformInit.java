@@ -18,7 +18,7 @@
 package net.skinsrestorer.shared.plugin;
 
 public non-sealed interface SRServerPlatformInit extends SRPlatformInit {
-    default void initClientCompatibility() {
+    default void initClientCompatibility(boolean proxyMode) {
     }
 
     default void initMetricsJoinListener() {
