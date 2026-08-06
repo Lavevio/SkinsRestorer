@@ -57,7 +57,6 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class SRModAdapter implements SRServerAdapter {
@@ -213,7 +212,7 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public Platform getPlatform() {
-        return Platform.BUKKIT;
+        return SRModPlatform.INSTANCE.getPlatform();
     }
 
     @Override

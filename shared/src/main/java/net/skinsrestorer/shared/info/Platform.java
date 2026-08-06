@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Platform {
     BUKKIT("Bukkit", PlatformType.SERVER),
+    FABRIC("Fabric", PlatformType.SERVER),
+    NEO_FORGE("NeoForge", PlatformType.SERVER),
     BUNGEE_CORD("BungeeCord", PlatformType.PROXY),
     VELOCITY("Velocity", PlatformType.PROXY);
 

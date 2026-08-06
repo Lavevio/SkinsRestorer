@@ -37,8 +37,8 @@ import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
-import net.neoforged.neoforgespi.language.IModInfo;
 import net.skinsrestorer.mod.SRModPlatform;
+import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
@@ -49,7 +49,10 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.neoforge.NeoForgeServerCommandManager;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -97,6 +100,11 @@ public class SRModPlatformImpl implements SRModPlatform {
     @Override
     public String getPlatformName() {
         return "NeoForge";
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.NEO_FORGE;
     }
 
     @Override

@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.Tristate;
@@ -49,6 +50,8 @@ public interface SRModPlatform {
     void registerPlayerJoinListener(Consumer<ServerPlayer> listener);
 
     String getPlatformName();
+
+    Platform getPlatform();
 
     CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
                                                          SenderMapper<CommandSourceStack, SRCommandSender> senderMapper);

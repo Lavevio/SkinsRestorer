@@ -34,6 +34,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.skinsrestorer.mod.SRModPlatform;
+import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
@@ -88,6 +89,11 @@ public class SRModPlatformImpl implements SRModPlatform {
     @Override
     public String getPlatformName() {
         return "Fabric";
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.FABRIC;
     }
 
     @Override
